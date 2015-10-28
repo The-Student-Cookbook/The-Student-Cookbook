@@ -1,4 +1,4 @@
-package cs506.studentcookbook.Model;
+package cs506.studentcookbook.Database;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,6 +20,16 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import cs506.studentcookbook.Model.Ingredient;
+import cs506.studentcookbook.Model.Recipe;
+import cs506.studentcookbook.Model.Technique;
+import cs506.studentcookbook.Model.Tool;
+
+/**
+ * This class is used to automatically populate the database with recipes from the BigOven API.
+ * Call the getRecipes(String keyword) method with a keyword from POPULATION_KEYWORDS to get a
+ * list of Recipe objects containing data from the API.
+ */
 public class APIGrabber {
 
     public static final String[] TOOLS_LIST = {"skewer", "grill", "oven", "pot", "saucepan",
@@ -56,6 +66,8 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"beef", "pasta", "hispanic", "vegetarian" };
+
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";
     private static final String SEARCH_URL = "http://api.bigoven.com/recipes";
@@ -65,38 +77,21 @@ public class APIGrabber {
     private static final String PARAM_PAGE = "pg=";
     private static final String PARAM_RESULTS_PER_PAGE = "rpp=";
 
-    private static final int MIN_RESULTS_PER_PAGE = 10;
-    private static final int MAX_RESULTS_PER_PAGE = 100;
-    private static final int MIN_PAGE = 1;
-    private static final int MAX_PAGE = 5;
-
     private static final double MIN_REVIEW = 2.0;
     private static final int MIN_REVIEW_COUNT = 2;
 
+    /**
+     * Run this with a keyword from POPULATION_KEYWORDS to get a series of recipes from the API.
+     * Use these recipes to populate the database. Use all keywords from POPULATION_KEYWORDS to
+     * completely populate the database. This should be done in multiple trials, because our free
+     * key for the API only allows for 500 calls per hour. Each call to this function will run about
+     * 10 - 20 calls to the API.
+     *
+     * This is the only method you need to call from the outside to get access to the functionality
+     * of this class.
+     */
     public static List<Recipe> getRecipes(String keyword) {
-        //Random random = new Random();
-        //int page = 1 + random.nextInt(MAX_PAGE - MIN_PAGE);
-        //int resultsPerPage = 1 + random.nextInt(MAX_RESULTS_PER_PAGE - MIN_RESULTS_PER_PAGE);
-
-        int page = 1;
-        int resultsPerPage = 50;
-        return getRecipesFromAPIBasedOnKeywordAndPage(keyword, page, resultsPerPage);
-    }
-
-    public static Recipe getTestRecipe() {
-        Document doc = getAPIRecipe(158299);
-        return createRecipeFromDocument(doc);
-    }
-
-    public static Recipe getOneRecipe(String keyword) {
-        List<Recipe> recipes = getRecipesFromAPIBasedOnKeywordAndPage(keyword, 1, 25);
-        return recipes.get(0);
-    }
-
-    public static String getRandomKeyword() {
-        Random random = new Random();
-        int i = random.nextInt(POPULATION_KEYWORDS.length);
-        return POPULATION_KEYWORDS[i];
+        return getRecipesFromAPIBasedOnKeywordAndPage(keyword, 1, 50);
     }
 
     private static List<Recipe> getRecipesFromAPIBasedOnKeywordAndPage(String keyword, int page, int resultsPerPage) {
@@ -328,7 +323,7 @@ public class APIGrabber {
 
             recipe.addBase(node.getFirstChild().getNodeValue());
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("Missing meal base on recipe: " + recipe.getName());
         }
 
         for(String s : CUISINE) {

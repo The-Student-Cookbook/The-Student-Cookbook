@@ -13,7 +13,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start new acttivity"
+        android:text="Start database acttivity"
         android:id="@+id/button"
         android:layout_weight="0.04"
         android:onClick="startDatabase" />

@@ -15,8 +15,9 @@ public class Technique {
     }
 
     public Technique(String name) {
-        if(name != null)
-            this.name = name.toLowerCase();
+        if(name != null) {
+            this.name = name.toLowerCase().trim();
+        }
 
         populateFromDatabase();
     }
@@ -50,16 +51,16 @@ public class Technique {
         if(name == null)
             return;
 
-        name = name.toLowerCase();
-
-        if(!this.name.equals(name)) {
-            this.name = name;
-            populateFromDatabase();
-        }
+        name = name.toLowerCase().trim();
+        this.name = name;
     }
 
     public void setDescription(String description) {
-        this.name = description;
+        if(description == null)
+            return;
+
+        description = description.trim();
+        this.description = description;
     }
 
     public void setTools(List<Tool> tools) {
@@ -75,6 +76,10 @@ public class Technique {
     }
 
     public void addExternalURL(String url) {
+        if(url == null)
+            return;
+
+        url = url.trim();
         this.externalURLs.add(url);
     }
 

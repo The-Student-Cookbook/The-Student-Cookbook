@@ -104,6 +104,10 @@ public class Recipe {
     }
 
     public void setName(String name) {
+        if(name == null)
+            return;
+
+        name = name.trim();
         this.name = name;
     }
 
@@ -112,6 +116,10 @@ public class Recipe {
     }
 
     public void addBase(String base) {
+        if(base == null)
+            return;
+
+        base = base.toLowerCase().trim();
         this.bases.add(base);
     }
 
@@ -120,10 +128,18 @@ public class Recipe {
     }
 
     public void addCuisine(String cuisine) {
+        if(cuisine == null)
+            return;
+
+        cuisine = cuisine.toLowerCase().trim();
         this.cuisines.add(cuisine);
     }
 
     public void setInstructions(String instructions) {
+        if(instructions == null)
+            return;
+
+        instructions = instructions.toLowerCase().trim();
         this.instructions = instructions;
     }
 
@@ -148,6 +164,10 @@ public class Recipe {
     }
 
     public void setImageURL(String imageURL) {
+        if(imageURL == null)
+            return;
+
+        imageURL = imageURL.trim();
         this.imageURL = imageURL;
     }
 

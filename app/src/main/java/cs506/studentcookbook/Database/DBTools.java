@@ -5,19 +5,26 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import cs506.studentcookbook.Model.Tool;
 import cs506.studentcookbook.Model.Technique;
-import cs506.studentcookbook.Model.APIGrabber;
 import cs506.studentcookbook.Model.Recipe;
 import cs506.studentcookbook.Model.Ingredient;
 
 /**
- * Created by cquag on 10/25/2015.
+ * The DBTools class is a wrapper around the SQLite database. This class currently provides
+ * functionality to create the database, delete the database, and insert into the database.
+ *
+ * This class calls out to APIGrabber to help populate the database.
+ *
+ * To populate the database with a test set of data, call populateDatabase(). All recipes added
+ * into the database will be displayed on the console/Logcat.
  */
-public class DatabaseCreator extends SQLiteOpenHelper {
+public class DBTools extends SQLiteOpenHelper {
 
     // Recipe tables
     public static final String TABLE_RECIPE = "Recipe";
@@ -55,9 +62,58 @@ public class DatabaseCreator extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TheStudentsCookbook";
 
-    public DatabaseCreator(Context context) {
+    public DBTools(Context context) {
         super(context, DATABASE_NAME, null, 1);
         createTables();
+    }
+
+    /**
+     * Uses APIGrabber to populate the internal database.
+     */
+    public void populateDatabase() {
+        String selectQuery = "SELECT * FROM Recipe";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // if there are things already in the database, return
+        if(cursor.getCount() > 0) {
+            db.close();
+            return;
+        }
+
+        db.close();
+
+        Thread thread = new Thread(new Runnable(){
+
+            // network activity needs to be on a separate thread or Android will throw an exception
+            public void run() {
+                try {
+                    int recipeCount = 0;
+                    int ingredientCount = 0;
+
+                    for(String s : APIGrabber.SIMPLE_POPULATION_KEYWORDS) {
+
+                        List<Recipe> recipes = APIGrabber.getRecipes(s);
+                        recipeCount += recipes.size();
+
+                        for(Recipe recipe : recipes) {
+                            addRecipeToDatabase(recipe);
+                            Log.d("Adding recipe", recipe.toString());
+                            ingredientCount += recipe.getIngredients().size();
+                        }
+                    }
+
+                    Log.d("Done populating", "...");
+                    Log.d("Recipe count", recipeCount + "");
+                    Log.d("Ingredient count", ingredientCount + "");
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
     }
 
     @Override
@@ -73,18 +129,14 @@ public class DatabaseCreator extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void addIngredient(String ingredient, double cost) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        ContentValues values = new ContentValues();
-        values.put("ingredientName", ingredient);
-        values.put("cost", cost);
-        db.insertWithOnConflict("Ingredient", null, values, SQLiteDatabase.CONFLICT_IGNORE);
-
-        db.close();
+    public void clearDatabase() {
+        dropTables();
+        Log.d("Database cleared", "...");
     }
 
-    // test
+    /**
+     * This method is an example of how to query the database using SQLite.
+     */
     public List<String> getIngredients() {
         ArrayList<String> list = new ArrayList<String>();
         String selectQuery = "SELECT * FROM Ingredient";

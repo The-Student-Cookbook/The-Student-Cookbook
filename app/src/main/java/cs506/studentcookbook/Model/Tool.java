@@ -9,15 +9,10 @@ public class Tool {
 
     public Tool(String name) {
         this.name = name;
-        populateFromDatabase();
     }
 
     public Tool() {
         this.name = "";
-    }
-
-    private void populateFromDatabase() {
-        // TODO make this grab the description and imageURL from the database
     }
 
     public String getName() {
@@ -33,17 +28,26 @@ public class Tool {
     }
 
     public void setName(String name) {
-        if(!this.name.equals(name)) {
-            this.name = name;
-            populateFromDatabase();
-        }
+        if(name == null)
+            return;
+
+        name = name.toLowerCase().trim();
+        this.name = name;
     }
 
     public void setDescription(String description) {
+        if(name == null)
+            return;
+
+        description = description.trim();
         this.description = description;
     }
 
     public void setImageURL(String imageURL) {
+        if(imageURL == null)
+            return;
+
+        imageURL = imageURL.trim();
         this.imageURL = imageURL;
     }
 

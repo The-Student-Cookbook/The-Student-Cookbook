@@ -13,10 +13,13 @@ public class Ingredient {
     }
 
     public Ingredient(String name, String unit, double amount) {
-        if(name != null)
-            this.name = name.toLowerCase();
-        if(unit != null)
-            this.unit = unit.toLowerCase();
+        if(name != null) {
+
+            this.name = name.toLowerCase().trim();
+        }
+        if(unit != null) {
+            this.unit = unit.toLowerCase().trim();
+        }
 
         this.amount = amount;
     }
@@ -25,14 +28,14 @@ public class Ingredient {
         if(name == null)
             return;
 
-        this.name = name.toLowerCase();
+        this.name = name.toLowerCase().trim();
     }
 
     public void setUnit(String unit) {
         if(unit == null)
             return;
 
-        this.name = unit.toLowerCase();
+        this.name = unit.toLowerCase().trim();
     }
 
     public void setAmount(double amount) {
