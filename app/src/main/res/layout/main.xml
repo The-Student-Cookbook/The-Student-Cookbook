@@ -2,11 +2,20 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="test" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start new acttivity"
+        android:id="@+id/button"
+        android:layout_weight="0.04"
+        android:onClick="startDatabase" />
 
 </LinearLayout>
