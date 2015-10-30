@@ -5,25 +5,30 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="cs506.studentcookbook.database.DatabaseTestActivity">
+    tools:context="cs506.studentcookbook.activity.DashboardActivity">
+
+    <!--
+    This view is currently not used because the buttons are dynamically generated from the
+    DashboardActivity
+    -->
+
+    <!--
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Help me choose..."
+        android:id="@+id/button1"
+        android:onClick="persistentDataQuery" />
+
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Populate Database (Don&apos;t touch this button more than 5 times per hour!)"
-        android:id="@+id/button2"
-        android:layout_centerHorizontal="true"
-        android:onClick="onButtonClick" />
+        android:text="Start database acttivity (temporary)"
+        android:id="@+id/button"
+        android:layout_weight="0.04"
+        android:onClick="startDatabase" />
+        -->
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear Database"
-        android:id="@+id/button3"
-        android:layout_below="@+id/button2"
-        android:layout_alignEnd="@+id/button2"
-        android:layout_marginTop="34dp"
-        android:layout_alignStart="@+id/button2"
-        android:onClick="onClearDatabase" />
 
 </RelativeLayout>
