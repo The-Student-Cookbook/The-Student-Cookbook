@@ -1,4 +1,4 @@
-package cs506.studentcookbook.Database;
+package cs506.studentcookbook.database;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -10,10 +10,10 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-import cs506.studentcookbook.Model.Tool;
-import cs506.studentcookbook.Model.Technique;
-import cs506.studentcookbook.Model.Recipe;
-import cs506.studentcookbook.Model.Ingredient;
+import cs506.studentcookbook.model.Tool;
+import cs506.studentcookbook.model.Technique;
+import cs506.studentcookbook.model.Recipe;
+import cs506.studentcookbook.model.Ingredient;
 
 /**
  * The DBTools class is a wrapper around the SQLite database. This class currently provides
