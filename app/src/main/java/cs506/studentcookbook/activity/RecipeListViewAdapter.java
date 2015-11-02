@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import cs506.studentcookbook.Model.Recipe;
+import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.R;
 
 /**
