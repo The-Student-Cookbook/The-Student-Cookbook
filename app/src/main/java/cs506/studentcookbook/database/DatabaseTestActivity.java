@@ -21,6 +21,6 @@ public class DatabaseTestActivity extends Activity {
 
     public void onClearDatabase(View view) {
         DBTools db = DBTools.getInstance(this);
-        db.clearDatabase();
+        db.deleteDatabase();
     }
 }

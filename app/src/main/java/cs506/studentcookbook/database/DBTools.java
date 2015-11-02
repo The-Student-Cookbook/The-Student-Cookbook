@@ -150,29 +150,14 @@ public class DBTools extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public void clearDatabase() {
+    public void deleteDatabase() {
         dropTables();
         Log.d("Database cleared", "...");
     }
 
-    /**
-     * This method is an example of how to query the database using SQLite.
-     */
-    public List<String> getIngredients() {
-        ArrayList<String> list = new ArrayList<String>();
-        String selectQuery = "SELECT * FROM Ingredient";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(cursor.getString(0));
-            } while (cursor.moveToNext());
-        }
-
-        db.close();
-        return list;
+    public void resetDatabase() {
+        deleteDatabase();
+        createTables();
     }
 
     public List<Recipe> getSuggestedRecipes(Preferences preferences) {
@@ -183,7 +168,9 @@ public class DBTools extends SQLiteOpenHelper {
 
         //"Automatic/ML/Choose for me" search
         if (preferences == null)
-        { //TODO
+        {
+            // TODO in second iteration make this the AI search
+            selectQuery = "SELECT * FROM Recipe";
         }
 
         //Text search (preferences.getName != empty string or null)
@@ -194,7 +181,7 @@ public class DBTools extends SQLiteOpenHelper {
 
         //"Browse All" search
         //NOTE: if preferences.getTitle = "", will pass all recipes back.
-        else if (preferences.getName() != null && preferences.getName().length() == 0)
+        else if (preferences.getName() == null || preferences.getName().length() == 0)
         {
             selectQuery = "SELECT * FROM Recipe";
         }
@@ -334,7 +321,7 @@ public class DBTools extends SQLiteOpenHelper {
 
         String recipe = "CREATE TABLE IF NOT EXISTS " + TABLE_RECIPE + "(" +
                 "recipeId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL" + ", " +
-                "bigOvenId INTEGER NOT NULL" + ", " +
+                "bigOvenId INTEGER" + ", " +
                 "title TEXT NOT NULL" + ", " +
                 "instructions TEXT NOT NULL" + ", " +
                 "cookTime INTEGER" + ", " +
@@ -654,8 +641,4 @@ public class DBTools extends SQLiteOpenHelper {
         values.put("baseName", base);
         db.insertWithOnConflict(TABLE_HAS_MEAL_BASE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
-
-//    public List<Recipe> getSuggestedRecipes(Prefences preferences) {
-//        // TODO if null return all recipes
-//    }
 }
