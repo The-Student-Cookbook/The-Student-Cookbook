@@ -15,7 +15,8 @@ public class SearchableRecipeQueryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable_recipe_query);
 
-        DBTools tools = new DBTools(this);
+        DBTools tools = DBTools.getInstance(this);
+
 //        List<Recipe> recipes = tools.getSuggestedRecipes(null);
         // itr through and display each recipe
 

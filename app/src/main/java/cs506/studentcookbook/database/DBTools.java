@@ -67,14 +67,12 @@ public class DBTools extends SQLiteOpenHelper {
     private DBTools(Context context) {
         super(context, DATABASE_NAME, null, 1);
         createTables();
-        populateDatabase();
     }
 
     public static DBTools getInstance(Context context) {
         if(dbToolsInstance == null) {
             dbToolsInstance = new DBTools(context);
         }
-
         return dbToolsInstance;
     }
 
@@ -84,14 +82,21 @@ public class DBTools extends SQLiteOpenHelper {
     public void populateDatabase() {
         String selectQuery = "SELECT * FROM Recipe";
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        Cursor cursor = null;
+        try {
+            cursor = db.rawQuery(selectQuery, null);
+        } catch (Exception e) {
+        }
 
         // if there are things already in the database, return
-        if(cursor.getCount() > 0) {
+        if(cursor != null && cursor.getCount() > 0) {
             db.close();
+            Log.d("Database", "already populated");
             return;
         }
 
+        createTables();
         db.close();
 
         Thread thread = new Thread(new Runnable(){
@@ -142,7 +147,7 @@ public class DBTools extends SQLiteOpenHelper {
 
     public void clearDatabase() {
         dropTables();
-        Log.d("Database cleared", "...");
+        Log.d("Database cleared", "success");
     }
 
     /**
@@ -178,7 +183,12 @@ public class DBTools extends SQLiteOpenHelper {
 
         for(String table : ALL_TABLES) {
             String drop = "DROP TABLE " + table + ";";
-            db.execSQL(drop);
+
+            try {
+                db.execSQL(drop);
+                Log.d("Cleared table", table);
+            } catch(Exception e) {
+            }
         }
         db.close();
     }
