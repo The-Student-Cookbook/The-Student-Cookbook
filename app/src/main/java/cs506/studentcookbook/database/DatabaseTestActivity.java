@@ -15,9 +15,8 @@ public class DatabaseTestActivity extends Activity {
     }
 
     public void onButtonClick(View view) {
-        //EditText text = (EditText)findViewById(R.id.ingredientText);
-        //String name = text.getText().toString();
         DBTools db = DBTools.getInstance(this);
+        db.populateDatabase();
     }
 
     public void onClearDatabase(View view) {

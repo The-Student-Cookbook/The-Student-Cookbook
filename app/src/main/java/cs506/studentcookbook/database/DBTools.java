@@ -3,6 +3,7 @@ package cs506.studentcookbook.database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -62,41 +63,33 @@ public class DBTools extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TheStudentsCookbook";
 
-    private static DBTools dbToolsInstance;
+    private static DBTools dbTools;
 
-    private DBTools(Context context) {
+    public DBTools(Context context) {
         super(context, DATABASE_NAME, null, 1);
         createTables();
-        populateDatabase();
     }
 
-    public static DBTools getInstance(Context context) {
-        if(dbToolsInstance == null) {
-            dbToolsInstance = new DBTools(context);
-        }
-
-        return dbToolsInstance;
+    public static DBTools getInstance(Context c) {
+        if(dbTools == null)
+            dbTools = new DBTools(c);
+        return dbTools;
     }
 
     /**
      * Uses APIGrabber to populate the internal database.
+     *
+     * Returns true if the database was populated, false if no action was taken because the database
+     * was already populated
      */
     public void populateDatabase() {
-        String selectQuery = "SELECT * FROM Recipe";
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(selectQuery, null);
-
-        // if there are things already in the database, return
-        if(cursor.getCount() > 0) {
-            db.close();
+        if(databaseIsPopulated())
             return;
-        }
 
-        db.close();
+        createTables();
 
+        // network activity needs to be on a separate thread or Android will throw an exception
         Thread thread = new Thread(new Runnable(){
-
-            // network activity needs to be on a separate thread or Android will throw an exception
             public void run() {
                 try {
                     int recipeCount = 0;
@@ -127,16 +120,32 @@ public class DBTools extends SQLiteOpenHelper {
         thread.start();
     }
 
+    public boolean databaseIsPopulated() {
+        String selectQuery = "SELECT * FROM Recipe";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery(selectQuery, null);
+        } catch (Exception e) {
+        }
+
+        boolean toReturn = true;
+
+        if(cursor == null || cursor.getCount() == 0)
+            toReturn = false;
+
+        db.close();
+        return toReturn;
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
-        createTables();
     }
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // Drop older tables if existed
         dropTables();
-
-        // Create tables again
+        createTables();
         onCreate(db);
     }
 
@@ -171,14 +180,22 @@ public class DBTools extends SQLiteOpenHelper {
         createUserTables(db);
         createSuggestionTables(db);
         db.close();
+        Log.d("Creating tables", "...");
     }
 
     private void dropTables() {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        boolean result = true;
+
         for(String table : ALL_TABLES) {
             String drop = "DROP TABLE " + table + ";";
-            db.execSQL(drop);
+
+            try {
+                db.execSQL(drop);
+                Log.d("Dropping", table);
+            } catch (SQLException e) {
+            }
         }
         db.close();
     }
