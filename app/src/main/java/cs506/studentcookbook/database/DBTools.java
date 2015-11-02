@@ -536,4 +536,8 @@ public class DBTools extends SQLiteOpenHelper {
         values.put("baseName", base);
         db.insertWithOnConflict(TABLE_HAS_MEAL_BASE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
+
+//    public List<Recipe> getSuggestedRecipes(Prefences preferences) {
+//        // TODO if null return all recipes
+//    }
 }
