@@ -62,9 +62,20 @@ public class DBTools extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "TheStudentsCookbook";
 
-    public DBTools(Context context) {
+    private static DBTools dbToolsInstance;
+
+    private DBTools(Context context) {
         super(context, DATABASE_NAME, null, 1);
         createTables();
+        populateDatabase();
+    }
+
+    public static DBTools getInstance(Context context) {
+        if(dbToolsInstance == null) {
+            dbToolsInstance = new DBTools(context);
+        }
+
+        return dbToolsInstance;
     }
 
     /**

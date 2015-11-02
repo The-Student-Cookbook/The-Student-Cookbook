@@ -17,13 +17,11 @@ public class DatabaseTestActivity extends Activity {
     public void onButtonClick(View view) {
         //EditText text = (EditText)findViewById(R.id.ingredientText);
         //String name = text.getText().toString();
-
-        DBTools db = new DBTools(this);
-        db.populateDatabase();
+        DBTools db = DBTools.getInstance(this);
     }
 
     public void onClearDatabase(View view) {
-        DBTools db = new DBTools(this);
+        DBTools db = DBTools.getInstance(this);
         db.clearDatabase();
     }
 }
