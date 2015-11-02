@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import cs506.studentcookbook.database.DatabaseTestActivity;
+import cs506.studentcookbook.Database.DatabaseTestActivity;
 
 public class DashboardActivity extends ListActivity {
 

@@ -1,4 +1,4 @@
-package cs506.studentcookbook.database;
+package cs506.studentcookbook.Database;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,10 +19,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import cs506.studentcookbook.model.Ingredient;
-import cs506.studentcookbook.model.Recipe;
-import cs506.studentcookbook.model.Technique;
-import cs506.studentcookbook.model.Tool;
+import cs506.studentcookbook.Model.Ingredient;
+import cs506.studentcookbook.Model.Recipe;
+import cs506.studentcookbook.Model.Technique;
+import cs506.studentcookbook.Model.Tool;
 
 /**
  * This class is used to automatically populate the database with recipes from the BigOven API.

@@ -1,4 +1,4 @@
-package cs506.studentcookbook.model;
+package cs506.studentcookbook.Model;
 
 
 public class Tool {
