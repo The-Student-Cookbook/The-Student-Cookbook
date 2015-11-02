@@ -1,4 +1,4 @@
-package cs506.studentcookbook.model;
+package cs506.studentcookbook.Model;
 
 import java.util.ArrayList;
 import java.util.List;
