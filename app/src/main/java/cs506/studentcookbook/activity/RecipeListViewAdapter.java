@@ -51,9 +51,9 @@ public class RecipeListViewAdapter extends BaseAdapter  {
         recipeTitle.setText(recipeList.get(position).getName());
 
         TextView rating = (TextView) row.findViewById(R.id.recipe_listitem_rating);
-        rating.setText(recipeList.get(position).getRating());
+        //rating.setText(recipeList.get(position).getRating());
 
-        return null;
+        return row;
     }
 
 

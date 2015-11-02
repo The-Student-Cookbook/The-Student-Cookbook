@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cs506.studentcookbook.Database.DBTools;
@@ -64,10 +65,17 @@ public class RecipeQueryActivity extends Activity {
         //TODO: Setup the listview with the recipes that were passed along
         ListView recipeList = (ListView) findViewById(R.id.recipe_query_listview);
 
-        //dbTools = new DBTools(this);
-        //chosenRecipeList = dbTools.getSuggestedRecipes(dbTools.getPrefernces());
+        chosenRecipeList = new ArrayList<Recipe>();
+        Recipe temp = new Recipe();
+        temp.setName("Test Recipe");
+        temp.setRating(5);
+        chosenRecipeList.add(temp);
 
-        //recipeList.setAdapter(new RecipeListViewAdapter(this, chosenRecipeList));
+
+        //dbTools = new DBTools(this);
+        //chosenRecipeList = dbTools.getSuggestedRecipes(dbTools.getPreferences());
+
+        recipeList.setAdapter(new RecipeListViewAdapter(this, chosenRecipeList));
 
 
         //Prompt the user make a selection
