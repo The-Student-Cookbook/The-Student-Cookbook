@@ -1,4 +1,4 @@
-package cs506.studentcookbook.Database;
+package cs506.studentcookbook.database;
 
 import android.app.Activity;
 import android.os.Bundle;

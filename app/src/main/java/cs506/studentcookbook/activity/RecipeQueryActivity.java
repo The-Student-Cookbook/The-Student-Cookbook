@@ -7,8 +7,10 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -16,14 +18,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import cs506.studentcookbook.Database.DBTools;
-import cs506.studentcookbook.Model.Recipe;
+import cs506.studentcookbook.database.DBTools;
+import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.R;
 
 public class RecipeQueryActivity extends Activity {
 
     private List<Recipe> chosenRecipeList;
     private DBTools dbTools;
+    private View selectedRecipe = null;
+    private Recipe selectedRecipeObj = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +40,9 @@ public class RecipeQueryActivity extends Activity {
             @Override
             public void onClick(View v) {
                 //TODO: Keep going into the recipe
+                if(selectedRecipe == null)
+                    Toast.makeText(RecipeQueryActivity.this, "Please select a recipe first!", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -64,14 +71,31 @@ public class RecipeQueryActivity extends Activity {
 
         //TODO: Setup the listview with the recipes that were passed along
         ListView recipeList = (ListView) findViewById(R.id.recipe_query_listview);
+        recipeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(selectedRecipe != null)
+                    selectedRecipe.setBackgroundColor(Color.BLACK);
+                selectedRecipe = view;
+                selectedRecipeObj = chosenRecipeList.get(position);
+                // TODO: Figure out what color a selected recipe should be
+                selectedRecipe.setBackgroundColor(Color.RED);
+            }
+
+        });
+
 
         chosenRecipeList = new ArrayList<Recipe>();
         Recipe temp = new Recipe();
         temp.setName("Test Recipe");
         temp.setRating(5);
         chosenRecipeList.add(temp);
+        temp = new Recipe();
+        temp.setName("2nd Recipe");
+        temp.setRating(2);
+        chosenRecipeList.add(temp);
 
-
+        // TODO: Get rid of predefined test recipes and actually use the DB
         //dbTools = new DBTools(this);
         //chosenRecipeList = dbTools.getSuggestedRecipes(dbTools.getPreferences());
 
