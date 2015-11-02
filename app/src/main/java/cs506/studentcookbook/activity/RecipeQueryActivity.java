@@ -16,8 +16,8 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import cs506.studentcookbook.Database.DBTools;
-import cs506.studentcookbook.Model.Recipe;
+import cs506.studentcookbook.database.DBTools;
+import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.R;
 
 public class RecipeQueryActivity extends Activity {
