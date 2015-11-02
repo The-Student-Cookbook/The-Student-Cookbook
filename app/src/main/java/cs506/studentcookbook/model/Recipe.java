@@ -19,7 +19,7 @@ public class Recipe {
 
     private int prepTime;
     private int cookTime;
-    private int cost;
+    private double cost;
     private int rating;
     private boolean isASide;
 
@@ -67,7 +67,7 @@ public class Recipe {
         return cookTime;
     }
 
-    public int getCost() {
+    public double getCost() {
         return cost;
     }
 
@@ -151,7 +151,7 @@ public class Recipe {
         this.cookTime = time;
     }
 
-    public void setCost(int cost) {
+    public void setCost(double cost) {
         this.cost = cost;
     }
 

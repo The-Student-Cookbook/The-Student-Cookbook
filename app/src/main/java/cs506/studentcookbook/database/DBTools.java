@@ -15,6 +15,7 @@ import cs506.studentcookbook.model.Tool;
 import cs506.studentcookbook.model.Technique;
 import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.model.Ingredient;
+import cs506.studentcookbook.model.Preferences;
 
 /**
  * The DBTools class is a wrapper around the SQLite database. This class currently provides
@@ -172,6 +173,106 @@ public class DBTools extends SQLiteOpenHelper {
 
         db.close();
         return list;
+    }
+
+    public List<Recipe> getSuggestedRecipes(Preferences preferences) {
+
+        List<Recipe> recipes = new ArrayList<Recipe>();
+        String selectQuery = "";
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //"Automatic/ML/Choose for me" search
+        if (preferences == null)
+        { //TODO
+        }
+
+        //Text search (preferences.getName != empty string or null)
+        else if (preferences.getName() != null && preferences.getName().length() > 0)
+        {
+            selectQuery = "SELECT * FROM Recipe WHERE title like '%" + preferences.getName() + "%'";
+        }
+
+        //"Browse All" search
+        //NOTE: if preferences.getTitle = "", will pass all recipes back.
+        else if (preferences.getName() != null && preferences.getName().length() == 0)
+        {
+            selectQuery = "SELECT * FROM Recipe";
+        }
+
+        //"Questionnaire/Help me choose" search
+        else
+        { //TODO
+        }
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                //Add new recipe to list of recipes
+                recipes.add(new Recipe());
+
+                //Extract values from DB and add to new recipe object in list
+                recipes.get(index).setId(Integer.parseInt(cursor.getString(0)));
+                recipes.get(index).setBigOvenId(Integer.parseInt(cursor.getString(1)));
+                recipes.get(index).setName(cursor.getString(2));
+                recipes.get(index).setInstructions(cursor.getString(3));
+                recipes.get(index).setCookTime(Integer.parseInt(cursor.getString(4)));
+                recipes.get(index).setPrepTime(Integer.parseInt(cursor.getString(5)));
+                recipes.get(index).setImageURL(cursor.getString(6));
+                recipes.get(index).setIsASide(Boolean.parseBoolean(cursor.getString(7)));
+                try{
+                    recipes.get(index).setCost(Double.parseDouble(cursor.getString(8)));}
+                catch (Exception e) { //The database doesn't have a lot of costs filled in
+                }
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        //TODO: use information to perform another SELECT to fill in other fields of recipe
+        //such as base(s), cuisine(s), rating, technique(s), and tool(s).
+
+        db.close();
+
+        return recipes;
+    }
+
+    //TODO: Iteration 2+, optimize selects by columns
+    public Preferences getPreferences(){
+        Preferences preferences = new Preferences();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM User";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                preferences.setGroupSize(Integer.parseInt(cursor.getString(4)));
+                preferences.setPrepTime(Integer.parseInt(cursor.getString(5)));
+                preferences.setCookTime(Integer.parseInt(cursor.getString(4)));
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        //TODO: Iteration 2, finish base/cuisine/ingredientstock for prefs
+        //        selectQuery = "SELECT * FROM Rates_Cuisine WHERE countLiked > 0 AND countLiked > countDisliked";
+        //        if (cursor.moveToFirst()) {
+        //            do {
+        //                preferences.setGroupSize(Integer.parseInt(cursor.getString(4)));
+        //                preferences.setPrepTime(Integer.parseInt(cursor.getString(5)));
+        //                preferences.setCookTime(Integer.parseInt(cursor.getString(4)));
+        //
+        //                //Increment counter var
+        //                index++;
+        //            } while (cursor.moveToNext());
+        //        }
+
+        return preferences;
     }
 
     private void createTables() {

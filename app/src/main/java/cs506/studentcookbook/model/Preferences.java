@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Preferences {
+	private String name;
 	private int prepTime;
 	private int cookTime;
 	private int groupSize;
@@ -24,7 +25,9 @@ public class Preferences {
 		dislikedBases = new ArrayList<String>();
 		ingredients = new ArrayList<Ingredient>();
 	}
-	
+
+	public String getName() { return name; }
+
 	public int getPrepTime(){
 		return prepTime;
 	}
@@ -56,7 +59,9 @@ public class Preferences {
 	public List<Ingredient> getIngredients(){
 		return ingredients;
 	}
-	
+
+	public void setName(String name) { this.name = name; }
+
 	public void setPrepTime(int prepTime){
 		this.prepTime = prepTime;
 	}
