@@ -38,6 +38,8 @@
         </activity>
         <activity android:name=".activity.SettingsActivity" >
         </activity>
+        <activity android:name=".activity.CookMealActivity" >
+        </activity>
     </application>
 
 </manifest>

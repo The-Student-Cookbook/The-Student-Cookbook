@@ -203,7 +203,7 @@ public class Recipe implements Parcelable{
         if(instructions == null)
             return;
 
-        instructions = instructions.toLowerCase().trim();
+        instructions = instructions.trim();
         this.instructions = instructions;
     }
 
