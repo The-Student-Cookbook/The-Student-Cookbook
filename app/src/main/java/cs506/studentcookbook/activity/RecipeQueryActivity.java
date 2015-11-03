@@ -55,7 +55,7 @@ public class RecipeQueryActivity extends Activity {
             }
         });
 
-        
+
         // This is the cancel button and the alert that goes with it
         Button cancelButton = (Button) findViewById(R.id.recipe_query_cancelbutton);
         cancelButton.setOnClickListener(new View.OnClickListener() {

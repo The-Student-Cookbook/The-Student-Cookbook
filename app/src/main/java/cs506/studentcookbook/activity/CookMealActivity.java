@@ -1,6 +1,7 @@
 package cs506.studentcookbook.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +12,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import cs506.studentcookbook.R;
+import cs506.studentcookbook.model.Ingredient;
+import cs506.studentcookbook.model.Recipe;
+import cs506.studentcookbook.model.Tool;
 
 public class CookMealActivity extends Activity {
 
@@ -22,10 +26,11 @@ public class CookMealActivity extends Activity {
     Button nextStep;
 
     //variables for data elements
+    private Recipe selectedRecipe;
     private String recipeName;
-    private List<String> instructions; //list of instructions for the recipe
-    private int step; //index of the current step
-
+    private String instructions; //-------- IMPLEMENT AS LIST IN ITERATION 2
+    private int step; //index of the current step not used until ITERATION 2
+    private final String CURRENT_RECIPE_PARCEL_KEY = "CURRENT_RECIPE_PARCEL_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,23 +45,42 @@ public class CookMealActivity extends Activity {
         nextStep = (Button) findViewById(R.id.nextStep);
 
         //set values to test values for now...
-        //TODO: change this to get values from the recipe in the bundle passed to this activity
+        /*
         recipeName = "Meatloaf";
         instructions = new LinkedList<String>();
         instructions.add("1. Do Something");
         instructions.add("2. Do Something Else");
         instructions.add("3. Bake Eddie at 350 degrees F for 15 minutes per pound.");
+        */
 
+        //get recipe passed from prior activity
+        Bundle savedRecipeBundle = getIntent().getExtras();
+        selectedRecipe = savedRecipeBundle.getParcelable(CURRENT_RECIPE_PARCEL_KEY);
+        instructions = selectedRecipe.getInstructions();
+        recipeName = selectedRecipe.getName();
+        nextStep.setText("Done");
+
+        // display the instructionsa
+        recipeTitle.setText(recipeName);
+        stepTitle.setText("Step " + (step+1));
+        instruction.setText(instructions);
+        previousStep.setEnabled(false); //previous step button starts disabled
+
+
+        /*  --------- REIMPLEMENT IN ITERATION 2
         //set the values of the text fields using text values
         recipeTitle.setText(recipeName);  //set once and forget
         step = 0;
         stepTitle.setText("Step " + (step+1));
         instruction.setText(instructions.get(step));
         previousStep.setEnabled(false); //previous step button starts disabled
-
+        */
         previousStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                //not actually implemented/usable until ITERATION 2
+                /*
                 step--;
                 //if we are at the first step, disable previous again
                 if (step == 0) {
@@ -66,13 +90,24 @@ public class CookMealActivity extends Activity {
                 nextStep.setText("Next Step");
                 stepTitle.setText("Step " + (step + 1));
                 instruction.setText(instructions.get(step));
+                */
             }
         });
 
         nextStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Intent goToMyRecipesPage = new Intent(CookMealActivity.this, MyRecipesActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(CURRENT_RECIPE_PARCEL_KEY, selectedRecipe);
+                goToMyRecipesPage.putExtras(bundle);
+                CookMealActivity.this.startActivity(goToMyRecipesPage);
+                finish();
+
+                // ----------------- IMPLEMENT IN ITERATION 2
                 //if going to the next step, enable previous step button
+                /*
                 if(!(previousStep.isEnabled())){
                     previousStep.setEnabled(true);
                 }
@@ -90,6 +125,7 @@ public class CookMealActivity extends Activity {
                 else {
                     //TODO: Go to the next Activity
                 }
+                */
             }
         });
     }

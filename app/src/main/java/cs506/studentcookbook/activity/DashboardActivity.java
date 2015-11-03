@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.database.DatabaseTestActivity;
 
 public class DashboardActivity extends ListActivity {
@@ -27,6 +28,9 @@ public class DashboardActivity extends ListActivity {
                 "My Recipes", "Grocery List", "Settings", "Start database activity (temporary)"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dashboardItems);
         setListAdapter(adapter);
+
+        DBTools db = DBTools.getInstance(this);
+        db.populateDatabase();
     }
 
     @Override
