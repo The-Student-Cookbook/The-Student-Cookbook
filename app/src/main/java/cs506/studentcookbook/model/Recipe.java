@@ -1,9 +1,13 @@
 package cs506.studentcookbook.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Recipe {
+public class Recipe implements Parcelable{
 
     private int recipeId;
     private int bigOvenId;
@@ -11,6 +15,9 @@ public class Recipe {
     private List<String> bases;
     private List<String> cuisines;
     private String instructions;
+
+    private static RecipeCreator CREATOR;
+    private static final String TAG = "RecipeObject";
 
     private String imageURL;
     private List<Ingredient> ingredients;
@@ -33,6 +40,63 @@ public class Recipe {
         ingredients = new ArrayList<Ingredient>();
         techniques = new ArrayList<Technique>();
         tools = new ArrayList<Tool>();
+    }
+
+    /*
+     * Reconstruct from the Parcel
+     */
+    public Recipe(Parcel parcel) {
+        Log.v(TAG, "Ingredient(Parcel source): Put the parcel back together");
+        setupObjects();
+
+        recipeId = parcel.readInt();
+        bigOvenId = parcel.readInt();
+        name = parcel.readString();
+        bases = parcel.readArrayList(bases.getClass().getClassLoader());
+        cuisines = parcel.readArrayList(cuisines.getClass().getClassLoader());
+        instructions = parcel.readString();
+        imageURL = parcel.readString();
+        ingredients = parcel.readArrayList(ingredients.getClass().getClassLoader());
+        techniques = parcel.readArrayList(techniques.getClass().getClassLoader());
+        tools = parcel.readArrayList(tools.getClass().getClassLoader());
+        prepTime = parcel.readInt();
+        cookTime = parcel.readInt();
+        cost = parcel.readDouble();
+        rating = parcel.readInt();
+        isASide = parcel.readByte() != 0;
+    }
+
+    public class RecipeCreator implements Parcelable.Creator<Recipe> {
+        public Recipe createFromParcel(Parcel source) {
+            return new Recipe(source);
+        }
+
+        public Recipe[] newArray(int size) {
+            return new Recipe[size];
+        }
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        Log.v(TAG, "writeToParcel..." + flags);
+        dest.writeInt(recipeId);
+        dest.writeInt(bigOvenId);
+        dest.writeString(name);
+        dest.writeList(bases);
+        dest.writeList(cuisines);
+        dest.writeString(instructions);
+        dest.writeString(imageURL);
+        dest.writeList(ingredients);
+        dest.writeList(techniques);
+        dest.writeList(tools);
+        dest.writeInt(prepTime);
+        dest.writeInt(cookTime);
+        dest.writeDouble(cost);
+        dest.writeInt(rating);
+        dest.writeByte((byte) (isASide ? 1 : 0));
+    }
+
+    public int describeContents() {
+        return this.hashCode();
     }
 
     public int getId() {

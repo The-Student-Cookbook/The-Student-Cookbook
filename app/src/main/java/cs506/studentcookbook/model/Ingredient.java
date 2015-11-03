@@ -1,10 +1,16 @@
 package cs506.studentcookbook.model;
 
-public class Ingredient {
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+public class Ingredient implements Parcelable {
 
     private String name;
     private String unit;
     private double amount;
+    private static final String TAG = "IngredientObject";
+    private static IngredientCreator CREATOR;
 
     public Ingredient() {
         unit = "";
@@ -22,6 +28,37 @@ public class Ingredient {
         }
 
         this.amount = amount;
+    }
+
+    /*
+    * Reconstruct from the Parcel
+    */
+    public Ingredient(Parcel parcel){
+
+        Log.v(TAG, "Ingredient(Parcel source): Put the parcel back together");
+        amount = parcel.readDouble();
+        name = parcel.readString();
+        unit = parcel.readString();
+    }
+
+    public class IngredientCreator implements Parcelable.Creator<Ingredient> {
+        public Ingredient createFromParcel(Parcel source) {
+            return new Ingredient(source);
+        }
+        public Ingredient[] newArray(int size) {
+            return new Ingredient[size];
+        }
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        Log.v(TAG, "writeToParcel..." + flags);
+        dest.writeDouble(amount);
+        dest.writeString(name);
+        dest.writeString(unit);
+    }
+
+    public int describeContents(){
+        return this.hashCode();
     }
 
     public void setName(String name) {

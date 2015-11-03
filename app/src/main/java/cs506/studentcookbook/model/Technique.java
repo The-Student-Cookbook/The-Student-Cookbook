@@ -1,14 +1,21 @@
 package cs506.studentcookbook.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class Technique {
+public class Technique implements Parcelable{
 
     private String name;
     private String description;
     private List<Tool> tools;
     private List<String> externalURLs;
+
+    private static TechniqueCreator CREATOR;
+    private static final String TAG = "ToolObject";
 
     public Technique() {
         createLists();
@@ -20,6 +27,40 @@ public class Technique {
         }
 
         populateFromDatabase();
+    }
+
+    /*
+    * Reconstruct from the Parcel
+    */
+    public Technique(Parcel parcel) {
+
+        Log.v(TAG, "Technique(Parcel source): Put the parcel back together");
+        name = parcel.readString();
+        description = parcel.readString();
+        tools = parcel.readArrayList(tools.getClass().getClassLoader());
+        externalURLs = parcel.readArrayList(externalURLs.getClass().getClassLoader());
+    }
+
+    public class TechniqueCreator implements Parcelable.Creator<Technique> {
+        public Technique createFromParcel(Parcel source) {
+            return new Technique(source);
+        }
+
+        public Technique[] newArray(int size) {
+            return new Technique[size];
+        }
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        Log.v(TAG, "writeToParcel..." + flags);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeList(tools);
+        dest.writeList(externalURLs);
+    }
+
+    public int describeContents() {
+        return this.hashCode();
     }
 
     private void populateFromDatabase() {

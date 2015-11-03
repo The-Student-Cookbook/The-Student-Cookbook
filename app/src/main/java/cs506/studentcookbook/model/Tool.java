@@ -1,11 +1,17 @@
 package cs506.studentcookbook.model;
 
 
-public class Tool {
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+public class Tool implements Parcelable {
 
     private String name;
     private String description;
     private String imageURL;
+    private static ToolCreator CREATOR;
+    private static final String TAG = "ToolObject";
 
     public Tool(String name) {
         this.name = name;
@@ -14,6 +20,39 @@ public class Tool {
     public Tool() {
         this.name = "";
     }
+
+    /*
+     * Reconstruct from the Parcel
+     */
+    public Tool(Parcel parcel) {
+
+        Log.v(TAG, "Ingredient(Parcel source): Put the parcel back together");
+        name = parcel.readString();
+        description = parcel.readString();
+        imageURL = parcel.readString();
+    }
+
+    public class ToolCreator implements Parcelable.Creator<Tool> {
+        public Tool createFromParcel(Parcel source) {
+            return new Tool(source);
+        }
+
+        public Tool[] newArray(int size) {
+            return new Tool[size];
+        }
+    }
+
+    public void writeToParcel(Parcel dest, int flags) {
+        Log.v(TAG, "writeToParcel..." + flags);
+        dest.writeString(name);
+        dest.writeString(description);
+        dest.writeString(imageURL);
+    }
+
+    public int describeContents() {
+        return this.hashCode();
+    }
+
 
     public String getName() {
         return this.name;
@@ -28,7 +67,7 @@ public class Tool {
     }
 
     public void setName(String name) {
-        if(name == null)
+        if (name == null)
             return;
 
         name = name.toLowerCase().trim();
@@ -36,7 +75,7 @@ public class Tool {
     }
 
     public void setDescription(String description) {
-        if(name == null)
+        if (name == null)
             return;
 
         description = description.trim();
@@ -44,7 +83,7 @@ public class Tool {
     }
 
     public void setImageURL(String imageURL) {
-        if(imageURL == null)
+        if (imageURL == null)
             return;
 
         imageURL = imageURL.trim();
