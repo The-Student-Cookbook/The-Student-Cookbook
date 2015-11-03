@@ -65,6 +65,7 @@ public class Recipe implements Parcelable{
         isASide = parcel.readByte() != 0;
     }
 
+
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Recipe createFromParcel(Parcel source) {
             return new Recipe(source);

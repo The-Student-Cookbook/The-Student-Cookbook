@@ -25,6 +25,7 @@ public class CookMealActivity extends Activity {
     private List<String> instructions; //list of instructions for the recipe
     private int step; //index of the current step
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

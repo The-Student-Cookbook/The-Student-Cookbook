@@ -68,6 +68,7 @@ public class Ingredient implements Parcelable {
         this.name = name.toLowerCase().trim();
     }
 
+
     public void setUnit(String unit) {
         if(unit == null)
             return;
