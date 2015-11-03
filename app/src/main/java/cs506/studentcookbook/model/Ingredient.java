@@ -73,7 +73,7 @@ public class Ingredient implements Parcelable {
         if(unit == null)
             return;
 
-        this.name = unit.toLowerCase().trim();
+        this.unit = unit.toLowerCase().trim();
     }
 
     public void setAmount(double amount) {
