@@ -250,6 +250,45 @@ public class DBTools extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
+
+
+//Queries ingredient table to build list of ingredients for list of recipes
+        for (int i = 0; i < recipes.size(); i++) {
+            int currRecipeId = recipes.get(i).getId();
+            List<Ingredient> ingredients = new ArrayList<Ingredient>();
+            selectQuery = "SELECT * FROM Requires_Ingredient WHERE recipeId='" + currRecipeId + "'";
+
+            cursor = db.rawQuery(selectQuery, null);
+            index = 0;
+
+            if (cursor.moveToFirst()) {
+                do {
+                    //Add new recipe to list of recipes
+                    ingredients.add(new Ingredient());
+
+
+
+                    //Extract values from DB and add to ingredients object in list
+                    ingredients.get(index).setName(cursor.getString(1));
+                    try {
+                        ingredients.get(index).setAmount(Double.parseDouble(cursor.getString(2)));
+                    } catch (Exception e) { //The database doesn't have all amts filled in
+                    }   //Currently can be null.
+                    try {
+                        ingredients.get(index).setUnit(cursor.getString(3));
+                    } catch (Exception e) { //The database doesn't have all units filled in
+                    }   //Currently can be null.
+
+                    //Increment counter var
+                    index++;
+                } while (cursor.moveToNext());
+            }
+
+            recipes.get(i).setIngredients(ingredients);
+            cursor.close();
+        }
+
         //TODO: use information to perform another SELECT to fill in other fields of recipe
         //such as base(s), cuisine(s), rating, technique(s), and tool(s).
 
