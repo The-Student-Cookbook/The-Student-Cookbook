@@ -16,7 +16,6 @@ public class Recipe implements Parcelable{
     private List<String> cuisines;
     private String instructions;
 
-    private static RecipeCreator CREATOR;
     private static final String TAG = "RecipeObject";
 
     private String imageURL;
@@ -66,7 +65,7 @@ public class Recipe implements Parcelable{
         isASide = parcel.readByte() != 0;
     }
 
-    public class RecipeCreator implements Parcelable.Creator<Recipe> {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
         public Recipe createFromParcel(Parcel source) {
             return new Recipe(source);
         }
@@ -74,7 +73,7 @@ public class Recipe implements Parcelable{
         public Recipe[] newArray(int size) {
             return new Recipe[size];
         }
-    }
+    };
 
     public void writeToParcel(Parcel dest, int flags) {
         Log.v(TAG, "writeToParcel..." + flags);

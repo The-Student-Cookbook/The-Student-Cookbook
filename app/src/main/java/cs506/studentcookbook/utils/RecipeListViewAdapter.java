@@ -1,4 +1,4 @@
-package cs506.studentcookbook.activity;
+package cs506.studentcookbook.utils;
 
 
 import android.content.Context;

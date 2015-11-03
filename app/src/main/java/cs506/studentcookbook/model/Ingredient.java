@@ -10,7 +10,7 @@ public class Ingredient implements Parcelable {
     private String unit;
     private double amount;
     private static final String TAG = "IngredientObject";
-    private static IngredientCreator CREATOR;
+
 
     public Ingredient() {
         unit = "";
@@ -41,14 +41,14 @@ public class Ingredient implements Parcelable {
         unit = parcel.readString();
     }
 
-    public class IngredientCreator implements Parcelable.Creator<Ingredient> {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
         public Ingredient createFromParcel(Parcel source) {
             return new Ingredient(source);
         }
         public Ingredient[] newArray(int size) {
             return new Ingredient[size];
         }
-    }
+    };
 
     public void writeToParcel(Parcel dest, int flags) {
         Log.v(TAG, "writeToParcel..." + flags);
@@ -92,6 +92,6 @@ public class Ingredient implements Parcelable {
     }
 
     public String toString() {
-        return this.name;
+        return this.amount + " " + this.unit + " " + this.name;
     }
 }

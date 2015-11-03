@@ -10,7 +10,7 @@ public class Tool implements Parcelable {
     private String name;
     private String description;
     private String imageURL;
-    private static ToolCreator CREATOR;
+
     private static final String TAG = "ToolObject";
 
     public Tool(String name) {
@@ -32,7 +32,7 @@ public class Tool implements Parcelable {
         imageURL = parcel.readString();
     }
 
-    public class ToolCreator implements Parcelable.Creator<Tool> {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
         public Tool createFromParcel(Parcel source) {
             return new Tool(source);
         }
@@ -40,7 +40,7 @@ public class Tool implements Parcelable {
         public Tool[] newArray(int size) {
             return new Tool[size];
         }
-    }
+    };
 
     public void writeToParcel(Parcel dest, int flags) {
         Log.v(TAG, "writeToParcel..." + flags);
@@ -91,6 +91,6 @@ public class Tool implements Parcelable {
     }
 
     public String toString() {
-        return this.name;
+        return this.name + ": " + this.description;
     }
 }

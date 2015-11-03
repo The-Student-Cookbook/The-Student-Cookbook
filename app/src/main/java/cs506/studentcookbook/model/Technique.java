@@ -14,7 +14,6 @@ public class Technique implements Parcelable{
     private List<Tool> tools;
     private List<String> externalURLs;
 
-    private static TechniqueCreator CREATOR;
     private static final String TAG = "ToolObject";
 
     public Technique() {
@@ -41,7 +40,7 @@ public class Technique implements Parcelable{
         externalURLs = parcel.readArrayList(externalURLs.getClass().getClassLoader());
     }
 
-    public class TechniqueCreator implements Parcelable.Creator<Technique> {
+    public static final Parcelable.Creator CREATOR = new Parcelable.Creator(){
         public Technique createFromParcel(Parcel source) {
             return new Technique(source);
         }
@@ -49,7 +48,7 @@ public class Technique implements Parcelable{
         public Technique[] newArray(int size) {
             return new Technique[size];
         }
-    }
+    };
 
     public void writeToParcel(Parcel dest, int flags) {
         Log.v(TAG, "writeToParcel..." + flags);
