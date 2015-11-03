@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -41,6 +42,7 @@ public class CookMealActivity extends Activity {
         recipeTitle = (TextView) findViewById(R.id.recipeTitle);
         stepTitle = (TextView) findViewById(R.id.stepTitle);
         instruction = (TextView) findViewById(R.id.instruction);
+        instruction.setMovementMethod(new ScrollingMovementMethod());
         previousStep = (Button) findViewById(R.id.previousStep);
         nextStep = (Button) findViewById(R.id.nextStep);
 
