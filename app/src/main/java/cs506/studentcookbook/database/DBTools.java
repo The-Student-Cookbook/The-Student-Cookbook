@@ -68,7 +68,6 @@ public class DBTools extends SQLiteOpenHelper {
 
     public DBTools(Context context) {
         super(context, DATABASE_NAME, null, 1);
-        createTables();
     }
 
     public static DBTools getInstance(Context c) {
@@ -84,8 +83,10 @@ public class DBTools extends SQLiteOpenHelper {
      * was already populated
      */
     public void populateDatabase() {
-        if(databaseIsPopulated())
+        if(databaseIsPopulated()) {
+            Log.d("database:", "already populated");
             return;
+        }
 
         createTables();
 
