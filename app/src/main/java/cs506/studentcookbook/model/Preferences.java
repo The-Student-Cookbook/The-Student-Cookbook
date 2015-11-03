@@ -14,7 +14,7 @@ public class Preferences {
 	private List<String> dislikedBases;
 	private List<Ingredient> ingredients;
 
-	public void Preferences(){
+	public Preferences(){
 		setupObjects();
 	}
 	

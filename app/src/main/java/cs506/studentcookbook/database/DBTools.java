@@ -167,28 +167,59 @@ public class DBTools extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         //"Automatic/ML/Choose for me" search
-        if (preferences == null)
+        if (preferences == null || (preferences.getName() != null && preferences.getName().length() == 0))
         {
             // TODO in second iteration make this the AI search
             selectQuery = "SELECT * FROM Recipe";
         }
 
-        //Text search (preferences.getName != empty string or null)
+        //"Browse All" (preferences.getName != empty string or null)
         else if (preferences.getName() != null && preferences.getName().length() > 0)
         {
-            selectQuery = "SELECT * FROM Recipe WHERE title like '%" + preferences.getName() + "%'";
-        }
-
-        //"Browse All" search
-        //NOTE: if preferences.getTitle = "", will pass all recipes back.
-        else if (preferences.getName() == null || preferences.getName().length() == 0)
-        {
-            selectQuery = "SELECT * FROM Recipe";
+            selectQuery = "SELECT * FROM Recipe WHERE title LIKE '%" + preferences.getName() + "%'";
         }
 
         //"Questionnaire/Help me choose" search
         else
-        { //TODO
+        {
+            String cuisine = prepareQueryLogic(preferences.getLikedCuisines(), "c.recipeId = r.recipeId", "c.cuisineName");
+            String base = prepareQueryLogic(preferences.getLikedBases(), "b.recipeId = r.recipeId", "b.baseName");
+
+            if(cuisine == null && base == null) {
+                selectQuery = "SELECT * FROM Recipe";
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append("SELECT DISTINCT r.recipeId, r.bigOvenId, r.title, r.instructions, r.cookTime, r.prepTime, r.imageURL, r.isASide, r.estimateCost ");
+                sb.append("FROM Recipe r");
+
+                if(cuisine != null)
+                    sb.append(", Has_Cuisine_Type c");
+                if(base != null)
+                    sb.append(", Has_Meal_Base b");
+
+                sb.append(" WHERE ");
+
+                if(cuisine != null)
+                    sb.append(cuisine);
+                if(base != null && cuisine != null)
+                    sb.append(" OR " + base);
+                else if (base != null)
+                    sb.append(base);
+
+                /*
+                if(preferences.getIngredients() != null && preferences.getIngredients().size() > 0) {
+                    List<String> ingredients = new ArrayList<String>();
+                    for(Ingredient i : preferences.getIngredients())
+                        ingredients.add(i.getName());
+
+                    next = prepareQueryLogic(ingredients, "i.recipeId = r.recipeId", "i.ingredientName");
+                    if (next != null)
+                        sb.append("OR " + next + " ");
+                }
+                */
+
+                selectQuery = sb.toString();
+            }
         }
 
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -640,5 +671,31 @@ public class DBTools extends SQLiteOpenHelper {
         values.put("recipeId", recipe.getId());
         values.put("baseName", base);
         db.insertWithOnConflict(TABLE_HAS_MEAL_BASE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+    }
+
+    public String prepareQueryLogic(List<String> strings, String prefix, String compared) {
+        if(strings == null || strings.size() == 0)
+            return null;
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        sb.append(prefix);
+        sb.append(" AND (");
+        //sb.append("(c.recipeId = r.recipeId AND (");
+
+        boolean first = true;
+
+        for(String s : strings) {
+            if(!first)
+                sb.append(" OR ");
+            first = false;
+
+            sb.append(compared);
+            sb.append(" LIKE '%" + s + "%'");
+            //sb.append("c.cuisineName LIKE '%" + s + "%'");
+        }
+
+        sb.append("))");
+        return sb.toString();
     }
 }
