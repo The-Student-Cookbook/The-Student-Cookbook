@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import cs506.studentcookbook.R;
@@ -41,6 +42,7 @@ public class CookMealActivity extends Activity {
         //set values to test values for now...
         //TODO: change this to get values from the recipe in the bundle passed to this activity
         recipeName = "Meatloaf";
+        instructions = new LinkedList<String>();
         instructions.add("1. Do Something");
         instructions.add("2. Do Something Else");
         instructions.add("3. Bake Eddie at 350 degrees F for 15 minutes per pound.");
@@ -57,10 +59,12 @@ public class CookMealActivity extends Activity {
             public void onClick(View v) {
                 step--;
                 //if we are at the first step, disable previous again
-                if(step == 0) {
+                if (step == 0) {
                     previousStep.setEnabled(false);
                 }
-                stepTitle.setText("Step " + (step+1));
+
+                nextStep.setText("Next Step");
+                stepTitle.setText("Step " + (step + 1));
                 instruction.setText(instructions.get(step));
             }
         });
@@ -72,14 +76,14 @@ public class CookMealActivity extends Activity {
                 if(!(previousStep.isEnabled())){
                     previousStep.setEnabled(true);
                 }
-                if (step < instructions.size()){
-                    //load the next step's instructions
-                    step++;
-                    stepTitle.setText("Step " + (step+1));
-                    instruction.setText(instructions.get(step));
+                    if ((step+1) < instructions.size()){
+                        //load the next step's instructions
+                        step++;
+                        stepTitle.setText("Step " + (step+1));
+                        instruction.setText(instructions.get(step));
 
                     //if this is the last step, change the next step button to 'Done'
-                    if(step == instructions.size()){
+                    if((step + 1) == instructions.size()){
                         nextStep.setText("Done");
                     }
                 }
