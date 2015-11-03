@@ -65,7 +65,7 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"beef", /*"pasta", "hispanic", "vegetarian"*/ };
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken", "pepper", "tuna"};
 
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";
@@ -214,7 +214,7 @@ public class APIGrabber {
 
             recipe.setName(node.getFirstChild().getNodeValue());
         } catch (Exception e) {
-            System.err.println("Missing name on recipe: " + recipe.getName());
+            //System.err.println("Missing name on recipe: " + recipe.getName());
         }
 
         try {
@@ -224,7 +224,7 @@ public class APIGrabber {
             int bigOvenId = Integer.parseInt(node.getFirstChild().getNodeValue());
             recipe.setBigOvenId(bigOvenId);
         } catch (Exception e) {
-            System.err.println("Missing BigOven ID on recipe: " + recipe.getName());
+            //System.err.println("Missing BigOven ID on recipe: " + recipe.getName());
         }
 
         try {
@@ -233,7 +233,7 @@ public class APIGrabber {
 
             recipe.setImageURL(node.getFirstChild().getNodeValue());
         } catch (Exception e) {
-            System.err.println("Missing image URL on recipe: " + recipe.getName());
+            //System.err.println("Missing image URL on recipe: " + recipe.getName());
         }
 
         int totalTime = 0;
@@ -243,7 +243,7 @@ public class APIGrabber {
             node = list.item(0);
             totalTime = Integer.parseInt(node.getFirstChild().getNodeValue());
         } catch(Exception e) {
-            System.err.println("Missing total time on recipe: " + recipe.getName());
+            //System.err.println("Missing total time on recipe: " + recipe.getName());
         }
 
         int prepTime = 0;
@@ -253,7 +253,7 @@ public class APIGrabber {
             node = list.item(0);
             prepTime = Integer.parseInt(node.getFirstChild().getNodeValue());
         } catch(Exception e) {
-            System.err.println("Missing prep time on recipe: " + recipe.getName());
+            //System.err.println("Missing prep time on recipe: " + recipe.getName());
         }
 
         recipe.setCookTime(totalTime - prepTime);
@@ -264,7 +264,7 @@ public class APIGrabber {
             node = list.item(0);
             recipe.setInstructions(node.getFirstChild().getNodeValue());
         } catch (Exception e) {
-            System.err.println("Missing instructions on recipe: " + recipe.getName());
+            //System.err.println("Missing instructions on recipe: " + recipe.getName());
         }
 
         return recipe;
@@ -287,7 +287,7 @@ public class APIGrabber {
                 list = ingElement.getElementsByTagName(INGREDIENT_NAME);
                 name = list.item(0).getFirstChild().getNodeValue();
             } catch (Exception e) {
-                System.err.println("Missing ingredient name on recipe: " + recipe.getName());
+                //System.err.println("Missing ingredient name on recipe: " + recipe.getName());
             }
 
             try {
@@ -295,14 +295,14 @@ public class APIGrabber {
                 String quantityString = list.item(0).getFirstChild().getNodeValue();
                 quantity = Double.parseDouble(quantityString);
             } catch (Exception e) {
-                System.err.println("Missing ingredient quantity on recipe: " + recipe.getName());
+                //System.err.println("Missing ingredient quantity on recipe: " + recipe.getName());
             }
 
             try {
                 list = ingElement.getElementsByTagName(INGREDIENT_UNIT);
                 unit = list.item(0).getFirstChild().getNodeValue();
             } catch (Exception e) {
-                System.err.println("Missing ingredient unit on recipe: " + recipe.getName());
+                //System.err.println("Missing ingredient unit on recipe: " + recipe.getName());
             }
 
             Ingredient ingredient = new Ingredient(name, unit, quantity);
@@ -322,7 +322,7 @@ public class APIGrabber {
 
             recipe.addBase(node.getFirstChild().getNodeValue());
         } catch (Exception e) {
-            System.err.println("Missing meal base on recipe: " + recipe.getName());
+            //System.err.println("Missing meal base on recipe: " + recipe.getName());
         }
 
         for(String s : CUISINE) {
@@ -332,7 +332,7 @@ public class APIGrabber {
 
                 recipe.addCuisine(node.getFirstChild().getNodeValue());
             } catch (Exception e) {
-                System.err.println("Missing cuisine on recipe: " + recipe.getName());
+                //System.err.println("Missing cuisine on recipe: " + recipe.getName());
             }
         }
 

@@ -104,7 +104,8 @@ public class DBTools extends SQLiteOpenHelper {
 
                         for(Recipe recipe : recipes) {
                             addRecipeToDatabase(recipe);
-                            Log.d("Adding recipe", recipe.toString());
+                            //Log.d("Adding recipe", recipe.toString());
+                            Log.d("Adding recipe", recipe.getName());
                             ingredientCount += recipe.getIngredients().size();
                         }
                     }
