@@ -10,7 +10,7 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Populate Database (Don&apos;t touch this button more than 5 times per hour!)"
+        android:text="Populate Database (Don&apos;t touch this button more than 10 times per hour!)"
         android:id="@+id/button2"
         android:layout_centerHorizontal="true"
         android:onClick="onButtonClick" />

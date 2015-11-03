@@ -3,6 +3,7 @@ package cs506.studentcookbook;
 import android.test.AndroidTestCase;
 import android.test.RenamingDelegatingContext;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cs506.studentcookbook.database.DBTools;
@@ -119,6 +120,13 @@ public class DBToolsUnitTest extends AndroidTestCase {
         // still contains one recipe
         assertEquals(rs.size(), 1);
 
+        Preferences p = new Preferences();
+        p.setName("");
+        rs = db.getSuggestedRecipes(p);
+
+        // still contains one recipe
+        assertEquals(rs.size(), 1);
+
         name = "recipe2";
         instructions = "These are the instructions for " + name;
         r = new Recipe();
@@ -133,6 +141,156 @@ public class DBToolsUnitTest extends AndroidTestCase {
         rs = db.getSuggestedRecipes(new Preferences());
 
         // still contains two recipes
+        assertEquals(rs.size(), 2);
+    }
+
+    public void testCuisineQuery() {
+        context = new RenamingDelegatingContext(getContext(), "test_");
+        db = new DBTools(context);
+
+        List<String> c = new ArrayList<>();
+        c.add("chicken");
+        c.add("toast");
+        c.add("test");
+
+        String test = db.prepareQueryLogic(c, "c.recipeId = r.recipeId", "c.cuisineName");
+        String shouldBe = "(c.recipeId = r.recipeId AND (c.cuisineName LIKE '%chicken%' OR c.cuisineName LIKE '%toast%' OR c.cuisineName LIKE '%test%'))";
+
+        // query is correct
+        assertEquals(test, shouldBe);
+
+        String name = "recipe1";
+        String instructions = "These are the instructions for " + name;
+        String cuisine = "chicken";
+        Recipe r = new Recipe();
+        r.setName(name);
+        r.setInstructions(instructions);
+        r.addCuisine(cuisine);
+
+        db.addRecipeToDatabase(r);
+        List<Recipe> rs = db.getSuggestedRecipes(null);
+
+        // now contains one recipe
+        assertEquals(rs.size(), 1);
+
+        Preferences p = new Preferences();
+        p.addLikedCuisine(cuisine);
+        rs = db.getSuggestedRecipes(p);
+
+        // still contains one recipe
+        assertEquals(rs.size(), 1);
+
+        name = "recipe2";
+        instructions = "These are the instructions for " + name;
+        String cuisine2 = "beef";
+        String cuisine3 = "apple";
+        r = new Recipe();
+        r.setName(name);
+        r.setInstructions(instructions);
+        r.addCuisine(cuisine);
+        r.addCuisine(cuisine2);
+        r.addCuisine(cuisine3);
+        db.addRecipeToDatabase(r);
+
+        p = new Preferences();
+        p.addLikedCuisine(cuisine2);
+        rs = db.getSuggestedRecipes(p);
+
+        // still contains one recipe
+        assertEquals(rs.size(), 1);
+
+        p = new Preferences();
+        p.addLikedCuisine(cuisine2);
+        p.addLikedCuisine(cuisine3);
+        rs = db.getSuggestedRecipes(p);
+
+        // still contains one recipe
+        assertEquals(rs.size(), 1);
+
+        p = new Preferences();
+        p.addLikedCuisine(cuisine);
+        p.addLikedCuisine(cuisine2);
+        p.addLikedCuisine(cuisine3);
+        rs = db.getSuggestedRecipes(p);
+
+        // contains both
+        assertEquals(rs.size(), 2);
+
+        p = new Preferences();
+        p.addLikedCuisine("orange");
+        rs = db.getSuggestedRecipes(p);
+
+        // empty
+        assertEquals(rs.size(), 0);
+    }
+
+    public void testBaseAndCuisineTogether() {
+        context = new RenamingDelegatingContext(getContext(), "test_");
+        db = new DBTools(context);
+
+        String name = "recipe1";
+        String instructions = "These are the instructions for " + name;
+        String cuisine = "chicken";
+        Recipe r = new Recipe();
+        r.setName(name);
+        r.setInstructions(instructions);
+        r.addCuisine(cuisine);
+        db.addRecipeToDatabase(r);
+
+        name = "recipe2";
+        instructions = "These are the instructions for " + name;
+        String base = "something else";
+        r = new Recipe();
+        r.setName(name);
+        r.setInstructions(instructions);
+        r.addBase(base);
+        db.addRecipeToDatabase(r);
+
+        List<Recipe> rs = db.getSuggestedRecipes(null);
+
+        // now contains two recipes
+        assertEquals(rs.size(), 2);
+
+        Preferences p = new Preferences();
+        p.addLikedCuisine(cuisine);
+        rs = db.getSuggestedRecipes(p);
+
+        // only the first one
+        assertEquals(rs.size(), 1);
+
+        p = new Preferences();
+        p.addLikedBase(base);
+        rs = db.getSuggestedRecipes(p);
+
+        // only the second one
+        assertEquals(rs.size(), 1);
+
+        p = new Preferences();
+        p.addLikedBase(base);
+        p.addLikedCuisine(cuisine);
+        rs = db.getSuggestedRecipes(p);
+
+        // both
+        assertEquals(rs.size(), 2);
+
+        p = new Preferences();
+        p.addLikedBase("lalalalalal");
+        rs = db.getSuggestedRecipes(p);
+
+        // nothing
+        assertEquals(rs.size(), 0);
+
+        p = new Preferences();
+        p.addLikedCuisine("lalalalalal");
+        rs = db.getSuggestedRecipes(p);
+
+        // nothing
+        assertEquals(rs.size(), 0);
+        p = new Preferences();
+        p.setName("");
+        rs = db.getSuggestedRecipes(p);
+
+        // still contains one recipe
         assertEquals(rs.size(), 2);
     }
 
