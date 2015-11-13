@@ -54,7 +54,7 @@ public class APIGrabber {
 
     public static final String[] POPULATION_KEYWORDS = {"beef", "pork", "lamb",
             "chicken", "turkey", "salmon", "tuna", "tilapia", "sardines", "trout",
-            "snapper", "shellfish", "eggs", "honey", "tofu", "soy", "cereal", "pasta",
+            "snapper", "shellfish", "egg", "honey", "tofu", "soy", "cereal", "pasta",
             "bread", "rice", "oatmeal", "beans", "lentils", "peas", "potato", "corn",
             "artichoke", "asparagus", "beet", "broccoli", "carrot", "sprouts",
             "celery", "garlic", "onion", "pepper", "mushroom", "tomato", "eggplant",
@@ -65,19 +65,22 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken", "pepper", "tuna"};
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"tomato"};
 
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";
     private static final String SEARCH_URL = "http://api.bigoven.com/recipes";
 
-    private static final String PARAM_TITLE_KEYWORD = "title_kw=";
+    private static final String PARAM_TITLE_KEYWORD = "any_kw=";
     private static final String PARAM_API_KEY = "api_key=";
     private static final String PARAM_PAGE = "pg=";
     private static final String PARAM_RESULTS_PER_PAGE = "rpp=";
 
     private static final double MIN_REVIEW = 2.0;
-    private static final int MIN_REVIEW_COUNT = 2;
+    private static final int MIN_REVIEW_COUNT = 1;
+    private static final int MAX_INGREDIENTS = 6;
+    private static final int MAX_PAGE = 5;
+    private static final int RESULTS_PER_PAGE = 25;
 
     /**
      * Run this with a keyword from POPULATION_KEYWORDS to get a series of recipes from the API.
@@ -90,7 +93,14 @@ public class APIGrabber {
      * of this class.
      */
     public static List<Recipe> getRecipes(String keyword) {
-        return getRecipesFromAPIBasedOnKeywordAndPage(keyword, 1, 50);
+        List<Recipe> list = getRecipesFromAPIBasedOnKeywordAndPage(keyword, 1, RESULTS_PER_PAGE);
+
+        for(int i = 1; i < MAX_PAGE; i++) {
+            System.out.println("Grabbing new page...");
+            list.addAll(getRecipesFromAPIBasedOnKeywordAndPage(keyword, i, RESULTS_PER_PAGE));
+        }
+
+        return list;
     }
 
     private static List<Recipe> getRecipesFromAPIBasedOnKeywordAndPage(String keyword, int page, int resultsPerPage) {
@@ -100,8 +110,14 @@ public class APIGrabber {
         List<Recipe> recipes = new LinkedList<Recipe>();
         for(Integer id : idList) {
             Document recipeResults = getAPIRecipe(id);
-            Recipe recipe = createRecipeFromDocument(recipeResults);
-            recipes.add(recipe);
+            if(recipeResults != null) {
+                Recipe recipe = createRecipeFromDocument(recipeResults);
+
+                if (recipe != null) {
+                    recipes.add(recipe);
+                    System.out.println("Added new recipe...");
+                }
+            }
         }
 
         return recipes;
@@ -116,6 +132,7 @@ public class APIGrabber {
     }
 
     private static Document getAPIRecipe(int bigOvenId) {
+        System.out.println("Grabbing new recipe...");
         String urlString = RECIPE_URL + bigOvenId + "?" + PARAM_API_KEY + API_KEY;
         return makeHTTPRequest(urlString);
     }
@@ -158,6 +175,7 @@ public class APIGrabber {
                 node = list.item(0);
                 int id = Integer.parseInt(node.getFirstChild().getNodeValue());
                 recipeIds.add(id);
+                System.out.println("Found potential recipe...");
             }
         }
 
@@ -168,8 +186,12 @@ public class APIGrabber {
         Recipe recipe = new Recipe();
         Element root = doc.getDocumentElement();
 
-        setupRecipeBasics(root, recipe);
         setupIngredients(root, recipe);
+        if(recipe == null || recipe.getIngredients().size() > MAX_INGREDIENTS) {
+            return null;
+        }
+
+        setupRecipeBasics(root, recipe);
         setupRecipeCuisinesAndBases(root, recipe);
         setupToolsAndTechniques(recipe);
 
@@ -273,6 +295,12 @@ public class APIGrabber {
     private static Recipe setupIngredients(Element recipeElement, Recipe recipe) {
         NodeList ingredientNodeList = recipeElement.getElementsByTagName(INGREDIENTS);
         Element element = (Element) ingredientNodeList.item(0);
+
+        if(element == null) {
+            recipe = null;
+            return null;
+        }
+
         NodeList ingredients = element.getElementsByTagName(INGREDIENT);
 
         for (int i = 0; i < ingredients.getLength(); i++) {

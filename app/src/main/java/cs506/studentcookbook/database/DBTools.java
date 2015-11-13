@@ -5,9 +5,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,12 +67,35 @@ public class DBTools extends SQLiteOpenHelper {
             TABLE_USER, TABLE_ALLERGIC_TO, TABLE_OWNS_TOOL, TABLE_PINNED_RECIPE, TABLE_HAS_COOKED,
             TABLE_HAS_ON_GROCERY_LIST, TABLE_RATES_RECIPE, TABLE_RATES_CUISINE, TABLE_RATES_MEAL_BASE};
 
-    private static final String DATABASE_NAME = "TheStudentsCookbook";
+    private static final String DATABASE_TEST_NAME = "Test.db";
+    private static final String DATABASE_NAME_REAL = "TheStudentsCookbook.db";
+    private static final String DATABASE_NAME = DATABASE_NAME_REAL;
+    private static final String DATABASE_PATH = "/data/data/cs506.studentcookbook/databases/";
 
     private static DBTools dbTools;
+    private static Context currentContext;
+
+    public enum PopulationMode {
+        WEB, LOCAL
+    }
+    public static PopulationMode CURRENT_POPULATION_MODE = PopulationMode.LOCAL;
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Constructor and helpers
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public DBTools(Context context) {
         super(context, DATABASE_NAME, null, 1);
+        currentContext = context;
+        System.out.println("Creating new DBTools instance");
+    }
+
+    public void onCreate(SQLiteDatabase db) {
+    }
+
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        resetDatabase();
+        onCreate(db);
     }
 
     public static DBTools getInstance(Context c) {
@@ -76,18 +104,134 @@ public class DBTools extends SQLiteOpenHelper {
         return dbTools;
     }
 
-    /**
-     * Uses APIGrabber to populate the internal database.
-     *
-     * Returns true if the database was populated, false if no action was taken because the database
-     * was already populated
-     */
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Database creation
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    public void resetDatabase() {
+        System.out.println("Resetting database");
+        dropTables();
+        currentContext.deleteDatabase(DATABASE_NAME);
+    }
+
     public void populateDatabase() {
+        if(CURRENT_POPULATION_MODE == PopulationMode.LOCAL) {
+            populateDatabaseFromLocal();
+        } else if(CURRENT_POPULATION_MODE == PopulationMode.WEB) {
+            populateDatabaseFromWeb();
+        }
+    }
+
+    public boolean databaseFileExists() {
+        SQLiteDatabase checkDB = null;
+
+        try {
+            checkDB = SQLiteDatabase.openDatabase(DATABASE_PATH + DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);
+        } catch (SQLiteException e){
+            System.out.println("Database file does not exist");
+            return false;
+        }
+
+        if(checkDB != null){
+            checkDB.close();
+            System.out.println("Database file already exists");
+            return true;
+        }
+
+        System.out.println("Database file does not exist");
+        return false;
+    }
+
+    public boolean databaseIsPopulated() {
+        String selectQuery = "SELECT * FROM Recipe";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = null;
+
+        try {
+            cursor = db.rawQuery(selectQuery, null);
+        } catch (Exception e) {
+        }
+
+        boolean toReturn = true;
+
+        if(cursor == null || cursor.getCount() == 0)
+            toReturn = false;
+
+        db.close();
+        return toReturn;
+    }
+
+    private void createTables() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        createRecipeTables(db);
+        createUserTables(db);
+        createSuggestionTables(db);
+        db.close();
+        Log.d("Creating tables", "...");
+    }
+
+    private void dropTables() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        boolean result = true;
+
+        for(String table : ALL_TABLES) {
+            String drop = "DROP TABLE " + table + ";";
+
+            try {
+                db.execSQL(drop);
+                Log.d("Dropping", table);
+            } catch (SQLException e) {
+            }
+        }
+        db.close();
+    }
+
+    private void populateDatabaseFromLocal() {
+        if(databaseFileExists() && databaseIsPopulated()) {
+            System.out.println("Database already locally populated");
+            return;
+        }
+
+        try {
+            this.getReadableDatabase();
+
+            InputStream myInput = currentContext.getAssets().open(DATABASE_NAME);
+            String outFileName = DATABASE_PATH + DATABASE_NAME;
+            OutputStream myOutput = new FileOutputStream(outFileName);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = myInput.read(buffer))>0){
+                myOutput.write(buffer, 0, length);
+            }
+
+            //Close the streams
+            myOutput.flush();
+            myOutput.close();
+            myInput.close();
+
+        } catch (IOException e) {
+            System.err.println("Error copying database.");
+        }
+
+        System.out.println("Database populated locally");
+    }
+
+    private void populateDatabaseFromWeb() {
+        /**
+         * Uses APIGrabber to populate the internal database.
+         *
+         * Returns true if the database was populated, false if no action was taken because the database
+         * was already populated
+         */
+
         if(databaseIsPopulated()) {
             Log.d("database:", "already populated");
             return;
         }
 
+        System.out.println("Beginning database population from the web...");
         createTables();
 
         // network activity needs to be on a separate thread or Android will throw an exception
@@ -123,48 +267,18 @@ public class DBTools extends SQLiteOpenHelper {
         thread.start();
     }
 
-    public boolean databaseIsPopulated() {
-        String selectQuery = "SELECT * FROM Recipe";
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = null;
-
-        try {
-            cursor = db.rawQuery(selectQuery, null);
-        } catch (Exception e) {
-        }
-
-        boolean toReturn = true;
-
-        if(cursor == null || cursor.getCount() == 0)
-            toReturn = false;
-
-        db.close();
-        return toReturn;
-    }
-
-    @Override
-    public void onCreate(SQLiteDatabase db) {
-    }
-
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        dropTables();
-        createTables();
-        onCreate(db);
-    }
-
-    public void deleteDatabase() {
-        dropTables();
-        Log.d("Database cleared", "...");
-    }
-
-    public void resetDatabase() {
-        deleteDatabase();
-        createTables();
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Search and preference methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public List<Recipe> getSuggestedRecipes(Preferences preferences) {
 
         List<Recipe> recipes = new ArrayList<Recipe>();
+
+        if(!databaseFileExists() || !databaseIsPopulated()) {
+            return recipes;
+        }
+
         String selectQuery = "";
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -254,7 +368,7 @@ public class DBTools extends SQLiteOpenHelper {
         cursor.close();
 
 
-//Queries ingredient table to build list of ingredients for list of recipes
+        //Queries ingredient table to build list of ingredients for list of recipes
         for (int i = 0; i < recipes.size(); i++) {
             int currRecipeId = recipes.get(i).getId();
             List<Ingredient> ingredients = new ArrayList<Ingredient>();
@@ -334,31 +448,9 @@ public class DBTools extends SQLiteOpenHelper {
         return preferences;
     }
 
-    private void createTables() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        createRecipeTables(db);
-        createUserTables(db);
-        createSuggestionTables(db);
-        db.close();
-        Log.d("Creating tables", "...");
-    }
-
-    private void dropTables() {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        boolean result = true;
-
-        for(String table : ALL_TABLES) {
-            String drop = "DROP TABLE " + table + ";";
-
-            try {
-                db.execSQL(drop);
-                Log.d("Dropping", table);
-            } catch (SQLException e) {
-            }
-        }
-        db.close();
-    }
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Create tables methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     private void createRecipeTables(SQLiteDatabase db) {
         String tool = "CREATE TABLE IF NOT EXISTS " + TABLE_TOOL + "(" +
@@ -566,6 +658,10 @@ public class DBTools extends SQLiteOpenHelper {
         db.execSQL(ratesMealBase);
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Add to database methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
     public void addRecipeToDatabase(Recipe recipe) {
         // add tools
         for(Tool tool : recipe.getTools())
@@ -713,6 +809,10 @@ public class DBTools extends SQLiteOpenHelper {
         values.put("baseName", base);
         db.insertWithOnConflict(TABLE_HAS_MEAL_BASE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // Query helping methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public String prepareQueryLogic(List<String> strings, String prefix, String compared) {
         if(strings == null || strings.size() == 0)
