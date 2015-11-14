@@ -67,10 +67,12 @@ public class DBTools extends SQLiteOpenHelper {
             TABLE_USER, TABLE_ALLERGIC_TO, TABLE_OWNS_TOOL, TABLE_PINNED_RECIPE, TABLE_HAS_COOKED,
             TABLE_HAS_ON_GROCERY_LIST, TABLE_RATES_RECIPE, TABLE_RATES_CUISINE, TABLE_RATES_MEAL_BASE};
 
-    private static final String DATABASE_TEST_NAME = "Test.db";
-    private static final String DATABASE_NAME_REAL = "TheStudentsCookbook.db";
-    private static final String DATABASE_NAME = DATABASE_NAME_REAL;
-    private static final String DATABASE_PATH = "/data/data/cs506.studentcookbook/databases/";
+    public static String DATABASE_REAL_NAME = "TheStudentsCookbook.db";
+    public static String DATABASE_TEST_NAME = "test_" + DATABASE_REAL_NAME;
+    public static String DATABASE_NAME = DATABASE_REAL_NAME;
+    public static String DATABASE_PATH = "/data/data/cs506.studentcookbook/databases/";
+    public static String DATABASE_TEST_PATH = "/data/user/0/cs506.studentcookbook/databases/";
+
 
     private static DBTools dbTools;
     private static Context currentContext;
@@ -79,6 +81,9 @@ public class DBTools extends SQLiteOpenHelper {
         WEB, LOCAL
     }
     public static PopulationMode CURRENT_POPULATION_MODE = PopulationMode.LOCAL;
+
+    public static final boolean LIKE = false;
+    public static final boolean DISLIKE = true;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor and helpers
@@ -161,7 +166,7 @@ public class DBTools extends SQLiteOpenHelper {
         return toReturn;
     }
 
-    private void createTables() {
+    public void createTables() {
         SQLiteDatabase db = this.getWritableDatabase();
         createRecipeTables(db);
         createUserTables(db);
@@ -635,9 +640,9 @@ public class DBTools extends SQLiteOpenHelper {
 
         String ratesCuisine = "CREATE TABLE IF NOT EXISTS " + TABLE_RATES_CUISINE + "(" +
                 "userId INTEGER NOT NULL" + ", " +
-                "cuisineName INTEGER NOT NULL" + ", " +
-                "countLiked INTEGER NOT NULL DEFAULT 0" + ", " +
-                "countDisliked NOT NULL DEFAULT 0" + ", " +
+                "cuisineName TEXT NOT NULL" + ", " +
+                "countLiked INTEGER DEFAULT 0" + ", " +
+                "countDisliked INTEGER DEFAULT 0" + ", " +
                 "PRIMARY KEY (userId, cuisineName)" + ", " +
                 "FOREIGN KEY(userId) REFERENCES " + TABLE_USER + "(userId)" + ", " +
                 "FOREIGN KEY(cuisineName) REFERENCES " + TABLE_CUISINE + "(cuisineName)" +
@@ -645,9 +650,9 @@ public class DBTools extends SQLiteOpenHelper {
 
         String ratesMealBase = "CREATE TABLE IF NOT EXISTS " + TABLE_RATES_MEAL_BASE + "(" +
                 "userId INTEGER NOT NULL" + ", " +
-                "baseName INTEGER NOT NULL" + ", " +
-                "countLiked INTEGER NOT NULL DEFAULT 0" + ", " +
-                "countDisliked NOT NULL DEFAULT 0" + ", " +
+                "baseName TEXT NOT NULL" + ", " +
+                "countLiked INTEGER DEFAULT 0" + ", " +
+                "countDisliked INTEGER DEFAULT 0" + ", " +
                 "PRIMARY KEY (userId, baseName)" + ", " +
                 "FOREIGN KEY(userId) REFERENCES " + TABLE_USER + "(userId)" + ", " +
                 "FOREIGN KEY(baseName) REFERENCES " + TABLE_MEAL_BASE + "(baseName)" +
@@ -810,6 +815,74 @@ public class DBTools extends SQLiteOpenHelper {
         db.insertWithOnConflict(TABLE_HAS_MEAL_BASE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
+    public void incrementCuisineRating(int userId, String cuisineName, int quantity, boolean like) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_RATES_CUISINE + " WHERE userId=" + userId + " AND cuisineName='" + cuisineName + "'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            ContentValues values = new ContentValues();
+
+            if(like == LIKE) {
+                int likeIndex = cursor.getColumnIndex("countLiked");
+                int numLiked = cursor.getInt(likeIndex);
+                values.put("countLiked", numLiked + quantity);
+            } else {
+                int dislikeIndex = cursor.getColumnIndex("countDisliked");
+                int numDisliked = cursor.getInt(dislikeIndex);
+                values.put("countDisliked", numDisliked + quantity);
+            }
+
+            db.update(TABLE_RATES_CUISINE, values, "userId=" + userId, null);
+
+        } else {
+            String columnName = "countLiked";
+            if(like == DISLIKE) {
+                columnName = "countDisliked";
+            }
+
+            ContentValues values = new ContentValues();
+            values.put("userId", userId);
+            values.put("cuisineName", cuisineName);
+            values.put(columnName, quantity);
+            db.insert(TABLE_RATES_CUISINE, null, values);
+        }
+    }
+
+    public void incrementBaseRating(int userId, String baseName, int quantity, boolean like) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_RATES_MEAL_BASE + " WHERE userId=" + userId + " AND baseName='" + baseName + "'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            ContentValues values = new ContentValues();
+
+            if(like == LIKE) {
+                int likeIndex = cursor.getColumnIndex("countLiked");
+                int numLiked = cursor.getInt(likeIndex);
+                values.put("countLiked", numLiked + quantity);
+            } else {
+                int dislikeIndex = cursor.getColumnIndex("countDisliked");
+                int numDisliked = cursor.getInt(dislikeIndex);
+                values.put("countDisliked", numDisliked + quantity);
+            }
+
+            db.update(TABLE_RATES_MEAL_BASE, values, "userId=" + userId, null);
+
+        } else {
+            String columnName = "countLiked";
+            if(like == DISLIKE) {
+                columnName = "countDisliked";
+            }
+
+            ContentValues values = new ContentValues();
+            values.put("userId", userId);
+            values.put("baseName", baseName);
+            values.put(columnName, quantity);
+            db.insert(TABLE_RATES_MEAL_BASE, null, values);
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Query helping methods
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -838,5 +911,77 @@ public class DBTools extends SQLiteOpenHelper {
 
         sb.append("))");
         return sb.toString();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+    // AI Search methods
+    ///////////////////////////////////////////////////////////////////////////////////////////////
+
+    public int getCuisineLikeOrDislikeCount(int userId, String cuisineName, boolean like) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_RATES_CUISINE + " WHERE userId=" + userId + " AND cuisineName='" + cuisineName + "'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if(cursor.moveToFirst()) {
+            String columnName = "countLiked";
+            if(like == DISLIKE) {
+                columnName = "countDisliked";
+            }
+
+            int index = cursor.getColumnIndex(columnName);
+            String sVal = cursor.getString(index);
+            return Integer.parseInt(sVal);
+        }
+
+        return 0;
+    }
+
+    public int getBaseLikeOrDislikeCount(int userId, String baseName, boolean like) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_RATES_MEAL_BASE + " WHERE userId=" + userId + " AND baseName='" + baseName + "'";
+        Cursor cursor = db.rawQuery(query, null);
+
+        if(cursor.moveToFirst()) {
+            String columnName = "countLiked";
+            if(like == DISLIKE) {
+                columnName = "countDisliked";
+            }
+
+            int index = cursor.getColumnIndex(columnName);
+            String sVal = cursor.getString(index);
+            return Integer.parseInt(sVal);
+        }
+
+        return 0;
+    }
+
+    // P(LIKE) or P(DISLIKE)
+    public double getProgability(int userId, boolean like) {
+        return 0.0;
+    }
+
+    // P(cuisine|LIKE) or P(cuisine|DISLIKE)
+    public double getConditionalProbabilityCuisine(int userId, String cuisineName, boolean like) {
+        return 0.0;
+    }
+
+    // P(base|LIKE) or P(base|DISLIKE)
+    public double getConditionalProbabilityBase(int userId, String cuisineName, boolean like) {
+        return 0.0;
+    }
+
+    public double getCuisineProbability(int userId, String cuisineName, boolean like) {
+        double totalLike = (double) getCuisineLikeOrDislikeCount(userId, cuisineName, LIKE);
+        double totalDislike = (double) getCuisineLikeOrDislikeCount(userId, cuisineName, DISLIKE);
+
+        if(totalDislike == 0 && totalLike == 0) {
+            return 0.0;
+        }
+
+        if(like == LIKE) {
+            return totalLike / (totalLike + totalDislike);
+        } else {
+            return totalDislike / (totalLike + totalDislike);
+        }
     }
 }

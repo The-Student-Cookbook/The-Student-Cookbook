@@ -65,7 +65,7 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"tomato"};
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken"};
 
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";

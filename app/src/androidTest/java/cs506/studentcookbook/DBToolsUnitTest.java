@@ -26,6 +26,7 @@ public class DBToolsUnitTest extends AndroidTestCase {
 
         assertEquals(false, db.databaseIsPopulated());
 
+        // we have a daily limit on calling the online API, so we won't call this test very often...
         if(true)
             return;
 
@@ -66,6 +67,7 @@ public class DBToolsUnitTest extends AndroidTestCase {
         context = new RenamingDelegatingContext(getContext(), "test_");
         db = new DBTools(context);
         db.resetDatabase();
+        db.createTables();
 
         String name = "TEST RECIPE";
         String instructions = "These are the instructions";
@@ -103,6 +105,7 @@ public class DBToolsUnitTest extends AndroidTestCase {
         context = new RenamingDelegatingContext(getContext(), "test_");
         db = new DBTools(context);
         db.resetDatabase();
+        db.createTables();
 
         String name = "recipe1";
         String instructions = "These are the instructions for " + name;
@@ -147,6 +150,7 @@ public class DBToolsUnitTest extends AndroidTestCase {
     public void testCuisineQuery() {
         context = new RenamingDelegatingContext(getContext(), "test_");
         db = new DBTools(context);
+        db.createTables();
 
         List<String> c = new ArrayList<>();
         c.add("chicken");
@@ -227,6 +231,7 @@ public class DBToolsUnitTest extends AndroidTestCase {
     public void testBaseAndCuisineTogether() {
         context = new RenamingDelegatingContext(getContext(), "test_");
         db = new DBTools(context);
+        db.createTables();
 
         String name = "recipe1";
         String instructions = "These are the instructions for " + name;
@@ -294,7 +299,70 @@ public class DBToolsUnitTest extends AndroidTestCase {
         assertEquals(rs.size(), 2);
     }
 
-    @Override
+    public void testGetAndSetLike() {
+        context = new RenamingDelegatingContext(getContext(), "test_");
+        db = new DBTools(context);
+        db.createTables();
+
+        int userId = 1337;
+        String cuisine = "chicken";
+
+        // like
+        int likeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.LIKE);
+        assertEquals(0, likeCount);
+
+        db.incrementCuisineRating(userId, cuisine, 10, DBTools.LIKE);
+        likeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.LIKE);
+        assertEquals(10, likeCount);
+
+        db.incrementCuisineRating(userId, cuisine, 2, DBTools.LIKE);
+        likeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.LIKE);
+        assertEquals(12, likeCount);
+
+        db.incrementCuisineRating(userId, cuisine, -6, DBTools.LIKE);
+        likeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.LIKE);
+        assertEquals(6, likeCount);
+
+        // dislike
+        int dislikeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.DISLIKE);
+        assertEquals(0, dislikeCount);
+
+        db.incrementCuisineRating(userId, cuisine, 3, DBTools.DISLIKE);
+        dislikeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.DISLIKE);
+        assertEquals(3, dislikeCount);
+
+        db.incrementCuisineRating(userId, cuisine, 2, DBTools.DISLIKE);
+        dislikeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.DISLIKE);
+        assertEquals(5, dislikeCount);
+
+        db.incrementCuisineRating(userId, cuisine, -1, DBTools.DISLIKE);
+        dislikeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.DISLIKE);
+        assertEquals(4, dislikeCount);
+
+        //meal base
+        // like
+        String base = cuisine;
+
+        likeCount = db.getBaseLikeOrDislikeCount(userId, base, DBTools.LIKE);
+        assertEquals(0, likeCount);
+
+        db.incrementBaseRating(userId, base, 7, DBTools.LIKE);
+        likeCount = db.getBaseLikeOrDislikeCount(userId, base, DBTools.LIKE);
+        assertEquals(7, likeCount);
+
+        db.incrementBaseRating(userId, base, 5, DBTools.LIKE);
+        likeCount = db.getBaseLikeOrDislikeCount(userId, base, DBTools.LIKE);
+        assertEquals(12, likeCount);
+
+        // make sure the methods are actually updating different tables
+        int baselikeCount = db.getBaseLikeOrDislikeCount(userId, base, DBTools.LIKE);
+        int cuisinelikeCount = db.getCuisineLikeOrDislikeCount(userId, cuisine, DBTools.LIKE);
+        assertFalse(baselikeCount == cuisinelikeCount);
+    }
+
+
+
+        @Override
     public void tearDown() throws Exception {
         super.tearDown();
     }
