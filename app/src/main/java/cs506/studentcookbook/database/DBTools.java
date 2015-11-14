@@ -73,7 +73,6 @@ public class DBTools extends SQLiteOpenHelper {
     public static String DATABASE_PATH = "/data/data/cs506.studentcookbook/databases/";
     public static String DATABASE_TEST_PATH = "/data/user/0/cs506.studentcookbook/databases/";
 
-
     private static DBTools dbTools;
     private static Context currentContext;
 
@@ -84,6 +83,13 @@ public class DBTools extends SQLiteOpenHelper {
 
     public static final boolean LIKE = false;
     public static final boolean DISLIKE = true;
+
+    private static final double SMOOTHING_FACTOR = 0.0001;
+    private static boolean countDataIsFresh = false;
+    private static double countLikeCuisine = -1.0;
+    private static double countDislikeCuisine = -1.0;
+    private static double countLikeBase = -1.0;
+    private static double countDislikeBase = -1.0;
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Constructor and helpers
@@ -847,6 +853,8 @@ public class DBTools extends SQLiteOpenHelper {
             values.put(columnName, quantity);
             db.insert(TABLE_RATES_CUISINE, null, values);
         }
+
+        countDataIsFresh = false;
     }
 
     public void incrementBaseRating(int userId, String baseName, int quantity, boolean like) {
@@ -881,6 +889,8 @@ public class DBTools extends SQLiteOpenHelper {
             values.put(columnName, quantity);
             db.insert(TABLE_RATES_MEAL_BASE, null, values);
         }
+
+        countDataIsFresh = false;
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -957,6 +967,51 @@ public class DBTools extends SQLiteOpenHelper {
 
     // P(LIKE) or P(DISLIKE)
     public double getProbability(int userId, boolean like) {
+        double[] likeAndDislike = totalLikeAndDislike(userId);
+        double likeD = likeAndDislike[0];
+        double dislikeD = likeAndDislike[1];
+
+        if(likeD + dislikeD == 0) {
+            return 0.0;
+        }
+
+        if(like == LIKE) {
+            return likeD / (likeD + dislikeD);
+        } else {
+            return dislikeD / (likeD + dislikeD);
+        }
+    }
+
+    private double[] totalCuisineCount(int userId) {
+        boolean goodData = (countDataIsFresh && countDislikeCuisine >= 0.0 && countLikeCuisine >= 0.0 && countLikeBase >= 0.0 && countDislikeBase>= 0.0);
+        if(!goodData) {
+            totalLikeAndDislike(userId);
+        }
+
+        double result[] = {countLikeCuisine, countDislikeCuisine};
+        return result;
+    }
+
+    private double[] totalBaseCount(int userId) {
+        boolean goodData = (countDataIsFresh && countDislikeCuisine >= 0.0 && countLikeCuisine >= 0.0 && countLikeBase >= 0.0 && countDislikeBase>= 0.0);
+        if(!goodData) {
+            totalLikeAndDislike(userId);
+        }
+
+        double result[] = {countLikeBase, countDislikeBase};
+        return result;
+    }
+
+    private double[] totalLikeAndDislike(int userId) {
+        // returned as an array: [like, dislike]
+
+        // cache the value because this operation is expensive
+        if(countDataIsFresh && countDislikeCuisine >= 0.0 && countLikeCuisine >= 0.0 && countLikeBase >= 0.0 && countDislikeBase>= 0.0) {
+            System.out.println("Grabbed cached count data.");
+            double result[] = {countLikeCuisine + countLikeBase, countDislikeCuisine + countDislikeBase};
+            return result;
+        }
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         // cuisine
@@ -992,10 +1047,9 @@ public class DBTools extends SQLiteOpenHelper {
             dislikeSum += Integer.parseInt(sVal);
         }
 
-        // no entries yet
-        if(dislikeSum + likeSum == 0) {
-            return 0.0;
-        }
+        // cache the values
+        countLikeCuisine = (double) likeSum;
+        countDislikeCuisine = (double) dislikeSum;
 
         // base
         query = "SELECT * FROM " + TABLE_RATES_MEAL_BASE + " WHERE userId=" + userId;
@@ -1021,43 +1075,34 @@ public class DBTools extends SQLiteOpenHelper {
             dislikeSum += Integer.parseInt(sVal);
         }
 
-        // no entries yet
-        if(dislikeSum + likeSum == 0) {
-            return 0.0;
-        }
+        countLikeBase = ((double) likeSum) - countLikeCuisine;
+        countDislikeBase = ((double) dislikeSum) - countDislikeCuisine;
 
         double likeD = (double) likeSum;
         double dislikeD = (double) dislikeSum;
 
-        if(like == LIKE) {
-            return likeD / (likeD + dislikeD);
-        } else {
-            return dislikeD / (likeD + dislikeD);
-        }
+        countDataIsFresh = true;
+        double result[] = {likeD, dislikeD};
+        return result;
     }
 
     // P(cuisine|LIKE) or P(cuisine|DISLIKE)
     public double getConditionalProbabilityCuisine(int userId, String cuisineName, boolean like) {
-        return 0.0;
+        // get how many times the cuisine was liked or disliked
+        double unitCount = getCuisineLikeOrDislikeCount(userId, cuisineName, like);
+
+        // get how many times any cuisine was liked or disliked
+        double[] cuisineTotal = totalCuisineCount(userId);
+        double totalCount = cuisineTotal[0];
+        if(like == DISLIKE) {
+            totalCount = cuisineTotal[1];
+        }
+
+        return (unitCount + SMOOTHING_FACTOR) / (totalCount * (1.0  + SMOOTHING_FACTOR));
     }
 
     // P(base|LIKE) or P(base|DISLIKE)
     public double getConditionalProbabilityBase(int userId, String cuisineName, boolean like) {
         return 0.0;
-    }
-
-    public double getCuisineProbability(int userId, String cuisineName, boolean like) {
-        double totalLike = (double) getCuisineLikeOrDislikeCount(userId, cuisineName, LIKE);
-        double totalDislike = (double) getCuisineLikeOrDislikeCount(userId, cuisineName, DISLIKE);
-
-        if(totalDislike == 0 && totalLike == 0) {
-            return 0.0;
-        }
-
-        if(like == LIKE) {
-            return totalLike / (totalLike + totalDislike);
-        } else {
-            return totalDislike / (totalLike + totalDislike);
-        }
     }
 }

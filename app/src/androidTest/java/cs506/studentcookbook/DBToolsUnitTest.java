@@ -422,6 +422,10 @@ public class DBToolsUnitTest extends AndroidTestCase {
         assertEquals(db.getProbability(userId, DBTools.LIKE), 1.0 - db.getProbability(userId, DBTools.DISLIKE), 0.01);
     }
 
+    public void testConditionalProb() {
+
+    }
+
         @Override
     public void tearDown() throws Exception {
         super.tearDown();
