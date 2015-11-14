@@ -956,8 +956,84 @@ public class DBTools extends SQLiteOpenHelper {
     }
 
     // P(LIKE) or P(DISLIKE)
-    public double getProgability(int userId, boolean like) {
-        return 0.0;
+    public double getProbability(int userId, boolean like) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        // cuisine
+        String query = "SELECT * FROM " + TABLE_RATES_CUISINE + " WHERE userId=" + userId;
+        Cursor cursor = db.rawQuery(query, null);
+
+        // get count like
+        int likeSum = 0;
+        int likeIndex = 0;
+        String sVal = "";
+
+        if(cursor.moveToFirst()) {
+            likeIndex = cursor.getColumnIndex("countLiked");
+            sVal = cursor.getString(likeIndex);
+            likeSum += Integer.parseInt(sVal);
+        }
+        while (cursor.moveToNext()) {
+            sVal = cursor.getString(likeIndex);
+            likeSum += Integer.parseInt(sVal);
+        }
+
+        // get count dislike
+        int dislikeSum = 0;
+        int dislikeIndex = 0;
+
+        if(cursor.moveToFirst()) {
+            dislikeIndex = cursor.getColumnIndex("countDisliked");
+            sVal = cursor.getString(dislikeIndex);
+            dislikeSum += Integer.parseInt(sVal);
+        }
+        while (cursor.moveToNext()) {
+            sVal = cursor.getString(dislikeIndex);
+            dislikeSum += Integer.parseInt(sVal);
+        }
+
+        // no entries yet
+        if(dislikeSum + likeSum == 0) {
+            return 0.0;
+        }
+
+        // base
+        query = "SELECT * FROM " + TABLE_RATES_MEAL_BASE + " WHERE userId=" + userId;
+        cursor = db.rawQuery(query, null);
+
+        if(cursor.moveToFirst()) {
+            likeIndex = cursor.getColumnIndex("countLiked");
+            sVal = cursor.getString(likeIndex);
+            likeSum += Integer.parseInt(sVal);
+        }
+        while (cursor.moveToNext()) {
+            sVal = cursor.getString(likeIndex);
+            likeSum += Integer.parseInt(sVal);
+        }
+
+        if(cursor.moveToFirst()) {
+            dislikeIndex = cursor.getColumnIndex("countDisliked");
+            sVal = cursor.getString(dislikeIndex);
+            dislikeSum += Integer.parseInt(sVal);
+        }
+        while (cursor.moveToNext()) {
+            sVal = cursor.getString(dislikeIndex);
+            dislikeSum += Integer.parseInt(sVal);
+        }
+
+        // no entries yet
+        if(dislikeSum + likeSum == 0) {
+            return 0.0;
+        }
+
+        double likeD = (double) likeSum;
+        double dislikeD = (double) dislikeSum;
+
+        if(like == LIKE) {
+            return likeD / (likeD + dislikeD);
+        } else {
+            return dislikeD / (likeD + dislikeD);
+        }
     }
 
     // P(cuisine|LIKE) or P(cuisine|DISLIKE)

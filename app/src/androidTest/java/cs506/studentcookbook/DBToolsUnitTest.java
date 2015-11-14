@@ -360,7 +360,67 @@ public class DBToolsUnitTest extends AndroidTestCase {
         assertFalse(baselikeCount == cuisinelikeCount);
     }
 
+    public void testGetProbability() {
+        context = new RenamingDelegatingContext(getContext(), "test_");
+        db = new DBTools(context);
+        db.createTables();
 
+        int userId = 1337;
+        double like = 0.0;
+        double dislike = 0.0;
+
+        assertEquals(0.0, db.getProbability(userId, DBTools.LIKE));
+        assertEquals(0.0, db.getProbability(userId, DBTools.DISLIKE));
+
+        // first only consider cuisines
+        db.incrementCuisineRating(userId, "cuisine1", 10, DBTools.LIKE);
+        like += 10.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        db.incrementCuisineRating(userId, "cuisine1", 10, DBTools.LIKE);
+        like += 10.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        db.incrementCuisineRating(userId, "cuisine1", 5, DBTools.DISLIKE);
+        dislike += 5.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        db.incrementCuisineRating(userId, "cuisine2", 5, DBTools.DISLIKE);
+        dislike += 5.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        db.incrementCuisineRating(userId, "cuisine3", 5, DBTools.LIKE);
+        like += 5.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        // now take bases into account
+        db.incrementBaseRating(userId, "base1", 16, DBTools.LIKE);
+        like += 16.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        db.incrementBaseRating(userId, "base1", 7, DBTools.DISLIKE);
+        dislike += 7.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        db.incrementBaseRating(userId, "base2", 4, DBTools.DISLIKE);
+        dislike += 4.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        db.incrementBaseRating(userId, "base3", 9, DBTools.LIKE);
+        like += 9.0;
+        assertEquals(like / (dislike + like), db.getProbability(userId, DBTools.LIKE));
+        assertEquals(dislike / (dislike + like), db.getProbability(userId, DBTools.DISLIKE));
+
+        assertEquals(db.getProbability(userId, DBTools.LIKE), 1.0 - db.getProbability(userId, DBTools.DISLIKE), 0.01);
+    }
 
         @Override
     public void tearDown() throws Exception {
