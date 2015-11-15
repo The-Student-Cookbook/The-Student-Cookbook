@@ -115,6 +115,12 @@ public class DBTools extends SQLiteOpenHelper {
         return dbTools;
     }
 
+    //Allows usage of getInstance to call non-static methods outside of
+    //private variable currentContext's global scope
+    public static Context getContext() {
+        return currentContext;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Database creation
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -416,6 +422,106 @@ public class DBTools extends SQLiteOpenHelper {
         }
 
         //TODO: use information to perform another SELECT to fill in other fields of recipe
+        //Queries Technique and Requires_Technique tables for list of techniques
+        //NOTE: As of iteration 1, this ONLY acquires names for techniques.
+        //This is because we are lacking data entries in the database for descriptions, URLS, etc.
+        for (int i = 0; i < recipes.size(); i++) {
+            int currRecipeId = recipes.get(i).getId();
+            List<Technique> techniques = new ArrayList<Technique>();
+            selectQuery = "SELECT techniqueName FROM Requires_Technique WHERE recipeId='" + currRecipeId + "'";
+
+            cursor = db.rawQuery(selectQuery, null);
+            index = 0;
+
+            if (cursor.moveToFirst()) {
+                do {
+                    //Add new recipe to list of recipes
+                    techniques.add(new Technique());
+
+                    //Extract values from DB and add to ingredients object in list
+                    try {
+                        techniques.get(index).setName(cursor.getString(0));
+                    } catch (Exception e) { //The database doesn't have all amts filled in
+                    }   //Currently can be null, if there is no entry in db
+
+                    //Increment counter var
+                    index++;
+                } while (cursor.moveToNext());
+            }
+
+            recipes.get(i).setTechniques(techniques);
+            cursor.close();
+        }
+
+        //Queries Tool and Requires_Tool tables for list of tools
+        //NOTE: As of iteration 1, this ONLY acquires names for tools.
+        //This is because we are lacking data entries in the database for descriptions, URLS, etc.
+        for (int i = 0; i < recipes.size(); i++) {
+            int currRecipeId = recipes.get(i).getId();
+            List<Tool> tools = new ArrayList<Tool>();
+            selectQuery = "SELECT toolName FROM Requires_Tool WHERE recipeId='" + currRecipeId + "'";
+
+            cursor = db.rawQuery(selectQuery, null);
+            index = 0;
+
+            if (cursor.moveToFirst()) {
+                do {
+                    //Add new recipe to list of recipes
+                    tools.add(new Tool());
+
+                    //Extract values from DB and add to ingredients object in list
+                    try {
+                        tools.get(index).setName(cursor.getString(0));
+                    } catch (Exception e) { //The database doesn't have all amts filled in
+                    }   //Currently can be null, if there is no entry in db
+
+                    //Increment counter var
+                    index++;
+                } while (cursor.moveToNext());
+            }
+
+            recipes.get(i).setTools(tools);
+            cursor.close();
+        }
+
+        //Obtains bases in recipe from db
+        //All of your bases are belong to us
+        for (int i = 0; i < recipes.size(); i++) {
+            int currRecipeId = recipes.get(i).getId();
+            List<String> bases = new ArrayList<String>();
+            selectQuery = "SELECT baseName FROM Has_Meal_Base WHERE recipeId='" + currRecipeId + "'";
+
+            cursor = db.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    bases.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+
+            recipes.get(i).setBases(bases);
+            cursor.close();
+        }
+
+        //Obtains cuisines in recipe from db
+        for (int i = 0; i < recipes.size(); i++) {
+            int currRecipeId = recipes.get(i).getId();
+            List<String> cuisineTypes = new ArrayList<String>();
+            selectQuery = "SELECT cuisineName FROM Has_Cuisine_Type WHERE recipeId='" + currRecipeId + "'";
+
+            cursor = db.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    cuisineTypes.add(cursor.getString(0));
+                } while (cursor.moveToNext());
+            }
+
+            recipes.get(i).setBases(cuisineTypes);
+            cursor.close();
+        }
+
+        //TODO: use information to perform another SELECT to fill in other fields of recipe
         //such as base(s), cuisine(s), rating, technique(s), and tool(s).
 
         db.close();
@@ -424,7 +530,7 @@ public class DBTools extends SQLiteOpenHelper {
     }
 
     //TODO: Iteration 2+, optimize selects by columns
-    public Preferences getPreferences(){
+    public Preferences getPreferences() {
         Preferences preferences = new Preferences();
         SQLiteDatabase db = this.getWritableDatabase();
         String selectQuery = "SELECT * FROM User";
@@ -443,20 +549,288 @@ public class DBTools extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-        //TODO: Iteration 2, finish base/cuisine/ingredientstock for prefs
-        //        selectQuery = "SELECT * FROM Rates_Cuisine WHERE countLiked > 0 AND countLiked > countDisliked";
-        //        if (cursor.moveToFirst()) {
-        //            do {
-        //                preferences.setGroupSize(Integer.parseInt(cursor.getString(4)));
-        //                preferences.setPrepTime(Integer.parseInt(cursor.getString(5)));
-        //                preferences.setCookTime(Integer.parseInt(cursor.getString(4)));
-        //
-        //                //Increment counter var
-        //                index++;
-        //            } while (cursor.moveToNext());
-        //        }
-
         return preferences;
+    }
+
+    public void setPreferences(Preferences preferences) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String updateQuery = "UPDATE User\n"
+                + "SET groupSize=" + preferences.getGroupSize()
+                + ", prepTime=" + preferences.getPrepTime()
+                + ", cookTime=" + preferences.getCookTime();
+
+        db.execSQL(updateQuery);
+    }
+
+    public List<String> getAllergicBases() {
+        List<String> allergicBases = new ArrayList<String>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT baseName FROM Allergic_To";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                allergicBases.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+
+        return allergicBases;
+    }
+
+    public void addAllergicBase(String baseName) {
+        //Until we add functionality to handle multiple users, use this:
+        int userId = 0;
+
+        String insertStatement = "INSERT INTO Allergic_To (userId, baseName)\n"
+                +"VALUES (" + userId
+                +", '" + baseName + "');";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(insertStatement);
+    }
+
+    public void removeAllergicBase(String baseName) {
+        //Until we add functionality to handle multiple users, use this:
+        int userId = 0;
+
+        String insertStatement = "DELETE FROM Allergic_To\n"
+                +"WHERE (" + "userId=" + userId + " AND baseName='"+baseName+"')";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(insertStatement);
+    }
+
+    public String getUserSetting(String field) {
+        String value;
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT " + field + " FROM User";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        value = cursor.getString(0);
+
+        return value;
+    }
+
+    public List<String> getUserSettings() {
+        List<String> settings = new ArrayList<String>();
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM User";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                //For each column (there are 8 for user), extract value
+                for (int i = 0; i < 8; i++)
+                {
+                    settings.add(cursor.getString(i));
+                }
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        return settings;
+    }
+
+    public void setUserSetting(String field, String value) {
+        final int DEFAULT_ID = 0;
+        final String DEFAULT_EMAIL = "";
+        final int DEFAULT_CRL = 0;
+        final int DEFAULT_CRD = 0;
+        final int DEFAULT_GROUPSIZE = 1;
+        final int DEFAULT_PREPTIME = 0;
+        final int DEFAULT_COOKTIME = 0;
+        final int DEFAULT_ESTIMATECOST = 0;
+
+        //Find right table
+        String table;
+        if (field == "allergicBases") table = "Allergic_To";
+        else table = "User";
+
+        //Checks if user table is empty
+        SQLiteDatabase db = this.getWritableDatabase();
+        String updateQuery = "SELECT * FROM " + table;
+        Cursor cursor = db.rawQuery(updateQuery, null);
+        try {
+            cursor = db.rawQuery(updateQuery, null);
+        } catch (Exception e) {
+        }
+
+        //If there is no inserted row in the table, we have to insert
+        //rather than update
+        if(cursor == null || cursor.getCount() == 0)
+        {
+
+
+            updateQuery = "INSERT INTO User (userId, email, countRecipesLiked,"
+                    + " countRecipesDisliked, groupSize, prepTime, cookTime, "
+                    + "estimateCost)\n"
+                    + "VALUES (" + DEFAULT_ID
+                    + ", '" + DEFAULT_EMAIL
+                    + "', " + DEFAULT_CRL
+                    + ", "  + DEFAULT_CRD
+                    + ", "  + DEFAULT_GROUPSIZE
+                    + ", "  + DEFAULT_PREPTIME
+                    + ", "  + DEFAULT_COOKTIME
+                    + ", "  + DEFAULT_ESTIMATECOST
+                    + ");";
+
+            db.execSQL(updateQuery);
+        }
+        else
+        {
+            //Note: this changes the values of the entire column.
+            //If we add functionality to support the storage of many user
+            //accounts, this must be modified (uncomment out below);
+            updateQuery = "UPDATE " + table + "\n" +
+                    "SET " + field + "='" + value + "'";
+            //updateQuery += "\nWHERE userId=" + userId;
+            updateQuery += ";";
+
+            db.execSQL(updateQuery);
+        }
+    }
+
+    public void setUserSetting(String field, int value) {
+        final int DEFAULT_ID = 0;
+        final String DEFAULT_EMAIL = "";
+        final int DEFAULT_CRL = 0;
+        final int DEFAULT_CRD = 0;
+        final int DEFAULT_GROUPSIZE = 1;
+        final int DEFAULT_PREPTIME = 0;
+        final int DEFAULT_COOKTIME = 0;
+        final int DEFAULT_ESTIMATECOST = 0;
+
+        //Checks if user table is empty
+        SQLiteDatabase db = this.getWritableDatabase();
+        String updateQuery = "SELECT * FROM User";
+        Cursor cursor = db.rawQuery(updateQuery, null);
+        try {
+            cursor = db.rawQuery(updateQuery, null);
+        } catch (Exception e) {
+        }
+
+        //If there is no inserted row in the table, we have to insert
+        //rather than update
+        if(cursor == null || cursor.getCount() == 0)
+        {
+
+
+            updateQuery = "INSERT INTO User (userId, email, countRecipesLiked,"
+                    + " countRecipesDisliked, groupSize, prepTime, cookTime, "
+                    + "estimateCost)\n"
+                    + "VALUES (" + DEFAULT_ID
+                    + ", '" + DEFAULT_EMAIL
+                    + "', " + DEFAULT_CRL
+                    + ", "  + DEFAULT_CRD
+                    + ", "  + DEFAULT_GROUPSIZE
+                    + ", "  + DEFAULT_PREPTIME
+                    + ", "  + DEFAULT_COOKTIME
+                    + ", "  + DEFAULT_ESTIMATECOST
+                    + ");";
+
+            db.execSQL(updateQuery);
+        }
+        else
+        {
+            //Note: this changes the values of the entire column.
+            //If we add functionality to support the storage of many user
+            //accounts, this must be modified (uncomment out below);
+            updateQuery = "UPDATE User\n" +
+                    "SET " + field + "=" + value;
+            //updateQuery += "\nWHERE userId=" + userId;
+            updateQuery += ";";
+
+            db.execSQL(updateQuery);
+        }
+    }
+
+    public List<Tool> getUserTools() {
+        List<Tool> tools = new ArrayList<Tool>();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String selectQuery = "SELECT Owns_Tool.toolName, Tool.*\n"
+                +"FROM Owns_Tool\n"
+                +"INNER JOIN"
+                +"Tool"
+                +"ON Owns_Tool.toolName = Tool.toolName";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                tools.add(new Tool());
+
+                tools.get(index).setName(cursor.getString(1));
+                tools.get(index).setDescription(cursor.getString(2));
+                tools.get(index).setImageURL(cursor.getString(3));
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        return tools;
+    }
+
+    public List<Tool> getTools() {
+        List<Tool> tools = new ArrayList<Tool>();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String selectQuery = "SELECT * FROM Tool";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                tools.add(new Tool());
+
+                tools.get(index).setName(cursor.getString(0));
+                tools.get(index).setDescription(cursor.getString(1));
+                tools.get(index).setImageURL(cursor.getString(2));
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        return tools;
+    }
+
+    public void addTool(Tool tool) {
+        //Until we add functionality to handle multiple users, use this:
+        int userId = 0;
+
+        String toolName = tool.getName();
+
+        String insertStatement = "INSERT INTO Owns_Tool (userId, toolName)\n"
+                +"VALUES (" + userId
+                +", '" + toolName + "');";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(insertStatement);
+    }
+
+    public void removeTool(Tool tool) {
+        //Until we add functionality to handle multiple users, use this:
+        int userId = 0;
+
+        String toolName = tool.getName();
+
+        String insertStatement = "DELETE FROM Owns_Tool\n"
+                +"WHERE (" + "userId=" + userId + " AND toolName='"+toolName+"')";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(insertStatement);
     }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////
