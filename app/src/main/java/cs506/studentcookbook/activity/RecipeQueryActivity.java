@@ -96,17 +96,6 @@ public class RecipeQueryActivity extends Activity {
 
         });
 
-        // EVENTUALLY REMOVE THIS!
-        /*chosenRecipeList = new ArrayList<Recipe>();
-        Recipe temp = new Recipe();
-        temp.setName("Test Recipe");
-        temp.setRating(5);
-        chosenRecipeList.add(temp);
-        temp = new Recipe();
-        temp.setName("2nd Recipe");
-        temp.setRating(2);
-        chosenRecipeList.add(temp);*/
-
         // TODO: Get rid of the temp var once the null branch of getSuggestedRecipes is setup
         dbTools = DBTools.getInstance(this);
         Preferences tempPref = new Preferences();

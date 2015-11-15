@@ -3,5 +3,9 @@
 
     <string name="hello">Hello World, HelloWorldActivity!</string>
     <string name="app_name">Student Cookbook</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="help">Help</string>
+    <string name="okay">Okay</string>
+    <string name="edit_profile_helpDialog">To add an item: Long click a group name\n\nTo delete an item: Long click an item in the list. </string>
 
 </resources>

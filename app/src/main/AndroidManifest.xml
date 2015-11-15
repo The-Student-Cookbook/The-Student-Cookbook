@@ -42,6 +42,10 @@
         </activity>
         <activity android:name=".activity.CookMealActivity" >
         </activity>
+        <activity android:name=".activity.EditProfileActivity" >
+        </activity>
+        <activity android:name=".activity.ProfileActivity" >
+        </activity>
     </application>
 
 </manifest>
