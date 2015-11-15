@@ -423,7 +423,162 @@ public class DBToolsUnitTest extends AndroidTestCase {
         assertEquals(db.getProbability(userId, DBTools.LIKE), 1.0 - db.getProbability(userId, DBTools.DISLIKE), 0.01);
     }
 
-    public void testConditionalProb() {
+    public void testConditionalProbCuisine() {
+        context = new RenamingDelegatingContext(getContext(), "test_");
+        db = new DBTools(context);
+        db.createTables();
+
+        int userId = 1337;
+        double likeTotal = 0.0;
+        double dislikeTotal = 0.0;
+
+        double likeC1 = 0.0;
+        double dislikeC1 = 0.0;
+
+        double treshold = 0.001;
+
+        // add the cuisine 1
+        db.incrementCuisineRating(userId, "cuisine1", 10, DBTools.LIKE);
+        likeC1 += 10.0;
+        likeTotal += 10.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        db.incrementCuisineRating(userId, "cuisine1", 7, DBTools.DISLIKE);
+        dislikeC1 += 7.0;
+        dislikeTotal += 7.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+        assertEquals(dislikeC1 / dislikeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.DISLIKE), treshold);
+
+        // add cuisine 2
+        db.incrementCuisineRating(userId, "cuisine2", 4, DBTools.LIKE);
+        likeTotal += 4.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        db.incrementCuisineRating(userId, "cuisine2", 4, DBTools.LIKE);
+        likeTotal += 4.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        db.incrementCuisineRating(userId, "cuisine2", 2, DBTools.LIKE);
+        likeTotal += 2.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        db.incrementCuisineRating(userId, "cuisine2", 1, DBTools.LIKE);
+        likeTotal += 1.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        // add cuisine 3
+        db.incrementCuisineRating(userId, "cuisine3", 5, DBTools.LIKE);
+        likeTotal += 5.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        db.incrementCuisineRating(userId, "cuisine3", 6, DBTools.LIKE);
+        likeTotal += 6.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        // go back to cuisine 1
+        db.incrementCuisineRating(userId, "cuisine1", 3, DBTools.LIKE);
+        likeC1 += 3.0;
+        likeTotal += 3.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+
+        // add in some dislikes
+        db.incrementCuisineRating(userId, "cuisine3", 6, DBTools.DISLIKE);
+        dislikeTotal += 6.0;
+        assertEquals(dislikeC1 / dislikeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.DISLIKE), treshold);
+
+        db.incrementCuisineRating(userId, "cuisine3", 2, DBTools.DISLIKE);
+        dislikeTotal += 2.0;
+        assertEquals(dislikeC1 / dislikeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.DISLIKE), treshold);
+
+        db.incrementCuisineRating(userId, "cuisine2", 1, DBTools.DISLIKE);
+        dislikeTotal += 1.0;
+        assertEquals(dislikeC1 / dislikeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.DISLIKE), treshold);
+
+        // go back to cuisine 1 again
+        db.incrementCuisineRating(userId, "cuisine1", 1, DBTools.DISLIKE);
+        dislikeC1 += 1.0;
+        dislikeTotal += 1.0;
+        assertEquals(likeC1 / likeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.LIKE), treshold);
+        assertEquals(dislikeC1 / dislikeTotal, db.getConditionalProbabilityCuisine(userId, "cuisine1", DBTools.DISLIKE), treshold);
+    }
+
+    public void testConditionalProbBase() {
+        context = new RenamingDelegatingContext(getContext(), "test_");
+        db = new DBTools(context);
+        db.createTables();
+
+        int userId = 1337;
+        double likeTotal = 0.0;
+        double dislikeTotal = 0.0;
+
+        double likeB1 = 0.0;
+        double dislikeB1 = 0.0;
+
+        double treshold = 0.001;
+
+        // add the cuisine 1
+        db.incrementBaseRating(userId, "base1", 10, DBTools.LIKE);
+        likeB1 += 10.0;
+        likeTotal += 10.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        db.incrementBaseRating(userId, "base1", 7, DBTools.DISLIKE);
+        dislikeB1 += 7.0;
+        dislikeTotal += 7.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+        assertEquals(dislikeB1 / dislikeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.DISLIKE), treshold);
+
+        // add base 2
+        db.incrementBaseRating(userId, "base2", 4, DBTools.LIKE);
+        likeTotal += 4.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        db.incrementBaseRating(userId, "base2", 4, DBTools.LIKE);
+        likeTotal += 4.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        db.incrementBaseRating(userId, "base2", 2, DBTools.LIKE);
+        likeTotal += 2.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        db.incrementBaseRating(userId, "base2", 1, DBTools.LIKE);
+        likeTotal += 1.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        // add base 3
+        db.incrementBaseRating(userId, "base3", 5, DBTools.LIKE);
+        likeTotal += 5.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        db.incrementBaseRating(userId, "base3", 6, DBTools.LIKE);
+        likeTotal += 6.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        // go back to base 1
+        db.incrementBaseRating(userId, "base1", 3, DBTools.LIKE);
+        likeB1 += 3.0;
+        likeTotal += 3.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+
+        // add in some dislikes
+        db.incrementBaseRating(userId, "base3", 6, DBTools.DISLIKE);
+        dislikeTotal += 6.0;
+        assertEquals(dislikeB1 / dislikeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.DISLIKE), treshold);
+
+        db.incrementBaseRating(userId, "base3", 2, DBTools.DISLIKE);
+        dislikeTotal += 2.0;
+        assertEquals(dislikeB1 / dislikeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.DISLIKE), treshold);
+
+        db.incrementBaseRating(userId, "base2", 1, DBTools.DISLIKE);
+        dislikeTotal += 1.0;
+        assertEquals(dislikeB1 / dislikeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.DISLIKE), treshold);
+
+        // go back to base 1 again
+        db.incrementBaseRating(userId, "base1", 1, DBTools.DISLIKE);
+        dislikeB1 += 1.0;
+        dislikeTotal += 1.0;
+        assertEquals(likeB1 / likeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.LIKE), treshold);
+        assertEquals(dislikeB1 / dislikeTotal, db.getConditionalProbabilityBase(userId, "base1", DBTools.DISLIKE), treshold);
 
     }
 

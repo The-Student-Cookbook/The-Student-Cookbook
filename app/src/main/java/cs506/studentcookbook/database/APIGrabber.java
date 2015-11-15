@@ -155,7 +155,10 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken"};
+    // TODO make use of this to ensure we don't have chicken breast != chicken
+    public static final String[] CORRECTED_SYNONYMS = {"sandwiches", "chicken", "beef", "pizza", "pasta"};
+
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken", "pepper", "pasta"};
 
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";
@@ -169,7 +172,7 @@ public class APIGrabber {
     private static final double MIN_REVIEW = 2.0;
     private static final int MIN_REVIEW_COUNT = 1;
     private static final int MAX_INGREDIENTS = 6;
-    private static final int MAX_PAGE = 1;
+    private static final int MAX_PAGE = 2;
     private static final int RESULTS_PER_PAGE = 25;
 
     /**
