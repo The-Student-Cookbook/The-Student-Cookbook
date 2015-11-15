@@ -6,6 +6,7 @@ import android.test.RenamingDelegatingContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import cs506.studentcookbook.database.APIGrabber;
 import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Ingredient;
 import cs506.studentcookbook.model.Preferences;
@@ -424,6 +425,17 @@ public class DBToolsUnitTest extends AndroidTestCase {
 
     public void testConditionalProb() {
 
+    }
+
+    public void testAPIHardcodedDescriptions() {
+        assertEquals(APIGrabber.TOOLS_DESCRIPTION.length, APIGrabber.TOOLS_LIST.length);
+        assertEquals(APIGrabber.TOOLS_URLS.length, APIGrabber.TOOLS_LIST.length);
+        assertEquals(APIGrabber.TOOLS_URLS.length, APIGrabber.TOOLS_DESCRIPTION.length);
+
+        assertEquals(APIGrabber.TECHNIQUES_DESCRIPTION.length, APIGrabber.TECHNIQUES_LIST.length);
+        assertEquals(APIGrabber.TECHNIQUES_HELP_URLS.length, APIGrabber.TECHNIQUES_LIST.length);
+        assertEquals(APIGrabber.TECHNIQUES_HELP_URLS.length, APIGrabber.TECHNIQUES_DESCRIPTION.length);
+        assertEquals(APIGrabber.TECHNIQUES_HELP_URLS.length, APIGrabber.TECHNIQUES_IMAGE_URLS.length);
     }
 
         @Override

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cs506.studentcookbook.model.Tool;
@@ -21,6 +22,7 @@ import cs506.studentcookbook.model.Technique;
 import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.model.Ingredient;
 import cs506.studentcookbook.model.Preferences;
+
 
 /**
  * The DBTools class is a wrapper around the SQLite database. This class currently provides
@@ -482,7 +484,7 @@ public class DBTools extends SQLiteOpenHelper {
         String technique = "CREATE TABLE IF NOT EXISTS " + TABLE_TECHNIQUE + "(" +
                 "techniqueName TEXT PRIMARY KEY NOT NULL" + ", " +
                 "description TEXT NOT NULL" + ", " +
-                "difficulty INTEGER NOT NULL" + ", " +
+                "difficulty INTEGER" + ", " +
                 "imageUrlText TEXT" +
                 ");";
 
@@ -737,11 +739,58 @@ public class DBTools extends SQLiteOpenHelper {
     }
 
     public void addToolToDatabase(Tool tool) {
-        // TODO
+        int index = Arrays.asList(APIGrabber.TOOLS_LIST).indexOf(tool.getName());
+        if(index < 0 || index > APIGrabber.TOOLS_LIST.length) {
+            return;
+        }
+
+        String desc = APIGrabber.TOOLS_DESCRIPTION[index];
+        String imageUrl = APIGrabber.TOOLS_URLS[index];
+        tool.setDescription(desc);
+        tool.setImageURL(imageUrl);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("toolName", tool.getName());
+        values.put("description", tool.getDescription());
+        values.put("imageURL", tool.getImageURL());
+        db.insertWithOnConflict(TABLE_TOOL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+        values = new ContentValues();
+        values.put("urlText", tool.getImageURL());
+        db.insertWithOnConflict(TABLE_URL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    public void addTechniqueToDatabase(Technique tool) {
-        // TODO
+    public void addTechniqueToDatabase(Technique technique) {
+        int index = Arrays.asList(APIGrabber.TECHNIQUES_LIST).indexOf(technique.getName());
+        if(index < 0 || index > APIGrabber.TECHNIQUES_LIST.length) {
+            return;
+        }
+
+        String desc = APIGrabber.TECHNIQUES_DESCRIPTION[index];
+        String helpURl = APIGrabber.TECHNIQUES_HELP_URLS[index];
+        String imageUrl = APIGrabber.TECHNIQUES_IMAGE_URLS[index];
+        technique.setDescription(desc);
+        technique.addExternalURL(helpURl);
+        technique.setImageURL(imageUrl);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("techniqueName", technique.getName());
+        values.put("description", technique.getDescription());
+        values.put("imageUrlText", technique.getImageURL());
+        db.insertWithOnConflict(TABLE_TECHNIQUE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+        values = new ContentValues();
+        values.put("urlText", technique.getImageURL());
+        db.insertWithOnConflict(TABLE_URL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+        if(technique.getExternalURLs() != null && technique.getExternalURLs().size() > 0) {
+            values = new ContentValues();
+            values.put("techniqueName", technique.getName());
+            values.put("urlText", technique.getExternalURLs().get(0));
+            db.insertWithOnConflict(TABLE_HAS_EXTERNAL_URL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
     }
 
     public void addIngredientToDatabase(String ingredient) {

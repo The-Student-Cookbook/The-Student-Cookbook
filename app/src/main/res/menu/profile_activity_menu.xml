@@ -3,9 +3,9 @@
 
     <item
         android:id="@+id/action_editProfile"
-        android:icon="@drawable/ic_settings_white_24dp"
         android:title="@string/edit_profile"
         />
+    <!-- android:icon="@drawable/ic_settings_white_24dp" -->
 
     <!-- Settings, should always be in the overflow -->
     <!-- <item android:id="@+id/action_settings"
