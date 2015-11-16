@@ -907,7 +907,7 @@ public class DBToolsUnitTest extends AndroidTestCase {
     public void testRateRecipes() {
         context = new RenamingDelegatingContext(getContext(), "test_");
         db = new DBTools(context);
-        db.resetDatabase();,
+        db.resetDatabase();
         db.createTables();
         populateEmptyTables(db);
 
