@@ -46,6 +46,12 @@
         </activity>
         <activity android:name=".activity.ProfileActivity" >
         </activity>
+        <activity android:name=".activity.ClearActivity" >
+        </activity>
+        <activity android:name=".activity.MealBaseQueryActivity" >
+        </activity>
+        <activity android:name=".activity.BackupAndRestoreActivity" >
+        </activity>
     </application>
 
 </manifest>
