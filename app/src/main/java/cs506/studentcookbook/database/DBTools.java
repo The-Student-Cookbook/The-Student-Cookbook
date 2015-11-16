@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -640,7 +641,10 @@ public class DBTools extends SQLiteOpenHelper {
                 +", '" + baseName + "');";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(insertStatement);
+        try {
+            db.execSQL(insertStatement);
+        } catch (SQLiteConstraintException e){
+        }
     }
 
     public void removeAllergicBase(String baseName) {

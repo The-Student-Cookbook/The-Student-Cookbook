@@ -52,6 +52,8 @@
         </activity>
         <activity android:name=".activity.BackupAndRestoreActivity" >
         </activity>
+        <activity android:name=".activity.AskAboutProfileSetupActivity" >
+        </activity>
     </application>
 
 </manifest>

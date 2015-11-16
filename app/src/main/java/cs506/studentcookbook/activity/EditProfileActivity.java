@@ -3,8 +3,6 @@ package cs506.studentcookbook.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
@@ -12,17 +10,19 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import cs506.studentcookbook.R;
 import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Preferences;
+import cs506.studentcookbook.model.Tool;
+import cs506.studentcookbook.model.User;
 import cs506.studentcookbook.utils.ProfileExpandableListAdapter;
 
 public class EditProfileActivity extends Activity {
@@ -30,41 +30,43 @@ public class EditProfileActivity extends Activity {
     private ExpandableListView preferencesList;
     private ProfileExpandableListAdapter profileExpListAdapter;
     private DBTools dbTools;
+    private User user;
     private Preferences preferences;
     private List<String> profileCategories;
     private ArrayList<ArrayList<String>> profileData;
 
 
     //Preferences Lists
-    private final String[] listHeaders = {"Allergies", "Dietary Restrictions", "Preferences", "Tools"};
+    private final String[] listHeaders = {"Allergies", "Preferences", "Tools"};
     private ArrayList<String> allergiesList;
-    private final String PROFILE_PARCEL_ALLERGIES_KEY = "PROFILE_PARCEL_ALLERGIES_KEY";
-    private ArrayList<String> dietaryList;
-    private final String PROFILE_PARCEL_DIETARY_KEY = "PROFILE_PARCEL_DIETARY_KEY";
     private ArrayList<String> preferences_List;
-    private final String PROFILE_PARCEL_PREFERENCES_KEY = "PROFILE_PARCEL_PREFERENCES_KEY";
     private ArrayList<String> toolsList;
-    private final String PROFILE_PARCEL_TOOLS_KEY = "PROFILE_PARCEL_TOOLS_KEY";
     private ArrayList<ArrayList<String>> listOfLists;
+    private ArrayList<Tool> actualToolList;
+    private ArrayList<Tool> toolToRemove;
+    private ArrayList<String> allergiesToRemove;
+    private ArrayList<String> preferencesToRemove;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_edit_profile);
         setTitle("Edit Profile");
+
+        // Grab an instance of the DBTools
+        dbTools = DBTools.getInstance(this);
+        user = dbTools.getUserSettings();
+        preferences = dbTools.getPreferences();
+        toolToRemove = new ArrayList<>();
+        allergiesToRemove = new ArrayList<>();
+        preferencesToRemove = new ArrayList<>();
 
         // Recover the preferences that were passed here
         setupPreferences();
 
-        // Grab an instance of the DBTools
-        dbTools = DBTools.getInstance(this);
-
-
-
-
         //Grab the list view
-        preferencesList = (ExpandableListView) findViewById(R.id.profile_expand_list);
+        preferencesList = (ExpandableListView) findViewById(R.id.editProfile_expandListview);
 
 
         profileExpListAdapter = new ProfileExpandableListAdapter(this, listHeaders, listOfLists);
@@ -82,7 +84,7 @@ public class EditProfileActivity extends Activity {
 
                     // Set up the input
                     final EditText input = new EditText(EditProfileActivity.this);
-                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    // Specify the type of input expected
                     input.setInputType(InputType.TYPE_CLASS_TEXT );
                     builder.setView(input);
 
@@ -110,24 +112,71 @@ public class EditProfileActivity extends Activity {
                 // Delete the item that was clicked from pref's
                 else if (ExpandableListView.getPackedPositionType(id) == ExpandableListView.PACKED_POSITION_TYPE_CHILD) {
 
-
-                    // TODO: Finish this ish up once the DB stuff is good
                     // Removed and update prefs
                     String removed = listOfLists.get(groupPosition).remove(childPosition);
-                    //dbTools.
-                    profileExpListAdapter.notifyDataSetChanged();
+                    switch (groupPosition) {
+                        case 0:
+                            allergiesToRemove.add(removed);
+                            break;
+                        case 1:
+                            dbTools.incrementBaseRating(0, removed, 1, DBTools.DISLIKE);
+                            break;
 
+                        case 2:
+                            Tool toRemove = actualToolList.get(childPosition);
+                            toolToRemove.add(toRemove);
+                            break;
+
+                        default:
+                            break;
+                    }
+
+                    profileExpListAdapter.notifyDataSetChanged();
                     // Return true as we are handling the event.
                     return true;
                 }
-
-
 
                 return false;
             }
         });
 
-        // TODO: Get Done/Cancel buttons working
+        // Done button, returns to the profile screen
+        Button doneButton = (Button) findViewById(R.id.editprofile_done_button);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.setAllergicBases(listOfLists.get(0));
+                preferences.setLikedCuisines(listOfLists.get(1));
+
+                //user.setTools();
+
+                for(String allergy: allergiesToRemove)
+                    dbTools.removeAllergicBase(allergy);
+
+
+                for(String pref: preferencesToRemove)
+                    preferences.removeLikedBase(pref);
+
+                for(Tool tool: toolToRemove)
+                    dbTools.removeTool(tool);
+
+                dbTools.setPreferences(preferences);
+                dbTools.setUserSettings(user);
+
+                finish();
+            }
+        });
+
+
+        // Cancel button shouldn't make changes.
+        Button cancelButton = (Button) findViewById(R.id.editprofile_cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
     }
 
 
@@ -161,42 +210,26 @@ public class EditProfileActivity extends Activity {
     }
 
     private void setupPreferences(){
-        Bundle savedProfileInfo = getIntent().getExtras();
-        allergiesList = savedProfileInfo.getStringArrayList(PROFILE_PARCEL_ALLERGIES_KEY);
-        dietaryList = savedProfileInfo.getStringArrayList(PROFILE_PARCEL_DIETARY_KEY);
-        preferences_List = savedProfileInfo.getStringArrayList(PROFILE_PARCEL_PREFERENCES_KEY);
-        toolsList = savedProfileInfo.getStringArrayList(PROFILE_PARCEL_TOOLS_KEY);
-
+        //Get the data here for the list
+        preferences = dbTools.getPreferences();
+        user = dbTools.getUserSettings();
         listOfLists = new ArrayList<>();
+
+
+        allergiesList = (ArrayList<String>) dbTools.getAllergicBases();
+
+        preferences_List = (ArrayList<String>) preferences.getLikedBases();
+
+        toolsList = new ArrayList<>();
+        actualToolList = (ArrayList<Tool>)dbTools.getTools();
+        for(Tool t: actualToolList){
+            toolsList.add(t.getName());
+        }
+
         listOfLists.add(allergiesList);
-        listOfLists.add(dietaryList);
         listOfLists.add(preferences_List);
         listOfLists.add(toolsList);
     }
 
-    // TODO: Setup this list with real data
-    private void setupList(){
-        //Get the data here for the list
-        preferences = dbTools.getPreferences();
-        profileCategories = preferences.getDislikedCuisines();
-        profileData = new ArrayList<>();
 
-
-
-
-
-        // TEMP
-        profileCategories.add("Allergies");
-        profileCategories.add("Tools");
-        profileCategories.add("Dietary Restrictions");
-        List<String> tempData = new ArrayList<>();
-        tempData.add("First");
-        tempData.add("1");
-        tempData.add("2");
-
-        for(String cat: profileCategories)
-            profileData.get(profileCategories.indexOf(cat)).addAll(tempData);
-
-
-    }
 }

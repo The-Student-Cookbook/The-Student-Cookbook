@@ -4,8 +4,8 @@
     <item
         android:id="@+id/action_editProfile_help"
         android:title="@string/help"
-        />
-    <!-- android:icon="@drawable/ic_help_white_24dp" -->
+        android:icon="@drawable/ic_help_white_24dp"
+        app:showAsAction="always"/>
 
     <!-- Settings, should always be in the overflow -->
     <!-- <item android:id="@+id/action_settings"

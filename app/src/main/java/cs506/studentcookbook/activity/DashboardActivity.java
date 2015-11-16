@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.database.DatabaseTestActivity;
+import cs506.studentcookbook.model.User;
 
 public class DashboardActivity extends ListActivity {
 
@@ -20,16 +21,25 @@ public class DashboardActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // setContentView(R.layout.activity_dashboard);
+
+        //First check and see if there is a profile:
+        DBTools db = DBTools.getInstance(this);
+        User user = db.getUserSettings();
+
+        // First launch
+        if(user.getEmail().equals("null")){
+            Intent firstLaunch = new Intent(this, AskAboutProfileSetupActivity.class);
+            this.startActivity(firstLaunch);
+        }
 
         // TODO: there's probably a more robust way to do this
         // we should be able to define a list of Activities that get started when clicking a list item
         String[] dashboardItems = {"Help me choose...", "Choose for me...", "Browse all...",
-                "My Recipes", "Grocery List", "Settings", "Start database activity (temporary)", "Profile Page (Temp!)"};
+                "My Recipes", "Grocery List", "Settings", "Start database activity (temporary)"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dashboardItems);
         setListAdapter(adapter);
 
-        DBTools db = DBTools.getInstance(this);
+
         db.populateDatabase();
     }
 
@@ -62,10 +72,6 @@ public class DashboardActivity extends ListActivity {
                 break;
             case 6:
                 intent = new Intent(this, DatabaseTestActivity.class);
-                this.startActivity(intent);
-                break;
-            case 7:
-                intent = new Intent(this, ProfileActivity.class);
                 this.startActivity(intent);
                 break;
             default:

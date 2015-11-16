@@ -26,14 +26,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:id="@+id/button4"
+            android:id="@+id/editprofile_cancel_button"
             android:layout_weight="1" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Done"
-            android:id="@+id/button7"
+            android:id="@+id/editprofile_done_button"
             android:layout_weight="1" />
     </LinearLayout>
 </RelativeLayout>

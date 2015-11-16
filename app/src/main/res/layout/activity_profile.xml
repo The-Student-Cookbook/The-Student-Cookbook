@@ -7,10 +7,39 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="cs506.studentcookbook.activity.ProfileActivity">
 
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Email:"
+        android:layout_alignParentTop="true"
+        android:id="@+id/profile_EmailLocation"
+        />
+
     <ExpandableListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/profile_expand_list"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/profile_EmailLocation"
+        android:layout_above="@+id/profile_buttonDivider"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/profile_buttonDivider" >
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Home"
+            android:id="@+id/profile_homeButton"
+            android:layout_weight="1" />
+
+
+    </LinearLayout>
 </RelativeLayout>
