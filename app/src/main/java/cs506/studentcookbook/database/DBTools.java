@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import cs506.studentcookbook.model.Tool;
@@ -21,6 +22,7 @@ import cs506.studentcookbook.model.Technique;
 import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.model.Ingredient;
 import cs506.studentcookbook.model.Preferences;
+
 
 /**
  * The DBTools class is a wrapper around the SQLite database. This class currently provides
@@ -354,6 +356,8 @@ public class DBTools extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
+                // TODO Connor or Steve add support for fetching techniques and tools
+
                 //Add new recipe to list of recipes
                 recipes.add(new Recipe());
 
@@ -459,6 +463,16 @@ public class DBTools extends SQLiteOpenHelper {
         return preferences;
     }
 
+    public Technique getTechnique(String name) {
+        // TODO Connor or Steve
+        return null;
+    }
+
+    public Tool getTool(String name) {
+        // TODO Connor or Steve
+        return null;
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Create tables methods
     ///////////////////////////////////////////////////////////////////////////////////////////////
@@ -482,7 +496,7 @@ public class DBTools extends SQLiteOpenHelper {
         String technique = "CREATE TABLE IF NOT EXISTS " + TABLE_TECHNIQUE + "(" +
                 "techniqueName TEXT PRIMARY KEY NOT NULL" + ", " +
                 "description TEXT NOT NULL" + ", " +
-                "difficulty INTEGER NOT NULL" + ", " +
+                "difficulty INTEGER" + ", " +
                 "imageUrlText TEXT" +
                 ");";
 
@@ -737,11 +751,58 @@ public class DBTools extends SQLiteOpenHelper {
     }
 
     public void addToolToDatabase(Tool tool) {
-        // TODO
+        int index = Arrays.asList(APIGrabber.TOOLS_LIST).indexOf(tool.getName());
+        if(index < 0 || index > APIGrabber.TOOLS_LIST.length) {
+            return;
+        }
+
+        String desc = APIGrabber.TOOLS_DESCRIPTION[index];
+        String imageUrl = APIGrabber.TOOLS_URLS[index];
+        tool.setDescription(desc);
+        tool.setImageURL(imageUrl);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("toolName", tool.getName());
+        values.put("description", tool.getDescription());
+        values.put("imageURL", tool.getImageURL());
+        db.insertWithOnConflict(TABLE_TOOL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+        values = new ContentValues();
+        values.put("urlText", tool.getImageURL());
+        db.insertWithOnConflict(TABLE_URL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    public void addTechniqueToDatabase(Technique tool) {
-        // TODO
+    public void addTechniqueToDatabase(Technique technique) {
+        int index = Arrays.asList(APIGrabber.TECHNIQUES_LIST).indexOf(technique.getName());
+        if(index < 0 || index > APIGrabber.TECHNIQUES_LIST.length) {
+            return;
+        }
+
+        String desc = APIGrabber.TECHNIQUES_DESCRIPTION[index];
+        String helpURl = APIGrabber.TECHNIQUES_HELP_URLS[index];
+        String imageUrl = APIGrabber.TECHNIQUES_IMAGE_URLS[index];
+        technique.setDescription(desc);
+        technique.addExternalURL(helpURl);
+        technique.setImageURL(imageUrl);
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("techniqueName", technique.getName());
+        values.put("description", technique.getDescription());
+        values.put("imageUrlText", technique.getImageURL());
+        db.insertWithOnConflict(TABLE_TECHNIQUE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+        values = new ContentValues();
+        values.put("urlText", technique.getImageURL());
+        db.insertWithOnConflict(TABLE_URL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+
+        if(technique.getExternalURLs() != null && technique.getExternalURLs().size() > 0) {
+            values = new ContentValues();
+            values.put("techniqueName", technique.getName());
+            values.put("urlText", technique.getExternalURLs().get(0));
+            db.insertWithOnConflict(TABLE_HAS_EXTERNAL_URL, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+        }
     }
 
     public void addIngredientToDatabase(String ingredient) {
@@ -839,7 +900,7 @@ public class DBTools extends SQLiteOpenHelper {
                 values.put("countDisliked", numDisliked + quantity);
             }
 
-            db.update(TABLE_RATES_CUISINE, values, "userId=" + userId, null);
+            db.update(TABLE_RATES_CUISINE, values, "userId=" + userId + " AND cuisineName='" + cuisineName + "'", null);
 
         } else {
             String columnName = "countLiked";
@@ -875,7 +936,7 @@ public class DBTools extends SQLiteOpenHelper {
                 values.put("countDisliked", numDisliked + quantity);
             }
 
-            db.update(TABLE_RATES_MEAL_BASE, values, "userId=" + userId, null);
+            db.update(TABLE_RATES_MEAL_BASE, values, "userId=" + userId + " AND baseName='" + baseName + "'", null);
 
         } else {
             String columnName = "countLiked";
@@ -965,7 +1026,9 @@ public class DBTools extends SQLiteOpenHelper {
         return 0;
     }
 
-    // P(LIKE) or P(DISLIKE)
+    /**
+     * P(LIKE) or P(DISLIKE)
+     */
     public double getProbability(int userId, boolean like) {
         double[] likeAndDislike = totalLikeAndDislike(userId);
         double likeD = likeAndDislike[0];
@@ -1004,8 +1067,8 @@ public class DBTools extends SQLiteOpenHelper {
 
     private double[] totalLikeAndDislike(int userId) {
         // returned as an array: [like, dislike]
-
         // cache the value because this operation is expensive
+
         if(countDataIsFresh && countDislikeCuisine >= 0.0 && countLikeCuisine >= 0.0 && countLikeBase >= 0.0 && countDislikeBase>= 0.0) {
             System.out.println("Grabbed cached count data.");
             double result[] = {countLikeCuisine + countLikeBase, countDislikeCuisine + countDislikeBase};
@@ -1086,7 +1149,9 @@ public class DBTools extends SQLiteOpenHelper {
         return result;
     }
 
-    // P(cuisine|LIKE) or P(cuisine|DISLIKE)
+    /**
+     * P(cuisine|LIKE) or P(cuisine|DISLIKE)
+     */
     public double getConditionalProbabilityCuisine(int userId, String cuisineName, boolean like) {
         // get how many times the cuisine was liked or disliked
         double unitCount = getCuisineLikeOrDislikeCount(userId, cuisineName, like);
@@ -1101,8 +1166,34 @@ public class DBTools extends SQLiteOpenHelper {
         return (unitCount + SMOOTHING_FACTOR) / (totalCount * (1.0  + SMOOTHING_FACTOR));
     }
 
-    // P(base|LIKE) or P(base|DISLIKE)
-    public double getConditionalProbabilityBase(int userId, String cuisineName, boolean like) {
-        return 0.0;
+    /**
+     * P(base|LIKE) or P(base|DISLIKE)
+     */
+    public double getConditionalProbabilityBase(int userId, String baseName, boolean like) {
+        // get how many times the base was liked or disliked
+        double unitCount = getBaseLikeOrDislikeCount(userId, baseName, like);
+
+        // get how many times any base was liked or disliked
+        double[] baseTotal = totalBaseCount(userId);
+        double totalCount = baseTotal[0];
+        if(like == DISLIKE) {
+            totalCount = baseTotal[1];
+        }
+
+        return (unitCount + SMOOTHING_FACTOR) / (totalCount * (1.0  + SMOOTHING_FACTOR));
+    }
+
+    /**
+     * Use getProbability(), getConditionalProbabilityCuisine(), and getConditionalProbabilityBase()
+     * to classify the recipe with this ID as suggseted (true) or not suggested (false)
+     */
+    public boolean recipeIsSuggested(int recipeId, int userId) {
+        // TODO Connor
+        return false;
+    }
+
+    public List<Recipe> performAISearch(int userId) {
+        // TODO Connor
+        return null;
     }
 }

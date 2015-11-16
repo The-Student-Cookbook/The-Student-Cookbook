@@ -31,11 +31,101 @@ import cs506.studentcookbook.model.Tool;
  */
 public class APIGrabber {
 
-    public static final String[] TOOLS_LIST = {"skewer", "grill", "oven", "pot", "saucepan",
-            "casserole", "dish", "skillet", "saucepan", "microwave", "broiler", "foil",
-            "food processor", "barbecue", "frying pan", "baking pan", "pan", "bowl"};
-    public static final String[] TECHNIQUES_LIST = {"marinate", "grill", "boil", "bake",
-            "whisk", "fry", "simmer", "cut", "barbecue"};
+    public static final String[] TOOLS_LIST = {
+            "skewer",
+            "grill",
+            "oven",
+            "pot",
+            "saucepan",
+            "dish",
+            "skillet",
+            "microwave",
+            "foil",
+            "food processor",
+            "barbecue",
+            "frying pan",
+            "baking pan",
+            "pan",
+            "bowl"
+    };
+    public static final String[] TOOLS_DESCRIPTION = {
+            "A long piece of wood or metal used for holding pieces of food, typically meat, together during cooking.",
+            "A metal framework used for cooking food over an open fire",
+            "An enclosed compartment, as in a kitchen range, for cooking and heating food",
+            "A container, typically rounded or cylindrical and of ceramic ware or metal, used for storage or cooking.",
+            "A deep cooking pan, typically round, made of metal, and with one long handle and a lid.",
+            "A usually ceramic dish in which items can be baked.",
+            "A small metal cooking pot with a long handle, typically having legs. A frying pan.",
+            "An oven that uses microwaves to cook or heat food.",
+            "Foil made of aluminum or a similar silvery-gray metal, used especially for covering or wrapping food.",
+            "An electric kitchen appliance used for chopping, mixing, or pureeing foods.",
+            "A metal framework used for cooking food over an open fire",
+            "A small metal cooking pot with a long handle, typically having legs.",
+            "A usually ceramic dish in which items can be baked.",
+            "A small metal cooking pot with a long handle, typically having legs. A frying pan.",
+            "A round, deep dish or basin used for food or liquid."
+    };
+    public static final String[] TOOLS_URLS = {
+            "http://www.eatingutensils.net/images/27/skewer-1.jpg",
+            "http://ll-us-i5.wal.co/dfw/4ff9c6c9-d698/k2-_95c5bb53-1127-4d32-9c22-afa90766a86d.v1.jpg-0d059a68eccb7b239d1a0986322d6b362f1b9473-optim-180x180.jpg",
+            "https://www.ameriproappliancerepair.com/wp-content/uploads/2012/05/Oven-repair-maintenance.jpg",
+            "http://ecx.images-amazon.com/images/I/3113c7uDvAL.jpg",
+            "http://tesco.scene7.com/is/image/tesco/212-9074_PI_TPS1137694?wid=493&ht=538",
+            "http://simplygluten-free.com/giveaways/files/2011/08/Baking-Dish-350-web.jpg",
+            "http://cdn.theawl.com/wp-content/uploads/2011/02/skillet.jpg",
+            "http://www.avartawellness.com/wp-content/uploads/2014/08/microwave.png",
+            "http://www.momgoesgreen.com/wp-content//alum-foil.jpg",
+            "http://ll-us-i5.wal.co/dfw/dce07b8c-10fb/k2-_a3b46780-0f3d-439b-81dc-43e2a85f12c9.v1.jpg-7a45182d29d5b01299771abdf07e2f4f78e08acd-optim-450x450.jpg",
+            "http://ll-us-i5.wal.co/dfw/4ff9c6c9-d698/k2-_95c5bb53-1127-4d32-9c22-afa90766a86d.v1.jpg-0d059a68eccb7b239d1a0986322d6b362f1b9473-optim-180x180.jpg",
+            "http://cdn.theawl.com/wp-content/uploads/2011/02/skillet.jpg",
+            "http://simplygluten-free.com/giveaways/files/2011/08/Baking-Dish-350-web.jpg",
+            "http://cdn.theawl.com/wp-content/uploads/2011/02/skillet.jpg",
+            "http://lgcdn.everythingkitchens.com/809F1B/mage/media/catalog/product/cache/1/image/496x/9df78eab33525d08d6e5fb8d27136e95/r/s/rsvp-endurance-mixing-bowl-popup.jpg"
+    };
+    public static final String[] TECHNIQUES_LIST = {
+            "marinate",
+            "grill",
+            "boil",
+            "bake",
+            "whisk",
+            "fry",
+            "simmer",
+            "cut",
+            "barbecue"
+    };
+    public static final String[] TECHNIQUES_DESCRIPTION = {
+            "Soak (meat, fish, or other food) in a marinade sauce, often in a plastic bag.",
+            "To cook (food) on a metal frame over fire. To fry or toast (something, such as a sandwich) on a hot surface.",
+            "Heating up water in a pan on the stovetop to its boiling point, where it begins to bubble.",
+            "Cook (food) by dry heat without direct exposure to a flame, typically in an oven or on a hot surface.",
+            "Beat or stir (a substance, especially cream or eggs) with a light, rapid movemen",
+            "Cook (food) in hot fat or oil, typically in a shallow pan.",
+            "(of water or food) stay just below the boiling point while being heated.",
+            "Use a knife to cut food into smaller pieces.",
+            "To cook (food) on a metal frame over fire. To fry or toast (something, such as a sandwich) on a hot surface.",
+    };
+    public static final String[] TECHNIQUES_IMAGE_URLS = {
+            "http://www.filipino-food-lovers.com/site-images/pinoy_bbq/pinoy_bbq_marinate_before.jpg",
+            "http://www.grill.com/wp-content/uploads/2011/08/grill-grills.jpg",
+            "http://www.seriouseats.com/images/20100813-boiling-water-primary.jpg",
+            "http://pad3.whstatic.com/images/thumb/e/e4/Bake-a-Ham-Step-8.jpg/670px-Bake-a-Ham-Step-8.jpg",
+            "http://hamodia.com/hamod-uploads/2013/04/whisking.jpg",
+            "https://theicook.files.wordpress.com/2012/09/dsc00925.jpg?w=614&h=461",
+            "http://www.chefdoughty.com/blog/wp-content/uploads/2010/12/simmer-with-water.jpg",
+            "http://www.feedyoursoul2.com/wp-content/uploads/2013/10/Slices-5001-500x300.jpg",
+            "To cook (food) on a metal frame over fire. To fry or toast (something, such as a sandwich) on a hot surface.",
+    };
+    public static final String[] TECHNIQUES_HELP_URLS = {
+            "http://www.ehow.com/how_17347_make-basic-marinade.html",
+            "http://www.ehow.com/how_2084912_use-grill.html",
+            "http://www.ehow.com/how_2295_boil-water.html",
+            "http://www.ehow.com/how_7931956_use-electric-oven.html",
+            "http://www.ehow.com/how_10015423_whisk-flour.html",
+            "http://www.ehow.com/how_2891_stir-fry-anything.html",
+            "http://www.ehow.com/how_8274234_simmer-soup.html",
+            "http://www.ehow.com/list_6495238_kitchen-cutting-tools.html",
+            "http://www.ehow.com/how_2084912_use-grill.html"
+    };
 
     public static final String[] CUISINE = {"Cuisine", "Subcategory", "Category"};
     public static final String MEAL_BASE = "PrimaryIngredient";
@@ -65,7 +155,10 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken"};
+    // TODO make use of this to ensure we don't have chicken breast != chicken
+    public static final String[] CORRECTED_SYNONYMS = {"sandwiches", "chicken", "beef", "pizza", "pasta"};
+
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken", "pepper", "pasta"};
 
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";
@@ -79,7 +172,7 @@ public class APIGrabber {
     private static final double MIN_REVIEW = 2.0;
     private static final int MIN_REVIEW_COUNT = 1;
     private static final int MAX_INGREDIENTS = 6;
-    private static final int MAX_PAGE = 5;
+    private static final int MAX_PAGE = 2;
     private static final int RESULTS_PER_PAGE = 25;
 
     /**

@@ -11,6 +11,7 @@ public class Technique implements Parcelable{
 
     private String name;
     private String description;
+    private String imageURL;
     private List<Tool> tools;
     private List<String> externalURLs;
 
@@ -25,6 +26,7 @@ public class Technique implements Parcelable{
             this.name = name.toLowerCase().trim();
         }
 
+        createLists();
         populateFromDatabase();
     }
 
@@ -32,8 +34,8 @@ public class Technique implements Parcelable{
     * Reconstruct from the Parcel
     */
     public Technique(Parcel parcel) {
-
         Log.v(TAG, "Technique(Parcel source): Put the parcel back together");
+        createLists();
         name = parcel.readString();
         description = parcel.readString();
         tools = parcel.readArrayList(tools.getClass().getClassLoader());
@@ -79,6 +81,10 @@ public class Technique implements Parcelable{
         return this.description;
     }
 
+    public String getImageURL() {
+        return this.imageURL;
+    }
+
     public List<Tool> getTools() {
         return tools;
     }
@@ -121,6 +127,14 @@ public class Technique implements Parcelable{
 
         url = url.trim();
         this.externalURLs.add(url);
+    }
+
+    public void setImageURL(String url) {
+        if(url == null)
+            return;
+
+        url = url.trim();
+        this.imageURL = url;
     }
 
     public String toString() {
