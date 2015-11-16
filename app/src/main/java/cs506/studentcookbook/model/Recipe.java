@@ -302,4 +302,39 @@ public class Recipe implements Parcelable{
 
         return sb.toString();
     }
+
+    public boolean equals(Recipe recipe) {
+        if (recipeId != recipe.getId())
+            return false;
+        else if (bigOvenId != recipe.getBigOvenId())
+            return false;
+        else if (!name.equals(recipe.getName()))
+            return false;
+        else if (!bases.equals(recipe.getBases()))
+            return false;
+        else if (!cuisines.equals(recipe.getCuisines()))
+            return false;
+        else if (!instructions.equals(recipe.getInstructions()))
+            return false;
+        else if (!imageURL.equals(recipe.getImageURL()))
+            return false;
+        else if (!ingredients.equals(recipe.getIngredients()))
+            return false;
+        else if (!techniques.equals(recipe.getTechniques()))
+            return false;
+        else if (!tools.equals(recipe.getTools()))
+            return false;
+        else if (prepTime != recipe.getPrepTime())
+            return false;
+        else if (cookTime != recipe.getCookTime())
+            return false;
+        else if (cost != recipe.getCost())
+            return false;
+        else if (rating != recipe.getRating())
+            return false;
+        else if (isASide != recipe.getIsASide())
+            return false;
+        else
+            return true;
+    }
 }

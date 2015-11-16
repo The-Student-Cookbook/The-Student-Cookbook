@@ -165,4 +165,28 @@ public class Preferences {
 	public void removeIngredient(Ingredient ingredient){
 		this.ingredients.remove(ingredient);
 	}
+
+	public boolean equals(Preferences preferences) {
+		//Written in this fashion to make debugging easier
+		if (name != preferences.getName())
+			return false;
+		else if (prepTime != preferences.getPrepTime())
+			return false;
+		else if (cookTime != preferences.getCookTime())
+			return false;
+		else if (groupSize != preferences.getGroupSize())
+			return false;
+		else if (!likedCuisines.equals(preferences.getLikedCuisines()))
+			return false;
+		else if (!dislikedCuisines.equals(preferences.getDislikedCuisines()))
+			return false;
+		else if (!likedBases.equals(preferences.getLikedBases()))
+			return false;
+		else if (!dislikedBases.equals(preferences.getDislikedBases()))
+			return false;
+		else if (!ingredients.equals(preferences.getIngredients()))
+			return false;
+		else
+			return true;
+	}
 }

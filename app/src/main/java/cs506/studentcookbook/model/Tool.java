@@ -94,4 +94,14 @@ public class Tool implements Parcelable {
         return this.name + ": " + this.description;
     }
 
+    public boolean equals(Tool tool) {
+        if (!name.equals(tool.getName()))
+            return false;
+        else if (!description.equals(tool.getDescription()))
+            return false;
+        else if (!imageURL.equals(tool.getImageURL()))
+            return false;
+        else
+            return true;
+    }
 }

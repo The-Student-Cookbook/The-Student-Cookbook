@@ -95,4 +95,17 @@ public class Ingredient implements Parcelable {
     public String toString() {
         return this.amount + " " + this.unit + " " + this.name;
     }
+
+    public boolean equals(Ingredient ingredient) {
+        //Written in this fashion to make debugging easier
+
+        if (name != ingredient.getName())
+            return false;
+        else if (unit != ingredient.getUnit())
+            return false;
+        else if (amount != ingredient.getAmount())
+            return false;
+        else
+            return true;
+    }
 }

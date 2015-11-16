@@ -140,4 +140,19 @@ public class Technique implements Parcelable{
     public String toString() {
         return this.name;
     }
+
+    public boolean equals(Technique technique) {
+        if (!name.equals(technique.getName()))
+            return false;
+        else if (!description.equals(technique.getDescription()))
+            return false;
+        else if (!imageURL.equals(technique.getImageURL()))
+            return false;
+        else if (!tools.equals(technique.getTools()))
+            return false;
+        else if (!externalURLs.equals(technique.getExternalURLs()))
+            return false;
+        else
+            return true;
+    }
 }
