@@ -15,7 +15,7 @@ In order to clone the repository and run the code, following the steps outlined 
 4. Build and run the code  
   a. Build -> Make project  
   b. Run -> Run 'app'  
-     i. When prompted, create a new virtual Android emulator    
+          i. When prompted, create a new virtual Android emulator    
 
 ## Running the unit test suite
 
