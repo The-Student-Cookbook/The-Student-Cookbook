@@ -80,10 +80,9 @@ public class DBTools extends SQLiteOpenHelper {
     private static DBTools dbTools;
     private static Context currentContext;
 
-    public enum PopulationMode {
-        WEB, LOCAL
-    }
+    public enum PopulationMode { WEB, LOCAL }
     public static PopulationMode CURRENT_POPULATION_MODE = PopulationMode.LOCAL;
+    private static final boolean POPULATE_EVERY_TIME = false;
 
     public static final boolean LIKE = false;
     public static final boolean DISLIKE = true;
@@ -241,9 +240,11 @@ public class DBTools extends SQLiteOpenHelper {
          * was already populated
          */
 
-        if(databaseIsPopulated()) {
-            Log.d("database:", "already populated");
-            return;
+        if(!POPULATE_EVERY_TIME) {
+            if (databaseIsPopulated()) {
+                Log.d("database:", "already populated");
+                return;
+            }
         }
 
         System.out.println("Beginning database population from the web...");
@@ -1385,6 +1386,14 @@ public class DBTools extends SQLiteOpenHelper {
     ///////////////////////////////////////////////////////////////////////////////////////////////
 
     public void addRecipeToDatabase(Recipe recipe) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        //String query = "SELECT * FROM " + TABLE_RECIPE + " WHERE bigOvenId=" + recipe.getBigOvenId();
+        //Cursor cursor = db.rawQuery(query, null);
+        //if(cursor.moveToFirst()) {
+        //    return; // we already added the recipe
+        //}
+
         // add tools
         for(Tool tool : recipe.getTools())
             addToolToDatabase(tool);
@@ -1407,8 +1416,6 @@ public class DBTools extends SQLiteOpenHelper {
 
         // add url
         addURLToDatabase(recipe.getImageURL());
-
-        SQLiteDatabase db = this.getWritableDatabase();
 
         // add recipe
         ContentValues values = new ContentValues();
