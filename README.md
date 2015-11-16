@@ -1,3 +1,7 @@
+# The Student Cookbook
+
+## Checking out, building, and running the application
+
 In order to clone the repository and run the code, following the steps outlined below:
 
 1) Acquire the code from Github:
@@ -11,4 +15,12 @@ In order to clone the repository and run the code, following the steps outlined 
 4) Build and run the code
 	a) Build -> Make project
 	b) Run -> Run 'app'
-		i) When prompted, create a new virtual Android emulator 
+		i) When prompted, create a new virtual Android emulator
+
+## Running the unit test suite
+
+<todo>
+
+## Tagging the code
+
+<todo> 
