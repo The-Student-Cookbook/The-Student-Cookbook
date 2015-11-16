@@ -147,7 +147,7 @@ public class DBTools extends SQLiteOpenHelper {
 
         if(checkDB != null){
             checkDB.close();
-            System.out.println("Database file already exists");
+            //System.out.println("Database file already exists");
             return true;
         }
 
@@ -300,6 +300,9 @@ public class DBTools extends SQLiteOpenHelper {
         {
             // TODO in second iteration make this the AI search
             selectQuery = "SELECT * FROM Recipe";
+            // TODO this is temporary
+            //List<Recipe> listToReturn = performAISearch(1);
+            //return listToReturn;
         }
 
         //"Browse All" (preferences.getName != empty string or null)
@@ -1163,6 +1166,10 @@ public class DBTools extends SQLiteOpenHelper {
             totalCount = cuisineTotal[1];
         }
 
+        if(totalCount == 0) {
+            return 0.0;
+        }
+
         return (unitCount + SMOOTHING_FACTOR) / (totalCount * (1.0  + SMOOTHING_FACTOR));
     }
 
@@ -1180,6 +1187,10 @@ public class DBTools extends SQLiteOpenHelper {
             totalCount = baseTotal[1];
         }
 
+        if(totalCount == 0) {
+            return 0.0;
+        }
+
         return (unitCount + SMOOTHING_FACTOR) / (totalCount * (1.0  + SMOOTHING_FACTOR));
     }
 
@@ -1188,12 +1199,119 @@ public class DBTools extends SQLiteOpenHelper {
      * to classify the recipe with this ID as suggseted (true) or not suggested (false)
      */
     public boolean recipeIsSuggested(int recipeId, int userId) {
-        // TODO Connor
+        List<String> cuisines = getCuisines(recipeId);
+        List<String> bases = getBases(recipeId);
+
+        // calculate sum for LIKE
+        double probabilityOfLike = getProbability(userId, LIKE);
+        for(String cuisine : cuisines) {
+            double temp = getConditionalProbabilityCuisine(userId, cuisine, LIKE);
+            probabilityOfLike += temp;
+        }
+        for(String base : bases) {
+            double temp = getConditionalProbabilityBase(userId, base, LIKE);
+            probabilityOfLike += temp;
+        }
+
+        // calculate sum for DISLIKE
+        double probabilityOfDislike = getProbability(userId, DISLIKE);
+        for(String cuisine : cuisines) {
+            double temp = getConditionalProbabilityCuisine(userId, cuisine, DISLIKE);
+            probabilityOfDislike += temp;
+        }
+        for(String base : bases) {
+            double temp = getConditionalProbabilityBase(userId, base, DISLIKE);
+            probabilityOfDislike += temp;
+        }
+
+        if(probabilityOfLike >= probabilityOfDislike) {
+            return true;
+        }
         return false;
     }
 
     public List<Recipe> performAISearch(int userId) {
-        // TODO Connor
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_RECIPE;
+        Cursor cursor = db.rawQuery(query, null);
+
+        List<Integer> ids = new ArrayList<Integer>();
+
+        while(cursor.moveToNext()) {
+            String sVal = cursor.getString(0);
+            if(sVal != null) {
+                try{
+                    int value = Integer.parseInt(sVal);
+                    ids.add(value);
+                } catch (Exception e) {
+                }
+            }
+        }
+
+        List<Recipe> suggested = new ArrayList<Recipe>();
+
+        for(Integer id : ids) {
+            if(recipeIsSuggested(id, userId)) {
+                Recipe r = getRecipe(id);
+                suggested.add(r);
+            }
+        }
+
+        return suggested;
+    }
+
+    public List<String> getCuisines(int recipeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT cuisineName FROM " + TABLE_HAS_CUISINE_TYPE + " WHERE recipeId=" + recipeId;
+        Cursor cursor = db.rawQuery(query, null);
+
+        List<String> list = new ArrayList<String>();
+
+        while(cursor.moveToNext()) {
+            int index = cursor.getColumnIndex("cuisineName");
+            String sVal = cursor.getString(index);
+            list.add(sVal);
+        }
+
+        return list;
+    }
+
+    public List<String> getBases(int recipeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT baseName FROM " + TABLE_HAS_MEAL_BASE + " WHERE recipeId=" + recipeId;
+        Cursor cursor = db.rawQuery(query, null);
+
+        List<String> list = new ArrayList<String>();
+
+        while(cursor.moveToNext()) {
+            int index = cursor.getColumnIndex("baseName");
+            String sVal = cursor.getString(index);
+            list.add(sVal);
+        }
+
+        return list;
+    }
+
+    // TODO this is supposed to be temporary - replace with version that also populates the rest of the needed info
+    public Recipe getRecipe(int recipeId) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String query = "SELECT * FROM " + TABLE_RECIPE + " WHERE recipeId=" + recipeId;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if(cursor.moveToFirst()) {
+            Recipe r = new Recipe();
+            r.setId(recipeId);
+            r.setBigOvenId(Integer.parseInt(cursor.getString(1)));
+            r.setName(cursor.getString(2));
+            r.setInstructions(cursor.getString(3));
+            r.setCookTime(Integer.parseInt(cursor.getString(4)));
+            r.setPrepTime(Integer.parseInt(cursor.getString(5)));
+            r.setImageURL(cursor.getString(6));
+            r.setIsASide(Boolean.parseBoolean(cursor.getString(7)));
+            return r;
+        }
+
         return null;
     }
 }

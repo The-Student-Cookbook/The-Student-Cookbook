@@ -19,7 +19,15 @@ In order to clone the repository and run the code, following the steps outlined 
 
 ## Running the unit test suite
 
-<todo>
+1. Open Android Studio  
+  a. Open the project The-Student-Cookbook  
+2. Build and run the code  
+  a. Build -> Make project  
+3. Run tests
+  a. Locate the "Project" pane on the left side of the screen
+  b. Using the file hierarchy explorer, navigate to app/java/cs506.studentcookbook (androidTest)/
+  c. Right click on cs506.studentcookbook (androidTest) -> Run 'Tests in 'cs506.studentcookbook
+  d. Test results appear in the "Run" pane on the bottom of the screen. 
 
 ## Tagging the code
 

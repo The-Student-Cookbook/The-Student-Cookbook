@@ -593,7 +593,55 @@ public class DBToolsUnitTest extends AndroidTestCase {
         assertEquals(APIGrabber.TECHNIQUES_HELP_URLS.length, APIGrabber.TECHNIQUES_IMAGE_URLS.length);
     }
 
-        @Override
+    public void testGetCuisinesAndBases() {
+        context = new RenamingDelegatingContext(getContext(), "test_");
+        db = new DBTools(context);
+        db.createTables();
+
+        Recipe r = new Recipe();
+        r.setInstructions("");
+        r.setName("recipe1");
+        r.setId(1);
+        r.addCuisine("cuisine1");
+        r.addCuisine("cuisine2");
+        r.addCuisine("cuisine3");
+        r.addBase("base1");
+        db.addRecipeToDatabase(r);
+
+        List<String> list = db.getCuisines(1);
+        assertTrue(list.contains("cuisine1"));
+        assertTrue(list.contains("cuisine2"));
+        assertTrue(list.contains("cuisine3"));
+
+        list = db.getBases(1);
+        assertTrue(list.contains("base1"));
+
+        r = new Recipe();
+        r.setInstructions("");
+        r.setName("recipe2");
+        r.setId(2);
+        r.addCuisine("cuisine3");
+        r.addCuisine("cuisine4");
+        r.addBase("base1");
+        r.addBase("base2");
+        db.addRecipeToDatabase(r);
+
+        list = db.getCuisines(2);
+        assertTrue(list.contains("cuisine3"));
+        assertTrue(list.contains("cuisine4"));
+
+        list = db.getBases(2);
+        assertTrue(list.contains("base1"));
+        assertTrue(list.contains("base2"));
+
+        list = db.getCuisines(3);
+        assertEquals(0, list.size());
+
+        list = db.getBases(3);
+        assertEquals(0, list.size());
+    }
+
+    @Override
     public void tearDown() throws Exception {
         super.tearDown();
     }
