@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -31,6 +32,7 @@ public class PersistentDataQueryActivity extends Activity {
     private String cookingTime;
     private String prepTime;
     private String groupSize;
+    private String mealTime;
 
 
     @Override
@@ -43,6 +45,11 @@ public class PersistentDataQueryActivity extends Activity {
         final EditText cookingTimeEditText = (EditText) findViewById(R.id.cookingTime_textinput);
         final EditText prepTimeEditText = (EditText) findViewById(R.id.prepTime_textinput);
         final EditText groupSizeEditText = (EditText) findViewById(R.id.groupSize_textinput);
+        final CheckBox breakfastCheckbox = (CheckBox) findViewById(R.id.breakfast_checkbox);
+        final CheckBox lunchCheckbox = (CheckBox) findViewById(R.id.lunch_checkbox);
+        final CheckBox dinnerCheckbox = (CheckBox) findViewById(R.id.dinner_checkbox);
+        final CheckBox snackCheckbox = (CheckBox) findViewById(R.id.snack_checkbox);
+        final CheckBox dessertCheckbox = (CheckBox) findViewById(R.id.dessert_checkbox);
 
 
 
@@ -60,7 +67,19 @@ public class PersistentDataQueryActivity extends Activity {
                 prepTime = prepTimeEditText.getText().toString();
                 groupSize = groupSizeEditText.getText().toString();
 
-                if(cost == 0 || cookingTime == null || prepTime == null || groupSize == null)
+                if(breakfastCheckbox.isChecked())
+                    mealTime += "Breakfast ";
+                if(lunchCheckbox.isChecked())
+                    mealTime += "Lunch ";
+                if(dinnerCheckbox.isChecked())
+                    mealTime += "Dinner ";
+                if(snackCheckbox.isChecked())
+                    mealTime += "Snack ";
+                if(dessertCheckbox.isChecked())
+                    mealTime += "Dessert";
+
+
+                if(cost == 0 || cookingTime == null || prepTime == null || groupSize == null || mealTime == null)
                     Toast.makeText(PersistentDataQueryActivity.this, "Please fill in all of the information!", Toast.LENGTH_LONG).show();
                 else{
                     Intent goToNextMenu = new Intent(PersistentDataQueryActivity.this, CuisineQuery.class);
@@ -68,6 +87,7 @@ public class PersistentDataQueryActivity extends Activity {
                     bundle.putString("cookTime", cookingTime);
                     bundle.putString("prepTime", prepTime);
                     bundle.putString("groupSize", groupSize);
+                    bundle.putString("mealTime", mealTime);
                     bundle.putInt("cost", cost);
                     goToNextMenu.putExtras(bundle);
                     PersistentDataQueryActivity.this.startActivity(goToNextMenu);

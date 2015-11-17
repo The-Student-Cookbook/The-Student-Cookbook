@@ -26,7 +26,7 @@ public class CuisineQuery extends Activity {
 
 
     private List<Recipe> returnedRecipes;
-    private List<Recipe> selectedRecipes;
+    private Recipe selectedRecipe;
     private View selectedRecipeView = null;
     private DBTools dbTools;
     private Preferences prefs;
@@ -34,9 +34,8 @@ public class CuisineQuery extends Activity {
     private String cookingTime;
     private String prepTime;
     private String groupSize;
-    private int numSelected = 0;
-    private final String RECIPIES = "RECIPIES";
-    private final String NUM_RECIPIES = "NUM_RECIPIES";
+    private String mealTime;
+    private final String CURRENT_RECIPE_PARCEL_KEY = "CURRENT_RECIPE_PARCEL_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +43,7 @@ public class CuisineQuery extends Activity {
         setContentView(R.layout.activity_cuisine_query);
 
         dbTools = DBTools.getInstance(this);
-        selectedRecipes = new ArrayList<>();
+
 
         // Cancel Button
         Button cancelButton = (Button) findViewById(R.id.quisineQuery_cancelbutton);
@@ -67,14 +66,14 @@ public class CuisineQuery extends Activity {
                 else {
                     Intent mealBaseQIntent = new Intent(CuisineQuery.this, MealBaseQueryActivity.class);
                     // Potentially package stuff here
-                    Bundle bundle = new Bundle();
-                    for(Recipe r: selectedRecipes){
-                        bundle.putParcelable(RECIPIES + numSelected, r);
-                        numSelected++;
-                    }
-                    bundle.putInt(NUM_RECIPIES, numSelected);
 
-                    CuisineQuery.this.startActivity(mealBaseQIntent);
+                        // Continue to the recipe page
+                    Intent goToLandingPage = new Intent(CuisineQuery.this, MealPlanActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putParcelable(CURRENT_RECIPE_PARCEL_KEY, selectedRecipe);
+                    goToLandingPage.putExtras(bundle);
+                    CuisineQuery.this.startActivity(goToLandingPage);
+
                 }
 
             }
@@ -89,6 +88,7 @@ public class CuisineQuery extends Activity {
             prepTime = savedBundle.getString("prepTime");
             groupSize = savedBundle.getString("groupSize");
             cost = savedBundle.getInt("cost");
+            mealTime = savedBundle.getString("mealTime");
 
             try{
                 prefs.setCookTime(Integer.parseInt(cookingTime));
@@ -111,13 +111,11 @@ public class CuisineQuery extends Activity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedRecipeView = view;
 
-                if(selectedRecipes.contains(returnedRecipes.get(position))){
+                if (selectedRecipeView != null)
                     selectedRecipeView.setBackgroundResource(android.R.drawable.list_selector_background);
-                    selectedRecipes.remove(returnedRecipes.get(position));
-                }else {
-                    selectedRecipes.add(returnedRecipes.get(position));
-                    selectedRecipeView.setBackgroundColor(Color.CYAN);
-                }
+                selectedRecipeView = view;
+                selectedRecipe = returnedRecipes.get(position);
+                selectedRecipeView.setBackgroundColor(Color.CYAN);
             }
 
         });

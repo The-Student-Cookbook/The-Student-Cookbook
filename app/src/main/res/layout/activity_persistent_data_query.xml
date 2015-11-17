@@ -9,7 +9,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="cs506.studentcookbook.activity.RecipeQueryActivity"
-                android:nestedScrollingEnabled="true">
+    android:nestedScrollingEnabled="true" >
 
 
     <TextView
@@ -141,5 +141,54 @@
             android:id="@+id/persistent_data_nextbutton"
             android:layout_weight="1"/>
     </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Meal:"
+        android:id="@+id/textView9"
+        android:layout_below="@+id/radioGroup"
+        android:layout_alignParentStart="true"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Breakfast"
+        android:id="@+id/breakfast_checkbox"
+        android:layout_below="@+id/textView9"
+        android:layout_toStartOf="@+id/lunch_checkbox"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dinner"
+        android:id="@+id/dinner_checkbox"
+        android:layout_alignTop="@+id/breakfast_checkbox"
+        android:layout_alignEnd="@+id/cookingTime_textinput"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Lunch"
+        android:id="@+id/lunch_checkbox"
+        android:layout_alignTop="@+id/dinner_checkbox"
+        android:layout_toStartOf="@+id/dinner_checkbox"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Snack"
+        android:id="@+id/snack_checkbox"
+        android:layout_below="@+id/breakfast_checkbox"
+        android:layout_alignParentEnd="true"/>
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dessert"
+        android:id="@+id/dessert_checkbox"
+        android:layout_alignTop="@+id/snack_checkbox"
+        android:layout_toStartOf="@+id/snack_checkbox"/>
 
 </RelativeLayout>
