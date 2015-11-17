@@ -24,10 +24,11 @@ public class DashboardActivity extends ListActivity {
 
         //First check and see if there is a profile:
         DBTools db = DBTools.getInstance(this);
+        db.populateDatabase();
         User user = db.getUserSettings();
 
         // First launch
-        if(user.getEmail().equals("null")){
+        if(user.getEmail() == null){
             Intent firstLaunch = new Intent(this, AskAboutProfileSetupActivity.class);
             this.startActivity(firstLaunch);
         }
@@ -38,9 +39,6 @@ public class DashboardActivity extends ListActivity {
                 "My Recipes", "Grocery List", "Settings", "Start database activity (temporary)"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dashboardItems);
         setListAdapter(adapter);
-
-
-        db.populateDatabase();
     }
 
     @Override

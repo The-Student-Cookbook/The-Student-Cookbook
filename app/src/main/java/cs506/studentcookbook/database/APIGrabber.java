@@ -7,6 +7,7 @@ import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -155,10 +156,14 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    // TODO make use of this to ensure we don't have chicken breast != chicken
-    public static final String[] CORRECTED_SYNONYMS = {"sandwiches", "chicken", "beef", "pizza", "pasta"};
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"salmon", "tuna", "tilapia"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"chicken", "pepper", "pasta"};
+    public static final String[] CORRECTED_SYNONYMS_DATA = {"chicken", "beef", "pizza", "pasta",
+    "pork", "turkey", "salmon", "egg", "asian", "dessert", "marinade", "meat", "bread", "bbq", "seafood"};
+    public static List<String> CORRECTED_SYNONYMS;
+
+    public static final String[] EXCLUDED_WORDS_DATA = {"main dish", "other", "main dish - other", "side dish", "other - misc"};
+    public static List<String> EXCLUDED_WORDS;
 
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";
@@ -175,6 +180,7 @@ public class APIGrabber {
     private static final int MAX_PAGE = 2;
     private static final int RESULTS_PER_PAGE = 25;
 
+
     /**
      * Run this with a keyword from POPULATION_KEYWORDS to get a series of recipes from the API.
      * Use these recipes to populate the database. Use all keywords from POPULATION_KEYWORDS to
@@ -186,9 +192,16 @@ public class APIGrabber {
      * of this class.
      */
     public static List<Recipe> getRecipes(String keyword) {
+        if(CORRECTED_SYNONYMS == null) {
+            CORRECTED_SYNONYMS = Arrays.asList(CORRECTED_SYNONYMS_DATA);
+        }
+        if(EXCLUDED_WORDS == null) {
+            EXCLUDED_WORDS = Arrays.asList(EXCLUDED_WORDS_DATA);
+        }
+
         List<Recipe> list = getRecipesFromAPIBasedOnKeywordAndPage(keyword, 1, RESULTS_PER_PAGE);
 
-        for(int i = 1; i < MAX_PAGE; i++) {
+        for(int i = 2; i <= MAX_PAGE; i++) {
             System.out.println("Grabbing new page...");
             list.addAll(getRecipesFromAPIBasedOnKeywordAndPage(keyword, i, RESULTS_PER_PAGE));
         }
@@ -441,7 +454,21 @@ public class APIGrabber {
             list = recipeElement.getElementsByTagName(MEAL_BASE);
             node = list.item(0);
 
-            recipe.addBase(node.getFirstChild().getNodeValue());
+            String base = node.getFirstChild().getNodeValue();
+            base = base.toLowerCase();
+
+            if(!EXCLUDED_WORDS.contains(base)) {
+
+                for(int i = 0; i < CORRECTED_SYNONYMS_DATA.length; i++) {
+                    String current = CORRECTED_SYNONYMS_DATA[i];
+                    if(base.contains(current)) {
+                        base = current;
+                        break;
+                    }
+                }
+
+                recipe.addBase(base);
+            }
         } catch (Exception e) {
             //System.err.println("Missing meal base on recipe: " + recipe.getName());
         }
@@ -451,7 +478,22 @@ public class APIGrabber {
                 list = recipeElement.getElementsByTagName(s);
                 node = list.item(0);
 
-                recipe.addCuisine(node.getFirstChild().getNodeValue());
+                String cuisine = node.getFirstChild().getNodeValue();
+                cuisine = cuisine.toLowerCase();
+
+                if(!EXCLUDED_WORDS.contains(cuisine)) {
+
+                    for (int i = 0; i < CORRECTED_SYNONYMS_DATA.length; i++) {
+                        String current = CORRECTED_SYNONYMS_DATA[i];
+                        if (cuisine.contains(current)) {
+                            cuisine = current;
+                            break;
+                        }
+                    }
+
+                    recipe.addCuisine(cuisine);
+                }
+
             } catch (Exception e) {
                 //System.err.println("Missing cuisine on recipe: " + recipe.getName());
             }
