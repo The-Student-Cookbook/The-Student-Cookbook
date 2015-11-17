@@ -25,17 +25,17 @@ In order to clone the repository and run the code, following the steps outlined 
   a. Open the project The-Student-Cookbook  
 2. Build the code  
   a. Build -> Make project  
-3. Run Unit tests
-  a. Locate the "Build Variants" pane on the bottom left side of the screen
-  b. Set "Test Artifact" to "Unit Tests"
-  c. Locate the "Project" pane on the left side of the screen
-  d. Using the file hierarchy explorer, navigate to app/java/cs506.studentcookbook (androidTest)/
-  e. Right click on cs506.studentcookbook (androidTest) -> Run 'Tests in 'cs506.studentcookbook
-  f. Test results appear in the "Run" pane on the bottom of the screen. 
-4. Run Instrumentation Tests  
-  a. Locate the "Build Variants" pane on the bottom left side of the screen
-  b. Set "Test Artifact" to "Android Instrumentation Tests"
-  c. Locate the "Project" pane on the left side of the screen
-  d. Using the file hierarchy explorer, navigate to app/java/cs506.studentcookbook (androidTest)/
-  e. Right click on cs506.studentcookbook (androidTest) -> Run 'Tests in 'cs506.studentcookbook
-  f. Test results appear in the "Run" pane on the bottom of the screen. 
+3. Run Unit tests  
+  a. Locate the "Build Variants" pane on the bottom left side of the screen  
+  b. Set "Test Artifact" to "Unit Tests"  
+  c. Locate the "Project" pane on the left side of the screen  
+  d. Using the file hierarchy explorer, navigate to app/java/cs506.studentcookbook (androidTest)/  
+  e. Right click on cs506.studentcookbook (androidTest) -> Run 'Tests in 'cs506.studentcookbook  
+  f. Test results appear in the "Run" pane on the bottom of the screen.   
+4. Run Instrumentation Tests    
+  a. Locate the "Build Variants" pane on the bottom left side of the screen   
+  b. Set "Test Artifact" to "Android Instrumentation Tests"  
+  c. Locate the "Project" pane on the left side of the screen  
+  d. Using the file hierarchy explorer, navigate to app/java/cs506.studentcookbook (androidTest)/  
+  e. Right click on cs506.studentcookbook (androidTest) -> Run 'Tests in 'cs506.studentcookbook  
+  f. Test results appear in the "Run" pane on the bottom of the screen.   
