@@ -42,9 +42,6 @@ public class ProfileActivity extends Activity {
 
     private ArrayList<ArrayList<String>> listOfLists;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +107,7 @@ public class ProfileActivity extends Activity {
         // Update the data set
         setupPreferences();
         profileExpListAdapter.notifyDataSetChanged();
+        preferencesList.setAdapter(profileExpListAdapter);
     }
 
 
@@ -122,12 +120,9 @@ public class ProfileActivity extends Activity {
         user = dbTools.getUserSettings();
         listOfLists = new ArrayList<>();
 
-
         allergiesList = (ArrayList<String>) dbTools.getAllergicBases();
 
-
         preferences_List = (ArrayList<String>) preferences.getLikedBases();
-
 
         ArrayList<Tool> tempToolList = (ArrayList<Tool>)dbTools.getTools();
         toolsList = new ArrayList<>();

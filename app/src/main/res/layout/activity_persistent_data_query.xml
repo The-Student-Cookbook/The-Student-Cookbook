@@ -1,15 +1,145 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:orientation="vertical"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="cs506.studentcookbook.activity.PersistentDataQueryActivity">
+    tools:context="cs506.studentcookbook.activity.RecipeQueryActivity"
+                android:nestedScrollingEnabled="true">
+
 
     <TextView
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="PersistentDataQueryActivity" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Group Size:"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/textView"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/groupSize_textinput"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Prep Time:"
+        android:id="@+id/textView2"
+        android:layout_below="@+id/groupSize_textinput"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="time"
+        android:ems="10"
+        android:id="@+id/prepTime_textinput"
+        android:layout_below="@+id/textView2"
+        android:layout_alignEnd="@+id/groupSize_textinput"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Cooking Time:"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/prepTime_textinput"
+        android:layout_alignParentStart="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/cookingTime_textinput"
+        android:layout_below="@+id/textView3"
+        android:layout_alignParentEnd="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Cost:"
+        android:id="@+id/textView4"
+        android:layout_below="@+id/cookingTime_textinput"
+        android:layout_alignParentStart="true"/>
+
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/radioGroup"
+        android:layout_below="@+id/textView4"
+        android:layout_alignEnd="@+id/cookingTime_textinput">
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/costradio_4"
+            android:layout_below="@+id/cookingTime_textinput"
+            android:layout_toEndOf="@+id/textView8"
+            android:onClick="onRadioButtonClicked"
+            android:text="$"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/costradio_3"
+            android:layout_below="@+id/cookingTime_textinput"
+            android:layout_toEndOf="@+id/textView7"
+            android:onClick="onRadioButtonClicked"
+            android:text="$$"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/costradio_2"
+            android:layout_below="@+id/cookingTime_textinput"
+            android:layout_toEndOf="@+id/textView6"
+            android:onClick="onRadioButtonClicked"
+            android:text="$$$"/>
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/costradio_1"
+            android:layout_below="@+id/cookingTime_textinput"
+            android:layout_toEndOf="@+id/textView5"
+            android:onClick="onRadioButtonClicked"
+            android:text="$$$$"/>
+    </RadioGroup>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/persistent_data_buttonDivider">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/persistent_data_cancelbutton"
+            android:layout_weight="1"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:id="@+id/persistent_data_nextbutton"
+            android:layout_weight="1"/>
+    </LinearLayout>
 
 </RelativeLayout>

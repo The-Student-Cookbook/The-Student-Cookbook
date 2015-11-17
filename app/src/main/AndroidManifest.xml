@@ -54,6 +54,8 @@
         </activity>
         <activity android:name=".activity.AskAboutProfileSetupActivity" >
         </activity>
+        <activity android:name=".activity.CuisineQuery" >
+        </activity>
     </application>
 
 </manifest>

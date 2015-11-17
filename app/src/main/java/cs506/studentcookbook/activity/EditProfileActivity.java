@@ -153,7 +153,6 @@ public class EditProfileActivity extends Activity {
                 for(String allergy: allergiesToRemove)
                     dbTools.removeAllergicBase(allergy);
 
-
                 for(String pref: preferencesToRemove)
                     preferences.removeLikedBase(pref);
 
@@ -229,6 +228,8 @@ public class EditProfileActivity extends Activity {
         listOfLists.add(allergiesList);
         listOfLists.add(preferences_List);
         listOfLists.add(toolsList);
+
+
     }
 
 

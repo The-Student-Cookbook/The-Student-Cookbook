@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -34,6 +35,7 @@ public class RecipeQueryActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_query);
+        setTitle("Choose For Me:");
 
         //Give the buttons their click listeners
         // This is the accept button, go to the next activity
@@ -64,7 +66,7 @@ public class RecipeQueryActivity extends Activity {
             public void onClick(View v) {
 
                 //Prompt to see if they want to leave
-                new AlertDialog.Builder(RecipeQueryActivity.this).setTitle("Test").setMessage("Are you sure you want to return to the dashboard?")
+                new AlertDialog.Builder(RecipeQueryActivity.this).setTitle("Return:").setMessage("Are you sure you want to return to the dashboard?")
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 // Return to Dash
@@ -81,22 +83,20 @@ public class RecipeQueryActivity extends Activity {
             }
         });
 
-        //TODO: Setup the listview with the recipes that were passed along
+
         ListView recipeList = (ListView) findViewById(R.id.recipe_query_listview);
         recipeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectedRecipe != null)
-                    selectedRecipe.setBackgroundColor(Color.BLACK);
+                    selectedRecipe.setBackgroundResource(android.R.drawable.list_selector_background);
                 selectedRecipe = view;
                 selectedRecipeObj = chosenRecipeList.get(position);
-                // TODO: Figure out what color a selected recipe should be
-                selectedRecipe.setBackgroundColor(Color.RED);
+                selectedRecipe.setBackgroundColor(Color.CYAN);
             }
 
         });
 
-        // TODO: Get rid of the temp var once the null branch of getSuggestedRecipes is setup
         dbTools = DBTools.getInstance(this);
         Preferences tempPref = new Preferences();
         tempPref.setName("");
