@@ -39,14 +39,6 @@ public class SearchableRecipeQueryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable_recipe_query);
 
-//        DBTools tools = new DBTools(this);
-//
-//        List<Recipe> recipes = tools.getSuggestedRecipes(null);
-        // itr through and display each recipe
-
-        // for text search
-        // prefs.setName then call getSuggestedRecipes
-
         //Give the buttons their click listeners
         // This is the accept button, go to the next activity
         Button nextButton = (Button) findViewById(R.id.search_recipe_query_nextbutton);

@@ -58,4 +58,11 @@ public class GroceryList {
         else
             return true;
     }
+
+    @Override
+    public String toString() {
+        return "GroceryList{" +
+                "ingredients=" + ingredients +
+                '}';
+    }
 }
