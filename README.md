@@ -5,9 +5,8 @@
 In order to clone the repository and run the code, following the steps outlined below:
 
 1. Acquire the code from Github:  
-  a. Revision Number: e87d9df  
-  b. Revision URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/tree/66ecbd148df3fa14793570a5a8747aa4b4cd2e2a  
-  c. Click "Download ZIP" on the right side of the screen  
+  a. Release URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/releases/tag/v0.9  
+  b. Download the source code as a zip and unpack it into a directory  
 2. Acquire Android Studio and the Android SDK
   a. http://developer.android.com/sdk/index.html  
   b. Follow on-screen install instructions
