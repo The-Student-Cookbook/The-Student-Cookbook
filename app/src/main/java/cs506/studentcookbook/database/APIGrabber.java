@@ -156,7 +156,7 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"salmon", "tuna", "tilapia"};
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"smoothie", "fish"};
 
     public static final String[] CORRECTED_SYNONYMS_DATA = {"chicken", "beef", "pizza", "pasta",
     "pork", "turkey", "salmon", "egg", "asian", "dessert", "marinade", "meat", "bread", "bbq", "seafood"};

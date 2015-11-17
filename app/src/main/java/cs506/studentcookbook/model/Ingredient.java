@@ -99,9 +99,9 @@ public class Ingredient implements Parcelable {
     public boolean equals(Ingredient ingredient) {
         //Written in this fashion to make debugging easier
 
-        if (name != ingredient.getName())
+        if (!name.equals(ingredient.getName()))
             return false;
-        else if (unit != ingredient.getUnit())
+        else if (!unit.equals(ingredient.getUnit()))
             return false;
         else if (amount != ingredient.getAmount())
             return false;

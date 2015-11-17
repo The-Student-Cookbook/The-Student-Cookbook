@@ -148,10 +148,11 @@ public class Technique implements Parcelable{
             return false;
         else if (!imageURL.equals(technique.getImageURL()))
             return false;
-        else if (!tools.equals(technique.getTools()))
-            return false;
-        else if (!externalURLs.equals(technique.getExternalURLs()))
-            return false;
+            //Excluded because this column doesn't exist in Technique table
+            //else if (!tools.equals(technique.getTools()))
+            //   return false;
+            //else if (!externalURLs.equals(technique.getExternalURLs()))
+            //    return false;
         else
             return true;
     }
