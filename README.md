@@ -37,4 +37,16 @@ In order to clone the repository and run the code, following the steps outlined 
   c. Locate the "Project" pane on the left side of the screen  
   d. Using the file hierarchy explorer, navigate to app/java/cs506.studentcookbook (androidTest)/  
   e. Right click on cs506.studentcookbook (androidTest) -> Run 'Tests in 'cs506.studentcookbook  
-  f. Test results appear in the "Run" pane on the bottom of the screen.   
+  f. Test results appear in the "Run" pane on the bottom of the screen.  
+
+## Tagging the Code
+```
+git tag -a vXX.XX
+```
+
+An editor will open where you will need to put a message about the release in.
+Quit the editor and the tag will be made.
+To push the tag to the remote repository, use:
+```
+git push origin --tags
+``` 
