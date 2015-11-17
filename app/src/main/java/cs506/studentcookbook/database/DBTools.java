@@ -86,6 +86,7 @@ public class DBTools extends SQLiteOpenHelper {
 
     public static final boolean LIKE = false;
     public static final boolean DISLIKE = true;
+    public static final int INITIAL_PROFILE_LIKE = 10;
 
     private static final double SMOOTHING_FACTOR = 0.0001;
     private static boolean countDataIsFresh = false;

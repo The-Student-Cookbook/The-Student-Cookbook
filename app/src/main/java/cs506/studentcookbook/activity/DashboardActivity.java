@@ -27,7 +27,7 @@ public class DashboardActivity extends ListActivity {
         User user = db.getUserSettings();
 
         // First launch
-        if(user.getEmail().equals("null")){
+        if(user.getEmail() == null){
             Intent firstLaunch = new Intent(this, AskAboutProfileSetupActivity.class);
             this.startActivity(firstLaunch);
         }
