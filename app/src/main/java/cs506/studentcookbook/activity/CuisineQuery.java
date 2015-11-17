@@ -64,16 +64,12 @@ public class CuisineQuery extends Activity {
 
                     // Go to the meal plan page?
                 else {
-                    Intent mealBaseQIntent = new Intent(CuisineQuery.this, MealBaseQueryActivity.class);
                     // Potentially package stuff here
-
-                        // Continue to the recipe page
                     Intent goToLandingPage = new Intent(CuisineQuery.this, MealPlanActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(CURRENT_RECIPE_PARCEL_KEY, selectedRecipe);
                     goToLandingPage.putExtras(bundle);
                     CuisineQuery.this.startActivity(goToLandingPage);
-
                 }
 
             }
@@ -109,8 +105,6 @@ public class CuisineQuery extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedRecipeView = view;
-
                 if (selectedRecipeView != null)
                     selectedRecipeView.setBackgroundResource(android.R.drawable.list_selector_background);
                 selectedRecipeView = view;
@@ -121,7 +115,6 @@ public class CuisineQuery extends Activity {
         });
 
         listView.setAdapter(new RecipeListViewAdapter(this, returnedRecipes));
-
 
         //Prompt the user make a selection
         Toast.makeText(this, "Please select recipes.", Toast.LENGTH_SHORT).show();

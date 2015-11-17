@@ -32,8 +32,6 @@
         </activity>
         <activity android:name=".activity.SearchableRecipeQueryActivity" >
         </activity>
-        <activity android:name=".activity.RecipeQueryActivity" >
-        </activity>
         <activity android:name=".activity.MyRecipesActivity" >
         </activity>
         <activity android:name=".activity.GroceryListActivity" >

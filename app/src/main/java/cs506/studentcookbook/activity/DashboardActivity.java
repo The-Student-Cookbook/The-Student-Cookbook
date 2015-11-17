@@ -10,12 +10,19 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.database.DatabaseTestActivity;
+import cs506.studentcookbook.model.Preferences;
+import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.model.User;
 
 public class DashboardActivity extends ListActivity {
 
+    private final String CURRENT_RECIPE_PARCEL_KEY = "CURRENT_RECIPE_PARCEL_KEY";
     private static final String TAG = "DashboardActivity";
 
     @Override
@@ -49,8 +56,16 @@ public class DashboardActivity extends ListActivity {
                 this.startActivity(intent);
                 break;
             case 1:
-                intent = new Intent(this, RecipeQueryActivity.class);
-                this.startActivity(intent);
+                Intent goToLandingPage = new Intent(DashboardActivity.this, MealPlanActivity.class);
+                DBTools dbTools = DBTools.getInstance(this);
+                Preferences tempPref = new Preferences();
+                tempPref.setName("");
+                List<Recipe> chosenRecipeList = dbTools.getSuggestedRecipes(tempPref);
+                Random gen = new Random();
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(CURRENT_RECIPE_PARCEL_KEY, chosenRecipeList.get(gen.nextInt(chosenRecipeList.size())));
+                goToLandingPage.putExtras(bundle);
+                this.startActivity(goToLandingPage);
                 break;
             case 2:
                 intent = new Intent(this, SearchableRecipeQueryActivity.class);
