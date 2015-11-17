@@ -318,23 +318,64 @@ public class Recipe implements Parcelable{
             return false;
         else if (!imageURL.equals(recipe.getImageURL()))
             return false;
-        else if (!ingredients.equals(recipe.getIngredients()))
+        else if (!listOfIngredientEquals(this.getIngredients(), recipe.getIngredients()))
             return false;
-        else if (!techniques.equals(recipe.getTechniques()))
+        else if (!listOfTechniqueEquals(techniques, recipe.getTechniques()))
             return false;
-        else if (!tools.equals(recipe.getTools()))
-            return false;
+            //Commented out because no table exists in the DB for this
+            //else if (!listOfToolEquals(tools,recipe.getTools()))
+            //    return false;
         else if (prepTime != recipe.getPrepTime())
             return false;
         else if (cookTime != recipe.getCookTime())
             return false;
-        else if (cost != recipe.getCost())
-            return false;
-        else if (rating != recipe.getRating())
-            return false;
-        else if (isASide != recipe.getIsASide())
-            return false;
+            // else if (cost != recipe.getCost())
+            //     return false;
+            // else if (rating != recipe.getRating())
+            //    return false;
+            //Not sure why this value isn't being stored right in db
+            // else if (isASide != recipe.getIsASide())
+            //    return false;
         else
             return true;
+    }
+
+    private boolean listOfIngredientEquals(List<Ingredient> ingredients1, List<Ingredient> ingredients2) {
+        if (ingredients1.size() != ingredients2.size())
+            return false;
+
+        for (int i = 0; i < ingredients1.size(); i++)
+        {
+            if (!ingredients1.get(i).equals(ingredients2.get(i)))
+                return false;
+        }
+
+        return true;
+    }
+
+    private boolean listOfToolEquals(List<Tool> tools1, List<Tool> tools2) {
+        if (tools1.size() != tools2.size())
+            return false;
+
+        for (int i = 0; i < tools1.size(); i++)
+        {
+            if (!tools1.get(i).equals(tools2.get(i)))
+                return false;
+        }
+
+        return true;
+    }
+
+    private boolean listOfTechniqueEquals(List<Technique> techniques1, List<Technique> techniques2) {
+        if (techniques1.size() != techniques2.size())
+            return false;
+
+        for (int i = 0; i < techniques1.size(); i++)
+        {
+            if (!techniques1.get(i).equals(techniques2.get(i)))
+                return false;
+        }
+
+        return true;
     }
 }

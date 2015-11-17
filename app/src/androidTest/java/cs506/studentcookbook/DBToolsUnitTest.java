@@ -720,6 +720,9 @@ public class DBToolsUnitTest extends AndroidTestCase {
         //Test remove
         allergicBases1.remove("Soy");
         db.removeAllergicBase("Soy");
+
+        allergicBases2 = db.getAllergicBases();
+
         assertEquals(allergicBases1, allergicBases2);
     }
 
@@ -735,9 +738,9 @@ public class DBToolsUnitTest extends AndroidTestCase {
         Ingredient ingredient1 = new Ingredient();
         Ingredient ingredient2 = new Ingredient();
         Ingredient ingredient3 = new Ingredient();
-        ingredient1.setName("ingredient2-1");
-        ingredient2.setName("ingredient2-2");
-        ingredient3.setName("ingredient2-3");
+        ingredient1.setName("ingredient1-1");
+        ingredient2.setName("ingredient1-2");
+        ingredient3.setName("ingredient1-3");
 
         //Grocery list comparison objects
         GroceryList g1 = new GroceryList();
@@ -1035,14 +1038,14 @@ public class DBToolsUnitTest extends AndroidTestCase {
         ingredients1.add(ingredient12);
 
         Ingredient ingredient21 = new Ingredient();
-        ingredient11.setName("ingredient2-1");
-        ingredient11.setAmount(1);
-        ingredient11.setUnit("ingredient2-1:unit");
+        ingredient21.setName("ingredient2-1");
+        ingredient21.setAmount(1);
+        ingredient21.setUnit("ingredient2-1:unit");
 
         Ingredient ingredient22 = new Ingredient();
-        ingredient12.setName("ingredient2-2");
-        ingredient12.setAmount(2);
-        ingredient12.setUnit("ingredient2-2:unit");
+        ingredient22.setName("ingredient2-2");
+        ingredient22.setAmount(2);
+        ingredient22.setUnit("ingredient2-2:unit");
 
         ingredients2.add(ingredient21);
         ingredients2.add(ingredient22);
@@ -1092,12 +1095,16 @@ public class DBToolsUnitTest extends AndroidTestCase {
         technique11.setExternalURLs(urls);
         technique11.setTools(tools1);
 
+        techniques1.add(technique11);
+
         Technique technique21 = new Technique();
         technique21.setDescription("technique21:description");
         technique21.setName("technique21");
         technique21.setImageURL("technique21:imageURL");
         technique21.setExternalURLs(urls);
         technique21.setTools(tools2);
+
+        techniques2.add(technique21);
 
         //Recipes
         Recipe recipe1 = new Recipe();
@@ -1145,6 +1152,10 @@ public class DBToolsUnitTest extends AndroidTestCase {
         db.addToolToDatabaseDebug(tool21);
         db.addToolToDatabaseDebug(tool22);
 
+        //Techniques
+        db.addTechniqueToDatabaseDebug(technique11);
+        db.addTechniqueToDatabaseDebug(technique21);
+
         //Allergic_To
         //Can be set this way or done by updating user settings with user object
 //        db.addAllergicBase("allergy1");
@@ -1156,8 +1167,21 @@ public class DBToolsUnitTest extends AndroidTestCase {
         //db.addCuisineToDatabase("cuisine2");
 
         //Has_Cooked
-        db.addHasCookedToDatabase(0, 0, "2000-10-10");
-        db.addHasCookedToDatabase(0, 1, "2010-12-12");
+        //db.addHasCookedToDatabase(0, 0, "2000-10-10");
+        //db.addHasCookedToDatabase(0, 1, "2010-12-12");
+        List<Recipe> recipes1 = new ArrayList<Recipe>();
+        recipes1.add(recipe1);
+        recipes1.add(recipe2);
+
+        db.addHasCookedToDatabase(recipes1,"1234-12-12");
+
+        List<Recipe> recipes2 = db.getHasCooked();
+
+        //assertTrue(recipes1.equals(recipes2));
+        for (int i = 0; i < recipes2.size(); i++)
+        {
+            assertTrue(recipes1.get(i).equals(recipes2.get(i)));
+        }
 
         //Has_Cuisine_Type
         //Called on addRecipeToDatabase

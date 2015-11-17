@@ -371,7 +371,7 @@ public class DBTools extends SQLiteOpenHelper {
                     //Add new recipe to list of recipes
                     recipes.add(new Recipe());
 
-                    //Extract values from DB and add to new recipe object in list
+                    //Adds values to recipe object in list that are pulled from Recipe table
                     recipes.get(index).setId(Integer.parseInt(cursor.getString(0)));
                     recipes.get(index).setBigOvenId(Integer.parseInt(cursor.getString(1)));
                     recipes.get(index).setName(cursor.getString(2));
@@ -380,159 +380,167 @@ public class DBTools extends SQLiteOpenHelper {
                     recipes.get(index).setPrepTime(Integer.parseInt(cursor.getString(5)));
                     recipes.get(index).setImageURL(cursor.getString(6));
                     recipes.get(index).setIsASide(Boolean.parseBoolean(cursor.getString(7)));
-                    try {
-                        recipes.get(index).setCost(Double.parseDouble(cursor.getString(8)));
-                    } catch (Exception e) { //The database doesn't have a lot of costs filled in
+                    try{
+                        recipes.get(index).setCost(Double.parseDouble(cursor.getString(8)));}
+                    catch (Exception e) { //The database doesn't have a lot of costs filled in
                     }
 
-                    //Increment counter var
-                    index++;
-                } while (cursor.moveToNext());
-            }
+                    int recipeId = recipes.get(index).getId();
 
-            cursor.close();
-        }
-
-        //Queries ingredient table to build list of ingredients for list of recipes
-        for (int i = 0; i < recipes.size(); i++) {
-            int currRecipeId = recipes.get(i).getId();
-            List<Ingredient> ingredients = new ArrayList<Ingredient>();
-            selectQuery = "SELECT * FROM Requires_Ingredient WHERE recipeId='" + currRecipeId + "'";
-
-            cursor = db.rawQuery(selectQuery, null);
-            index = 0;
-
-            if (cursor.moveToFirst()) {
-                do {
-                    //Add new recipe to list of recipes
-                    ingredients.add(new Ingredient());
-
-
-
-                    //Extract values from DB and add to ingredients object in list
-                    ingredients.get(index).setName(cursor.getString(1));
-                    try {
-                        ingredients.get(index).setAmount(Double.parseDouble(cursor.getString(2)));
-                    } catch (Exception e) { //The database doesn't have all amts filled in
-                    }   //Currently can be null.
-                    try {
-                        ingredients.get(index).setUnit(cursor.getString(3));
-                    } catch (Exception e) { //The database doesn't have all units filled in
-                    }   //Currently can be null.
+                    //Fill in bases,cuisines,ingredients,techniques,tools for this recipe in list
+                    recipes.get(index).setBases(this.getBases(recipeId));
+                    recipes.get(index).setCuisines(this.getCuisines(recipeId));
+                    recipes.get(index).setIngredients(this.getIngredients(recipeId));
+                    recipes.get(index).setTechniques(this.getTechniques(recipeId));
+                    recipes.get(index).setTools(this.getTools(recipeId));
 
                     //Increment counter var
                     index++;
                 } while (cursor.moveToNext());
             }
-
-            recipes.get(i).setIngredients(ingredients);
-            cursor.close();
         }
-
-        //NOTE: As of iteration 1, this ONLY acquires names for techniques.
-        //This is because we are lacking data entries in the database for descriptions, URLS, etc.
-        for (int i = 0; i < recipes.size(); i++) {
-            int currRecipeId = recipes.get(i).getId();
-            List<Technique> techniques = new ArrayList<Technique>();
-            selectQuery = "SELECT techniqueName FROM Requires_Technique WHERE recipeId='" + currRecipeId + "'";
-
-            cursor = db.rawQuery(selectQuery, null);
-            index = 0;
-
-            if (cursor.moveToFirst()) {
-                do {
-                    //Add new recipe to list of recipes
-                    techniques.add(new Technique());
-
-                    //Extract values from DB and add to ingredients object in list
-                    try {
-                        techniques.get(index).setName(cursor.getString(0));
-                    } catch (Exception e) { //The database doesn't have all amts filled in
-                    }   //Currently can be null, if there is no entry in db
-
-                    //Increment counter var
-                    index++;
-                } while (cursor.moveToNext());
-            }
-
-            recipes.get(i).setTechniques(techniques);
-            cursor.close();
-        }
-
-        //Queries Tool and Requires_Tool tables for list of tools
-        //NOTE: As of iteration 1, this ONLY acquires names for tools.
-        //This is because we are lacking data entries in the database for descriptions, URLS, etc.
-        for (int i = 0; i < recipes.size(); i++) {
-            int currRecipeId = recipes.get(i).getId();
-            List<Tool> tools = new ArrayList<Tool>();
-            selectQuery = "SELECT toolName FROM Requires_Tool WHERE recipeId='" + currRecipeId + "'";
-
-            cursor = db.rawQuery(selectQuery, null);
-            index = 0;
-
-            if (cursor.moveToFirst()) {
-                do {
-                    //Add new recipe to list of recipes
-                    tools.add(new Tool());
-
-                    //Extract values from DB and add to ingredients object in list
-                    try {
-                        tools.get(index).setName(cursor.getString(0));
-                    } catch (Exception e) { //The database doesn't have all amts filled in
-                    }   //Currently can be null, if there is no entry in db
-
-                    //Increment counter var
-                    index++;
-                } while (cursor.moveToNext());
-            }
-
-            recipes.get(i).setTools(tools);
-            cursor.close();
-        }
-
-        //Obtains bases in recipe from db
-        //All of your bases are belong to us
-        for (int i = 0; i < recipes.size(); i++) {
-            int currRecipeId = recipes.get(i).getId();
-            List<String> bases = new ArrayList<String>();
-            selectQuery = "SELECT baseName FROM Has_Meal_Base WHERE recipeId='" + currRecipeId + "'";
-
-            cursor = db.rawQuery(selectQuery, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    bases.add(cursor.getString(0));
-                } while (cursor.moveToNext());
-            }
-
-            recipes.get(i).setBases(bases);
-            cursor.close();
-        }
-
-        //Obtains cuisines in recipe from db
-        for (int i = 0; i < recipes.size(); i++) {
-            int currRecipeId = recipes.get(i).getId();
-            List<String> cuisineTypes = new ArrayList<String>();
-            selectQuery = "SELECT cuisineName FROM Has_Cuisine_Type WHERE recipeId='" + currRecipeId + "'";
-
-            cursor = db.rawQuery(selectQuery, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    cuisineTypes.add(cursor.getString(0));
-                } while (cursor.moveToNext());
-            }
-
-            recipes.get(i).setBases(cuisineTypes);
-            cursor.close();
-        }
-
-        db.close();
 
         return recipes;
+
+//        //Queries ingredient table to build list of ingredients for list of recipes
+//        for (int i = 0; i < recipes.size(); i++) {
+//            int currRecipeId = recipes.get(i).getId();
+//            List<Ingredient> ingredients = new ArrayList<Ingredient>();
+//            selectQuery = "SELECT * FROM Requires_Ingredient WHERE recipeId='" + currRecipeId + "'";
+//
+//            cursor = db.rawQuery(selectQuery, null);
+//            index = 0;
+//
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    //Add new recipe to list of recipes
+//                    ingredients.add(new Ingredient());
+//
+//
+//
+//                    //Extract values from DB and add to ingredients object in list
+//                    ingredients.get(index).setName(cursor.getString(1));
+//                    try {
+//                        ingredients.get(index).setAmount(Double.parseDouble(cursor.getString(2)));
+//                    } catch (Exception e) { //The database doesn't have all amts filled in
+//                    }   //Currently can be null.
+//                    try {
+//                        ingredients.get(index).setUnit(cursor.getString(3));
+//                    } catch (Exception e) { //The database doesn't have all units filled in
+//                    }   //Currently can be null.
+//
+//                    //Increment counter var
+//                    index++;
+//                } while (cursor.moveToNext());
+//            }
+//
+//            recipes.get(i).setIngredients(ingredients);
+//            cursor.close();
+//        }
+//
+//        //NOTE: As of iteration 1, this ONLY acquires names for techniques.
+//        //This is because we are lacking data entries in the database for descriptions, URLS, etc.
+//        for (int i = 0; i < recipes.size(); i++) {
+//            int currRecipeId = recipes.get(i).getId();
+//            List<Technique> techniques = new ArrayList<Technique>();
+//            selectQuery = "SELECT techniqueName FROM Requires_Technique WHERE recipeId='" + currRecipeId + "'";
+//
+//            cursor = db.rawQuery(selectQuery, null);
+//            index = 0;
+//
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    //Add new recipe to list of recipes
+//                    techniques.add(new Technique());
+//
+//                    //Extract values from DB and add to ingredients object in list
+//                    try {
+//                        techniques.get(index).setName(cursor.getString(0));
+//                    } catch (Exception e) { //The database doesn't have all amts filled in
+//                    }   //Currently can be null, if there is no entry in db
+//
+//                    //Increment counter var
+//                    index++;
+//                } while (cursor.moveToNext());
+//            }
+//
+//            recipes.get(i).setTechniques(techniques);
+//            cursor.close();
+//        }
+//
+//        //Queries Tool and Requires_Tool tables for list of tools
+//        //NOTE: As of iteration 1, this ONLY acquires names for tools.
+//        //This is because we are lacking data entries in the database for descriptions, URLS, etc.
+//        for (int i = 0; i < recipes.size(); i++) {
+//            int currRecipeId = recipes.get(i).getId();
+//            List<Tool> tools = new ArrayList<Tool>();
+//            selectQuery = "SELECT toolName FROM Requires_Tool WHERE recipeId='" + currRecipeId + "'";
+//
+//            cursor = db.rawQuery(selectQuery, null);
+//            index = 0;
+//
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    //Add new recipe to list of recipes
+//                    tools.add(new Tool());
+//
+//                    //Extract values from DB and add to ingredients object in list
+//                    try {
+//                        tools.get(index).setName(cursor.getString(0));
+//                    } catch (Exception e) { //The database doesn't have all amts filled in
+//                    }   //Currently can be null, if there is no entry in db
+//
+//                    //Increment counter var
+//                    index++;
+//                } while (cursor.moveToNext());
+//            }
+//
+//            recipes.get(i).setTools(tools);
+//            cursor.close();
+//        }
+//
+//        //Obtains bases in recipe from db
+//        //All of your bases are belong to us
+//        for (int i = 0; i < recipes.size(); i++) {
+//            int currRecipeId = recipes.get(i).getId();
+//            List<String> bases = new ArrayList<String>();
+//            selectQuery = "SELECT baseName FROM Has_Meal_Base WHERE recipeId='" + currRecipeId + "'";
+//
+//            cursor = db.rawQuery(selectQuery, null);
+//
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    bases.add(cursor.getString(0));
+//                } while (cursor.moveToNext());
+//            }
+//
+//            recipes.get(i).setBases(bases);
+//            cursor.close();
+//        }
+//
+//        //Obtains cuisines in recipe from db
+//        for (int i = 0; i < recipes.size(); i++) {
+//            int currRecipeId = recipes.get(i).getId();
+//            List<String> cuisineTypes = new ArrayList<String>();
+//            selectQuery = "SELECT cuisineName FROM Has_Cuisine_Type WHERE recipeId='" + currRecipeId + "'";
+//
+//            cursor = db.rawQuery(selectQuery, null);
+//
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    cuisineTypes.add(cursor.getString(0));
+//                } while (cursor.moveToNext());
+//            }
+//
+//            recipes.get(i).setBases(cuisineTypes);
+//            cursor.close();
+//        }
+//
+//        db.close();
+//
+//        return recipes;
     }
 
-    //TODO: Iteration 2+, optimize selects by columns
     public Preferences getPreferences(){
         Preferences preferences = new Preferences();
         List<String> likedCuisines = new ArrayList<String>();
@@ -692,7 +700,7 @@ public class DBTools extends SQLiteOpenHelper {
         db.execSQL(removeStatement);
     }
 
-    //NOTE: See GroceryList specs, has only ingredient names as per our design doc
+    //NOTE: has only ingredient names as per our design doc
     public GroceryList getGroceryList() {
         GroceryList groceryList = new GroceryList();
         List<String> ingredientNames = new ArrayList<String>();
@@ -747,23 +755,31 @@ public class DBTools extends SQLiteOpenHelper {
                 recipes.add(new Recipe());
 
                 //Extract values from DB and add to new recipe object in list
-                recipes.get(index).setId(Integer.parseInt(cursor.getString(0)));
-                recipes.get(index).setBigOvenId(Integer.parseInt(cursor.getString(1)));
-                recipes.get(index).setName(cursor.getString(2));
-                recipes.get(index).setInstructions(cursor.getString(3));
-                recipes.get(index).setCookTime(Integer.parseInt(cursor.getString(4)));
-                recipes.get(index).setPrepTime(Integer.parseInt(cursor.getString(5)));
-                recipes.get(index).setImageURL(cursor.getString(6));
+                recipes.get(index).setId(Integer.parseInt(cursor.getString(1)));
+                recipes.get(index).setBigOvenId(Integer.parseInt(cursor.getString(2)));
+                recipes.get(index).setName(cursor.getString(3));
+                recipes.get(index).setInstructions(cursor.getString(4));
+                recipes.get(index).setCookTime(Integer.parseInt(cursor.getString(5)));
+                recipes.get(index).setPrepTime(Integer.parseInt(cursor.getString(6)));
+                recipes.get(index).setImageURL(cursor.getString(7));
                 try {
-                    recipes.get(index).setIsASide(Boolean.parseBoolean(cursor.getString(7)));
+                    recipes.get(index).setIsASide(Boolean.parseBoolean(cursor.getString(8)));
                 }
                 catch (Exception e1) { //The database doesn't have a lot of isASide filled in
                 }
                 try{
-                    recipes.get(index).setCost(Double.parseDouble(cursor.getString(8)));
+                    recipes.get(index).setCost(Double.parseDouble(cursor.getString(9)));
                 }
                 catch (Exception e2) { //The database doesn't have a lot of costs filled in
                 }
+
+                int recipeId = recipes.get(index).getId();
+
+                recipes.get(index).setBases(this.getBases(recipeId));
+                recipes.get(index).setCuisines(this.getCuisines(recipeId));
+                recipes.get(index).setIngredients(this.getIngredients(recipeId));
+                recipes.get(index).setTechniques(this.getTechniques(recipeId));
+                recipes.get(index).setTools(this.getTools(recipeId));
 
                 //Increment counter var
                 index++;
@@ -866,6 +882,8 @@ public class DBTools extends SQLiteOpenHelper {
         db.execSQL(removeStatement);
     }
 
+    //NOTE: This draws values from User table. This means only try to use this method for fields:
+    //userId, email, countRecipesLiked, countRecipesDisliked, groupSize, prepTime, cookTime, estimateCost
     public String getUserSetting(String field) {
         String value = "";
         SQLiteDatabase db = this.getWritableDatabase();
@@ -910,6 +928,8 @@ public class DBTools extends SQLiteOpenHelper {
 
     //To make this easier to use, the method automatically checks whether it needs to write an
     //update or an insert statement in the db
+    //NOTE: This draws values from User table. This means only try to use this method for fields:
+    //userId, email, countRecipesLiked, countRecipesDisliked, groupSize, prepTime, cookTime, estimateCost
     public void setUserSetting(String field, String value) {
         final int DEFAULT_ID = 0;
         final String DEFAULT_EMAIL = "";
@@ -971,6 +991,8 @@ public class DBTools extends SQLiteOpenHelper {
 
     //To make this easier to use, the method automatically checks whether it needs to write an
     //update or an insert statement in the db
+    //NOTE: This draws values from User table. This means only try to use this method for fields:
+    //userId, email, countRecipesLiked, countRecipesDisliked, groupSize, prepTime, cookTime, estimateCost
     public void setUserSetting(String field, int value) {
         final int DEFAULT_ID = 0;
         final String DEFAULT_EMAIL = "";
@@ -1125,6 +1147,7 @@ public class DBTools extends SQLiteOpenHelper {
 
     }
 
+    //This gets all tools in the table Tool, this does NOT get the user's owned tools
     public List<Tool> getTools() {
         List<Tool> tools = new ArrayList<Tool>();
 
@@ -1539,15 +1562,93 @@ public class DBTools extends SQLiteOpenHelper {
         db.insertWithOnConflict(TABLE_CUISINE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
-    public void addHasCookedToDatabase(int userId, int recipeId, String date) {
+    public void addHasCookedToDatabase(int recipeId, String date) {
+        int userId = 0;
         SQLiteDatabase db = this.getWritableDatabase();
 
         String insertStatement = "INSERT INTO Has_Cooked (userId, recipeId, dateCooked)\n"
                 +"VALUES (" + userId
                 +", " + recipeId
-                +", '" + date + "');";
+                +", \"" + date + "\");";
 
         db.execSQL(insertStatement);
+    }
+
+    public void addHasCookedToDatabase(List<Recipe> recipes, String date) {
+        int userId = 0;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String insertStatement = "INSERT INTO Has_Cooked (userId, recipeId, dateCooked)\n"
+                +"VALUES ";
+
+        for (int i = 0; i < recipes.size() - 1; i++)
+        {
+            insertStatement += "(" + userId
+                    +", " + recipes.get(i).getId()
+                    +", \"" + date + "\")"
+                    +",";
+        }
+
+        insertStatement += "(" + userId
+                +", " + recipes.get(recipes.size()-1).getId()
+                +", \"" + date + "\")";
+
+        db.execSQL(insertStatement);
+    }
+
+    public List<Recipe> getHasCooked() {
+        List<Recipe> recipes = new ArrayList<Recipe>();
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String selectQuery = "SELECT Has_Cooked.recipeId, Recipe.*"
+                +"FROM Has_Cooked\n"
+                +"INNER JOIN\n"
+                +"Recipe\n"
+                +"ON Has_Cooked.recipeId = Recipe.recipeId;";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                //Add new recipe to list of recipes
+                recipes.add(new Recipe());
+
+                //Extract values from DB and add to new recipe object in list
+                recipes.get(index).setId(Integer.parseInt(cursor.getString(1)));
+                recipes.get(index).setBigOvenId(Integer.parseInt(cursor.getString(2)));
+                recipes.get(index).setName(cursor.getString(3));
+                recipes.get(index).setInstructions(cursor.getString(4));
+                recipes.get(index).setCookTime(Integer.parseInt(cursor.getString(5)));
+                recipes.get(index).setPrepTime(Integer.parseInt(cursor.getString(6)));
+                recipes.get(index).setImageURL(cursor.getString(7));
+                try {
+                    recipes.get(index).setIsASide(Boolean.parseBoolean(cursor.getString(8)));
+                }
+                catch (Exception e1) { //The database doesn't have a lot of isASide filled in
+                }
+                try{
+                    recipes.get(index).setCost(Double.parseDouble(cursor.getString(9)));
+                }
+                catch (Exception e2) { //The database doesn't have a lot of costs filled in
+                }
+
+                int recipeId = recipes.get(index).getId();
+
+                //Fill in bases,cuisines,ingredients,techniques,tools for this recipe in list
+                recipes.get(index).setBases(this.getBases(recipeId));
+                recipes.get(index).setCuisines(this.getCuisines(recipeId));
+                recipes.get(index).setIngredients(this.getIngredients(recipeId));
+                recipes.get(index).setTechniques(this.getTechniques(recipeId));
+                recipes.get(index).setTools(this.getTools(recipeId));
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        return recipes;
     }
 
     public void addMealBaseToDatabase(String base) {
@@ -2036,14 +2137,132 @@ public class DBTools extends SQLiteOpenHelper {
         return list;
     }
 
+    public List<Ingredient> getIngredients(int recipeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT * FROM Requires_Ingredient WHERE recipeId=" + recipeId + "";
+
+        List<Ingredient> ingredients = new ArrayList<Ingredient>();
+
+        //Queries ingredient table to build list of ingredients for a recipe
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                //Add new ingredient to list of ingredients
+                ingredients.add(new Ingredient());
+
+                //Extract values from DB and add to ingredients object in list
+                ingredients.get(index).setName(cursor.getString(1));
+                try {
+                    ingredients.get(index).setAmount(Double.parseDouble(cursor.getString(2)));
+                } catch (Exception e) { //The database doesn't have all amts filled in
+                }   //Currently can be null.
+                try {
+                    ingredients.get(index).setUnit(cursor.getString(3));
+                } catch (Exception e) { //The database doesn't have all units filled in
+                }   //Currently can be null.
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return ingredients;
+    }
+
+    public List<Technique> getTechniques(int recipeId) {
+        List<String> techniquesTableToString = getTechniquesTableToString();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT Requires_Technique.techniqueName, Technique.*"
+                + "FROM Requires_Technique\n"
+                + "INNER JOIN\n"
+                + "Technique\n"
+                + "ON Requires_Technique.techniqueName = Technique.techniqueName\n"
+                + "WHERE recipeId=" + recipeId + ";";
+
+        List<Technique> techniques = new ArrayList<Technique>();
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                //Add new recipe to list of recipes
+                techniques.add(new Technique());
+
+                //Extract values from DB and add to ingredients object in list
+                try {
+                    techniques.get(index).setName(cursor.getString(1));
+                    techniques.get(index).setDescription(cursor.getString(2));
+                    //techniques.get(index).setDifficulty(cursor.getString(3));
+                    //techniques.set(index).setTools(...);
+                    techniques.get(index).setImageURL(cursor.getString(4));
+
+                } catch (Exception e) { //The database doesn't have all amts filled in
+                }   //Currently can be null, if there is no entry in db
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return techniques;
+    }
+
+    //Gets tools per recipe
+    public List<Tool> getTools(int recipeId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        List<Tool> tools = new ArrayList<Tool>();
+
+        String selectQuery = "SELECT Requires_Tool.toolName, Tool.*"
+                + "FROM Requires_Tool\n"
+                + "INNER JOIN\n"
+                + "Tool\n"
+                + "ON Requires_Tool.toolName = Tool.toolName\n"
+                + "WHERE recipeId=" + recipeId + ";";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        int index = 0;
+
+        if (cursor.moveToFirst()) {
+            do {
+                //Add new recipe to list of recipes
+                tools.add(new Tool());
+
+                //Extract values from DB and add to ingredients object in list
+                try {
+                    tools.get(index).setName(cursor.getString(1));
+                    tools.get(index).setDescription(cursor.getString(2));
+                    tools.get(index).setImageURL(cursor.getString(3));
+                } catch (Exception e) { //The database doesn't have all amts filled in
+                }   //Currently can be null, if there is no entry in db
+
+                //Increment counter var
+                index++;
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+
+        return tools;
+    }
+
     public Recipe getRecipe(int recipeId) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         String query = "SELECT * FROM " + TABLE_RECIPE + " WHERE recipeId=" + recipeId;
         Cursor cursor = db.rawQuery(query, null);
 
+        Recipe r = new Recipe();
+
         if(cursor.moveToFirst()) {
-            Recipe r = new Recipe();
             r.setId(recipeId);
             r.setBigOvenId(Integer.parseInt(cursor.getString(1)));
             r.setName(cursor.getString(2));
@@ -2052,12 +2271,15 @@ public class DBTools extends SQLiteOpenHelper {
             r.setPrepTime(Integer.parseInt(cursor.getString(5)));
             r.setImageURL(cursor.getString(6));
             r.setIsASide(Boolean.parseBoolean(cursor.getString(7)));
-            return r;
         }
 
-        cursor.close();
+        r.setBases(this.getBases(recipeId));
+        r.setCuisines(this.getCuisines(recipeId));
+        r.setIngredients(this.getIngredients(recipeId));
+        r.setTechniques(this.getTechniques(recipeId));
+        r.setTools(this.getTools(recipeId));
 
-        return null;
+        return r;
     }
 
     //Debugging method
@@ -2136,5 +2358,46 @@ public class DBTools extends SQLiteOpenHelper {
 
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL(insertStatement);
+    }
+
+    //Only use this method for adding custom techniques to db for testing
+    //Forcefully adds a technique to db, doesn't check if in list in APIGrabber
+    public void addTechniqueToDatabaseDebug(Technique technique) {
+        String insertStatement = "INSERT INTO Technique (techniqueName, description, imageUrlText)\n"
+                +"VALUES ('" + technique.getName() + "'"
+                +", '" + technique.getDescription() + "'"
+                +", '" + technique.getImageURL() + "');";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(insertStatement);
+    }
+
+    //Debugging Method.. gets  list of entries of techniques table as list of string
+    public List<String> getTechniquesTableToString() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ArrayList<String> result = new ArrayList<String>();
+
+        String selectQuery = "SELECT * FROM Technique";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String currTechnique = "";
+
+                currTechnique += cursor.getString(0);
+                currTechnique += ", ";
+                currTechnique += cursor.getString(1);
+                currTechnique += ", ";
+                currTechnique += cursor.getString(2);
+                currTechnique += ", ";
+                currTechnique += cursor.getString(3);
+
+                result.add(currTechnique);
+            } while (cursor.moveToNext());
+        }
+
+        return result;
     }
 }
