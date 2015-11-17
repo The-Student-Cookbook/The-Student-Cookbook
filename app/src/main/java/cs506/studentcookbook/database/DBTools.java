@@ -298,15 +298,16 @@ public class DBTools extends SQLiteOpenHelper {
 
         String selectQuery = "";
         SQLiteDatabase db = this.getWritableDatabase();
+        boolean doingAISearch = false;
 
         //"Automatic/ML/Choose for me" search
         if (preferences == null || (preferences.getName() != null && preferences.getName().length() == 0))
         {
-            // TODO in second iteration make this the AI search
-            selectQuery = "SELECT * FROM Recipe";
-            // TODO this is temporary
-            //List<Recipe> listToReturn = performAISearch(1);
-            //return listToReturn;
+            //May need to change this later to add modularity
+            int userId = 0;
+
+            recipes = performAISearch(userId);
+            doingAISearch = true;
         }
 
         //"Browse All" (preferences.getName != empty string or null)
@@ -358,35 +359,39 @@ public class DBTools extends SQLiteOpenHelper {
             }
         }
 
-        Cursor cursor = db.rawQuery(selectQuery, null);
-        int index = 0;
+        Cursor cursor = null;
+        int index;
 
-        if (cursor.moveToFirst()) {
-            do {
-                //Add new recipe to list of recipes
-                recipes.add(new Recipe());
+        if(!doingAISearch) {
+            cursor = db.rawQuery(selectQuery, null);
+            index = 0;
 
-                //Extract values from DB and add to new recipe object in list
-                recipes.get(index).setId(Integer.parseInt(cursor.getString(0)));
-                recipes.get(index).setBigOvenId(Integer.parseInt(cursor.getString(1)));
-                recipes.get(index).setName(cursor.getString(2));
-                recipes.get(index).setInstructions(cursor.getString(3));
-                recipes.get(index).setCookTime(Integer.parseInt(cursor.getString(4)));
-                recipes.get(index).setPrepTime(Integer.parseInt(cursor.getString(5)));
-                recipes.get(index).setImageURL(cursor.getString(6));
-                recipes.get(index).setIsASide(Boolean.parseBoolean(cursor.getString(7)));
-                try{
-                    recipes.get(index).setCost(Double.parseDouble(cursor.getString(8)));}
-                catch (Exception e) { //The database doesn't have a lot of costs filled in
-                }
+            if (cursor.moveToFirst()) {
+                do {
+                    //Add new recipe to list of recipes
+                    recipes.add(new Recipe());
 
-                //Increment counter var
-                index++;
-            } while (cursor.moveToNext());
+                    //Extract values from DB and add to new recipe object in list
+                    recipes.get(index).setId(Integer.parseInt(cursor.getString(0)));
+                    recipes.get(index).setBigOvenId(Integer.parseInt(cursor.getString(1)));
+                    recipes.get(index).setName(cursor.getString(2));
+                    recipes.get(index).setInstructions(cursor.getString(3));
+                    recipes.get(index).setCookTime(Integer.parseInt(cursor.getString(4)));
+                    recipes.get(index).setPrepTime(Integer.parseInt(cursor.getString(5)));
+                    recipes.get(index).setImageURL(cursor.getString(6));
+                    recipes.get(index).setIsASide(Boolean.parseBoolean(cursor.getString(7)));
+                    try {
+                        recipes.get(index).setCost(Double.parseDouble(cursor.getString(8)));
+                    } catch (Exception e) { //The database doesn't have a lot of costs filled in
+                    }
+
+                    //Increment counter var
+                    index++;
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
         }
-
-        cursor.close();
-
 
         //Queries ingredient table to build list of ingredients for list of recipes
         for (int i = 0; i < recipes.size(); i++) {
@@ -1389,11 +1394,12 @@ public class DBTools extends SQLiteOpenHelper {
     public void addRecipeToDatabase(Recipe recipe) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        //String query = "SELECT * FROM " + TABLE_RECIPE + " WHERE bigOvenId=" + recipe.getBigOvenId();
-        //Cursor cursor = db.rawQuery(query, null);
-        //if(cursor.moveToFirst()) {
-        //    return; // we already added the recipe
-        //}
+//        String query = "SELECT * FROM " + TABLE_RECIPE + " WHERE bigOvenId=" + recipe.getBigOvenId();
+//        Cursor cursor = db.rawQuery(query, null);
+//        if(cursor.moveToFirst()) {
+//            return; // we already added the recipe
+//        }
+//        cursor.close();
 
         // add tools
         for(Tool tool : recipe.getTools())
@@ -1420,7 +1426,7 @@ public class DBTools extends SQLiteOpenHelper {
 
         // add recipe
         ContentValues values = new ContentValues();
-        //values.put("recipeId", note this is automatically done by the database);
+        //values.put("recipeId", recipe.getBigOvenId());
         values.put("bigOvenId", recipe.getBigOvenId());
         values.put("title", recipe.getName());
         values.put("instructions", recipe.getInstructions());
@@ -1631,6 +1637,7 @@ public class DBTools extends SQLiteOpenHelper {
             db.insert(TABLE_RATES_CUISINE, null, values);
         }
 
+        cursor.close();
         countDataIsFresh = false;
     }
 
@@ -1667,6 +1674,7 @@ public class DBTools extends SQLiteOpenHelper {
             db.insert(TABLE_RATES_MEAL_BASE, null, values);
         }
 
+        cursor.close();
         countDataIsFresh = false;
     }
 
@@ -1717,9 +1725,12 @@ public class DBTools extends SQLiteOpenHelper {
 
             int index = cursor.getColumnIndex(columnName);
             String sVal = cursor.getString(index);
+
+            cursor.close();
             return Integer.parseInt(sVal);
         }
 
+        cursor.close();
         return 0;
     }
 
@@ -1736,9 +1747,12 @@ public class DBTools extends SQLiteOpenHelper {
 
             int index = cursor.getColumnIndex(columnName);
             String sVal = cursor.getString(index);
+
+            cursor.close();
             return Integer.parseInt(sVal);
         }
 
+        cursor.close();
         return 0;
     }
 
@@ -1786,7 +1800,7 @@ public class DBTools extends SQLiteOpenHelper {
         // cache the value because this operation is expensive
 
         if(countDataIsFresh && countDislikeCuisine >= 0.0 && countLikeCuisine >= 0.0 && countLikeBase >= 0.0 && countDislikeBase>= 0.0) {
-            System.out.println("Grabbed cached count data.");
+            //System.out.println("Grabbed cached count data.");
             double result[] = {countLikeCuisine + countLikeBase, countDislikeCuisine + countDislikeBase};
             return result;
         }
@@ -1830,6 +1844,8 @@ public class DBTools extends SQLiteOpenHelper {
         countLikeCuisine = (double) likeSum;
         countDislikeCuisine = (double) dislikeSum;
 
+        cursor.close();
+
         // base
         query = "SELECT * FROM " + TABLE_RATES_MEAL_BASE + " WHERE userId=" + userId;
         cursor = db.rawQuery(query, null);
@@ -1853,6 +1869,8 @@ public class DBTools extends SQLiteOpenHelper {
             sVal = cursor.getString(dislikeIndex);
             dislikeSum += Integer.parseInt(sVal);
         }
+
+        cursor.close();
 
         countLikeBase = ((double) likeSum) - countLikeCuisine;
         countDislikeBase = ((double) dislikeSum) - countDislikeCuisine;
@@ -1916,7 +1934,7 @@ public class DBTools extends SQLiteOpenHelper {
         List<String> bases = getBases(recipeId);
 
         // calculate sum for LIKE
-        double probabilityOfLike = getProbability(userId, LIKE);
+        double probabilityOfLike = 0.0; //getProbability(userId, LIKE);
         for(String cuisine : cuisines) {
             double temp = getConditionalProbabilityCuisine(userId, cuisine, LIKE);
             probabilityOfLike += temp;
@@ -1927,7 +1945,7 @@ public class DBTools extends SQLiteOpenHelper {
         }
 
         // calculate sum for DISLIKE
-        double probabilityOfDislike = getProbability(userId, DISLIKE);
+        double probabilityOfDislike = 0.0; //getProbability(userId, DISLIKE);
         for(String cuisine : cuisines) {
             double temp = getConditionalProbabilityCuisine(userId, cuisine, DISLIKE);
             probabilityOfDislike += temp;
@@ -1937,10 +1955,20 @@ public class DBTools extends SQLiteOpenHelper {
             probabilityOfDislike += temp;
         }
 
-        if(probabilityOfLike >= probabilityOfDislike) {
+        // not enough data
+        if(probabilityOfLike < 0.01 && probabilityOfDislike < 0.01) {
             return true;
         }
-        return false;
+
+        if(probabilityOfDislike >= 2.0 * probabilityOfLike) {
+            return false;
+        }
+
+        //if(probabilityOfLike >= probabilityOfDislike) {
+        //    return true;
+        //}
+
+        return true;
     }
 
     public List<Recipe> performAISearch(int userId) {
@@ -1970,6 +1998,7 @@ public class DBTools extends SQLiteOpenHelper {
             }
         }
 
+        cursor.close();
         return suggested;
     }
 
@@ -1985,6 +2014,7 @@ public class DBTools extends SQLiteOpenHelper {
             String sVal = cursor.getString(index);
             list.add(sVal);
         }
+        cursor.close();
 
         return list;
     }
@@ -2001,11 +2031,11 @@ public class DBTools extends SQLiteOpenHelper {
             String sVal = cursor.getString(index);
             list.add(sVal);
         }
+        cursor.close();
 
         return list;
     }
 
-    // TODO this is supposed to be temporary - replace with version that also populates the rest of the needed info
     public Recipe getRecipe(int recipeId) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -2024,6 +2054,8 @@ public class DBTools extends SQLiteOpenHelper {
             r.setIsASide(Boolean.parseBoolean(cursor.getString(7)));
             return r;
         }
+
+        cursor.close();
 
         return null;
     }

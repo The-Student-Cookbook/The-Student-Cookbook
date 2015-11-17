@@ -29,21 +29,21 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Like Tomato"
+        android:text="Like Beef"
         android:id="@+id/button6"
         android:layout_marginTop="42dp"
         android:layout_alignParentStart="true"
         android:layout_below="@+id/button3"
-        android:onClick="likeTomato" />
+        android:onClick="likeBeef" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dislike Tomato"
+        android:text="Dislike Beef"
         android:id="@+id/button8"
         android:layout_alignTop="@+id/button6"
         android:layout_alignParentEnd="true"
-        android:onClick="dislikeTomato" />
+        android:onClick="dislikeBeef" />
 
     <Button
         android:layout_width="wrap_content"
@@ -66,37 +66,37 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Like sandwich"
+        android:text="Like Turkey"
         android:id="@+id/button10"
         android:layout_below="@+id/button5"
         android:layout_alignParentStart="true"
-        android:onClick="likeSandwich" />
+        android:onClick="likeTurkey" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dislike sandwich"
+        android:text="Dislike Turkey"
         android:id="@+id/button11"
         android:layout_alignTop="@+id/button10"
         android:layout_alignParentEnd="true"
-        android:onClick="dislikeSandwich" />
+        android:onClick="dislikeTurkey" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Like pasta"
+        android:text="Like egg"
         android:id="@+id/button12"
         android:layout_below="@+id/button10"
         android:layout_alignParentStart="true"
-        android:onClick="likePasta" />
+        android:onClick="likeEgg" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Dislike pasta"
+        android:text="Dislike egg"
         android:id="@+id/button13"
         android:layout_below="@+id/button11"
         android:layout_alignEnd="@+id/button11"
-        android:onClick="dislikePasta" />
+        android:onClick="dislikeEgg" />
 
 </RelativeLayout>

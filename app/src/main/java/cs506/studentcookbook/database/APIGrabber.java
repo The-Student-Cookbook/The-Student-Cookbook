@@ -156,13 +156,13 @@ public class APIGrabber {
             "spicy", "indian", "israeli", "thai", "german", "russian", "middle-eastern",
             "breakfast", "lunch", "dinner", "snack", "dessert", "smoothie", "fish"};
 
-    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"beef"};
+    public static final String[] SIMPLE_POPULATION_KEYWORDS = {"salmon", "tuna", "tilapia"};
 
     public static final String[] CORRECTED_SYNONYMS_DATA = {"chicken", "beef", "pizza", "pasta",
-    "pork", "turkey", "salmon", "egg", "asian", "dessert", "marinade", "meat"};
+    "pork", "turkey", "salmon", "egg", "asian", "dessert", "marinade", "meat", "bread", "bbq", "seafood"};
     public static List<String> CORRECTED_SYNONYMS;
 
-    public static final String[] EXCLUDED_WORDS_DATA = {"main dish", "other", "main dish - other", "side dish"};
+    public static final String[] EXCLUDED_WORDS_DATA = {"main dish", "other", "main dish - other", "side dish", "other - misc"};
     public static List<String> EXCLUDED_WORDS;
 
     private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
@@ -177,7 +177,7 @@ public class APIGrabber {
     private static final double MIN_REVIEW = 2.0;
     private static final int MIN_REVIEW_COUNT = 1;
     private static final int MAX_INGREDIENTS = 6;
-    private static final int MAX_PAGE = 5;
+    private static final int MAX_PAGE = 2;
     private static final int RESULTS_PER_PAGE = 25;
 
 
@@ -201,7 +201,7 @@ public class APIGrabber {
 
         List<Recipe> list = getRecipesFromAPIBasedOnKeywordAndPage(keyword, 1, RESULTS_PER_PAGE);
 
-        for(int i = 1; i < MAX_PAGE; i++) {
+        for(int i = 2; i <= MAX_PAGE; i++) {
             System.out.println("Grabbing new page...");
             list.addAll(getRecipesFromAPIBasedOnKeywordAndPage(keyword, i, RESULTS_PER_PAGE));
         }
