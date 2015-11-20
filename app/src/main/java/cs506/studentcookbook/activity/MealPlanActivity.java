@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -18,6 +19,7 @@ import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Ingredient;
 import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.model.Tool;
+import cs506.studentcookbook.utils.DownloadImageTask;
 
 /**
  * Landing page that gives a brief overview of what the recipe was that was selected
@@ -40,6 +42,9 @@ public class MealPlanActivity extends Activity {
         Bundle savedRecipeBundle = getIntent().getExtras();
         selectedRecipe = savedRecipeBundle.getParcelable(CURRENT_RECIPE_PARCEL_KEY);
 
+        // grabs the image from the web and puts it in the image view
+        new DownloadImageTask((ImageView) findViewById(R.id.recipeImageView)).execute(selectedRecipe.getImageURL());
+
         Log.d(TAG, "Selected recipe = " + selectedRecipe);
 
         //Setup the click listeners for the various buttons we have
@@ -51,7 +56,6 @@ public class MealPlanActivity extends Activity {
                 finish();
             }
         });
-
 
         //Setup the Add To Grocery List Button
         // TODO: Interation 2: Send the grocery list stuff?
