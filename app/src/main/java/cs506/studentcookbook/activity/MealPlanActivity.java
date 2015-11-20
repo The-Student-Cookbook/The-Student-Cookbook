@@ -1,13 +1,20 @@
 package cs506.studentcookbook.activity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Iterator;
+import java.util.List;
 
 import cs506.studentcookbook.R;
+import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Ingredient;
 import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.model.Tool;
@@ -17,18 +24,23 @@ import cs506.studentcookbook.model.Tool;
  */
 public class MealPlanActivity extends Activity {
 
+    private static final String TAG = "MealPlanActivity";
     private final String CURRENT_RECIPE_PARCEL_KEY = "CURRENT_RECIPE_PARCEL_KEY";
     private Recipe selectedRecipe;
+    private DBTools dbTools;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_meal_plan);
 
+        dbTools = new DBTools(getApplicationContext());
+
         // Recover the recipe that was passed here
         Bundle savedRecipeBundle = getIntent().getExtras();
         selectedRecipe = savedRecipeBundle.getParcelable(CURRENT_RECIPE_PARCEL_KEY);
 
+        Log.d(TAG, "Selected recipe = " + selectedRecipe);
 
         //Setup the click listeners for the various buttons we have
         //Setup the Back Button
@@ -44,6 +56,32 @@ public class MealPlanActivity extends Activity {
         //Setup the Add To Grocery List Button
         // TODO: Interation 2: Send the grocery list stuff?
         Button addToGroceryButton = (Button) findViewById(R.id.meal_plan_add_to_grocery_button);
+        addToGroceryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                // TODO: add to grocery list
+//                DBTools tools = new DBTools();
+//                tools.addIngredientToGroceryList();
+
+                // need list of Ingredients for grocery list
+                List<Ingredient> ingredients = selectedRecipe.getIngredients();
+
+                Log.d(TAG, "Ingredients = " + ingredients);
+                Log.d(TAG, "Grocery list before adding ingredients = " + dbTools.getGroceryList());
+
+                Iterator<Ingredient> itr = ingredients.iterator();
+                while(itr.hasNext()) {
+                    Ingredient next = itr.next();
+                   // dbTools.addIngredientToGroceryList(next);
+                }
+
+                Log.d(TAG, "Grocery list AFTER adding ingredients = " + dbTools.getGroceryList());
+
+                Context context = getApplicationContext();
+                Toast toast = Toast.makeText(context, "Ingredients Added to Grocery List", Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
 
         //Setup up the Let's Cook! button
         Button letsCookButton = (Button) findViewById(R.id.meal_plan_lets_cook_button);
