@@ -4,56 +4,56 @@
 
 In order to clone the repository and run the code, following the steps outlined below:
 
-1. Acquire Android Studio and the Android SDK  
-  a. Download from http://developer.android.com/sdk/index.html  
+### Acquire Android Studio and the Android SDK  
+  1. Download from http://developer.android.com/sdk/index.html  
   
   [step1.jpg]
   
-  b. Launch the installed application and choose "Standard" as the install type.  
+  2. Launch the installed application and choose "Standard" as the install type.  
   
   [step2.jpg]
   
-  c. Take the defaults and click finish to start the installation of the SDK.
+  3. Take the defaults and click finish to start the installation of the SDK.
   
   [step3.jpg]
   
-2. Acquire the code from Github:  
-  a. Release URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/releases/tag/v0.9    
-  b. Download the source code as a zip and unzip it into a local directory  
-  c. **Important: Delete The-Student-Cookbook.iml file from the top level of the project**  
-  d. Open Android Studio and click "Open an existing Android Studio Project"  
-  e. Select the "The-Student-Cookbook-0.9" folder as your project directory  
+### Acquire the code from Github:  
+  1. Release URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/releases/tag/v0.9    
+  2. Download the source code as a zip and unzip it into a local directory  
+  3. **Important: Delete The-Student-Cookbook.iml file from the top level of the project**  
+  4. Open Android Studio and click "Open an existing Android Studio Project"  
+  5. Select the "The-Student-Cookbook-0.9" folder as your project directory  
 
-3. Open Android Studio  
-  a. Open the project The-Student-Cookbook  
-4. Build and run the code  
-  a. Build -> Make project  
-  b. Run -> Run 'app'  
-    i. When prompted, create a new virtual Android emulator or attach an Android phone via USB
-    ii. The app should launch on the emulator or the actual phone
+### Open Android Studio  
+  1. Open the project The-Student-Cookbook  
+### Build and run the code  
+  1. Build -> Make project  
+  2. Run -> Run 'app'  
+    a. When prompted, create a new virtual Android emulator or attach an Android phone via USB
+    b. The app should launch on the emulator or the actual phone
 
-4. Build the Project
-  a. Once the project is imported, from the top menu, select "build" --> "make project"
+### Build the Project
+  1. Once the project is imported, from the top menu, select "build" --> "make project"
   
   [step4.jpg]
   
-5. Run the Project
-  a. Select the green "run" icon from the top bar in Android Studio
+### Run the Project
+  1. Select the green "run" icon from the top bar in Android Studio
   
   [step5.jpg]
   
-  b. A "device chooser" dialog will pop up.  Click the "..." button near the bottom to open the virtual device manager.
+  2. A "device chooser" dialog will pop up.  Click the "..." button near the bottom to open the virtual device manager.
   
   [step6.jpg]
   
-  c. "Create Virtual Device...", then select the Nexus 6 emulator.
-  d. Choose the download link next to the Marshmallow release for x86_64.  
-  e. It will download and then eventually you'll end back at the "device chooser" dialog
+  3. "Create Virtual Device...", then select the Nexus 6 emulator.
+  4. Choose the download link next to the Marshmallow release for x86_64.  
+  5. It will download and then eventually you'll end back at the "device chooser" dialog
   
   [step7.jpg]
   
-  f. Choose the Nexus 6 emulator you just downloaded, click ok
-  g. The application will now launch.  It should launch and open up into the application.
+  6. Choose the Nexus 6 emulator you just downloaded, click ok
+  7. The application will now launch.  It should launch and open up into the application.
   
   [step8.jpg]
 
