@@ -27,12 +27,6 @@ In order to clone the repository and run the code, following the steps outlined 
 ### Open Android Studio  
   1. Open the project The-Student-Cookbook  
 
-### Build and run the code  
-  1. Build -> Make project  
-  2. Run -> Run 'app'  
-    a. When prompted, create a new virtual Android emulator or attach an Android phone via USB
-    b. The app should launch on the emulator or the actual phone
-
 ### Build the Project
   1. Once the project is imported, from the top menu, select "build" --> "make project"
   
