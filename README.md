@@ -7,15 +7,15 @@ In order to clone the repository and run the code, following the steps outlined 
 ### Acquire Android Studio and the Android SDK  
   1. Download from http://developer.android.com/sdk/index.html  
   
-  ![step1.jpg](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step3.jpg?raw=true)
+  ![step1.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step1.png)
   
   2. Launch the installed application and choose "Standard" as the install type.  
   
-  [step2.jpg]
+  [step2.png]
   
   3. Take the defaults and click finish to start the installation of the SDK.
   
-  [step3.jpg]
+  [step3.png]
   
 ### Acquire the code from Github:  
   1. Release URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/releases/tag/v0.9    
@@ -36,27 +36,27 @@ In order to clone the repository and run the code, following the steps outlined 
 ### Build the Project
   1. Once the project is imported, from the top menu, select "build" --> "make project"
   
-  [step4.jpg]
+  [step4.png]
   
 ### Run the Project
   1. Select the green "run" icon from the top bar in Android Studio
   
-  [step5.jpg]
+  [step5.png]
   
   2. A "device chooser" dialog will pop up.  Click the "..." button near the bottom to open the virtual device manager.
   
-  [step6.jpg]
+  [step6.png]
   
   3. "Create Virtual Device...", then select the Nexus 6 emulator.
   4. Choose the download link next to the Marshmallow release for x86_64.  
   5. It will download and then eventually you'll end back at the "device chooser" dialog
   
-  [step7.jpg]
+  [step7.png]
   
   6. Choose the Nexus 6 emulator you just downloaded, click ok
   7. The application will now launch.  It should launch and open up into the application.
   
-  [step8.jpg]
+  [step8.png]
 
 ## Running the unit test suite
 
