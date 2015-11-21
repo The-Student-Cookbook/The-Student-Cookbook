@@ -39,13 +39,36 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
+    <RelativeLayout
+        android:id="@+id/imageLayout"
+        android:layout_width="640px"
+        android:layout_height="640px"
+        android:layout_weight="0.5"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/meal_plan_recipe_title"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:background="#393939">
+
+        <ImageView
+            android:scaleType="fitCenter"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/recipeImageView"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:background="#000000"
+            android:padding="2dp"
+            />
+    </RelativeLayout>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Ingredients:"
         android:id="@+id/meal_plan_ingredients_header"
-        android:layout_below="@+id/meal_plan_recipe_title"
+        android:layout_below="@+id/imageLayout"
         android:layout_alignParentStart="true" />
 
     <TextView

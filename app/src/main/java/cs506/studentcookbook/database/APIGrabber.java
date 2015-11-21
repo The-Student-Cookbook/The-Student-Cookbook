@@ -128,20 +128,20 @@ public class APIGrabber {
             "http://www.ehow.com/how_2084912_use-grill.html"
     };
 
-    public static final String[] CUISINE = {"Cuisine", "Subcategory", "Category"};
-    public static final String MEAL_BASE = "PrimaryIngredient";
-    public static final String NAME = "Title";
-    public static final String IMAGE_URL = "ImageURL";
-    public static final String TOTAL_TIME = "TotalMinutes";
-    public static final String PREP_TIME = "ActiveMinutes";
-    public static final String INSTRUCTIONS = "Instructions";
-    public static final String INGREDIENTS = "Ingredients";
-    public static final String INGREDIENT = "Ingredient";
-    public static final String BIG_OVEN_ID = "RecipeID";
+    private static final String[] CUISINE = {"Cuisine", "Subcategory", "Category"};
+    private static final String MEAL_BASE = "PrimaryIngredient";
+    private static final String NAME = "Title";
+    private static final String IMAGE_URL = "ImageURL";
+    private static final String TOTAL_TIME = "TotalMinutes";
+    private static final String PREP_TIME = "ActiveMinutes";
+    private static final String INSTRUCTIONS = "Instructions";
+    private static final String INGREDIENTS = "Ingredients";
+    private static final String INGREDIENT = "Ingredient";
+    private static final String BIG_OVEN_ID = "RecipeID";
 
-    public static final String INGREDIENT_NAME = "Name";
-    public static final String INGREDIENT_QUANTITY = "Quantity";
-    public static final String INGREDIENT_UNIT = "Unit";
+    private static final String INGREDIENT_NAME = "Name";
+    private static final String INGREDIENT_QUANTITY = "Quantity";
+    private static final String INGREDIENT_UNIT = "Unit";
 
     public static final String[] POPULATION_KEYWORDS = {"beef", "pork", "lamb",
             "chicken", "turkey", "salmon", "tuna", "tilapia", "sardines", "trout",
@@ -158,14 +158,18 @@ public class APIGrabber {
 
     public static final String[] SIMPLE_POPULATION_KEYWORDS = {"smoothie", "fish"};
 
-    public static final String[] CORRECTED_SYNONYMS_DATA = {"chicken", "beef", "pizza", "pasta",
+    private static final String[] CORRECTED_SYNONYMS_DATA = {"chicken", "beef", "pizza", "pasta",
     "pork", "turkey", "salmon", "egg", "asian", "dessert", "marinade", "meat", "bread", "bbq", "seafood"};
-    public static List<String> CORRECTED_SYNONYMS;
+    private static List<String> CORRECTED_SYNONYMS;
 
-    public static final String[] EXCLUDED_WORDS_DATA = {"main dish", "other", "main dish - other", "side dish", "other - misc"};
-    public static List<String> EXCLUDED_WORDS;
+    private static final String[] EXCLUDED_WORDS_DATA = {"main dish", "other", "main dish - other", "side dish", "other - misc"};
+    private static List<String> EXCLUDED_WORDS;
+    private static char[] EXCLUDED_CHARS_DATA = {'™', '®'};
+    private static List<Character> EXCLUDED_CHARS;
 
-    private static final String API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
+    //private static final String OLD_API_KEY = "3h61BCUOSbbRbYq29wkD0gz6gcKItdRR";
+    private static final String API_KEY = "X1H9FYans9Ra934LujUIM9w0dR7q4TrC";
+
     private static final String RECIPE_URL = "http://api.bigoven.com/recipe/";
     private static final String SEARCH_URL = "http://api.bigoven.com/recipes";
 
@@ -179,7 +183,6 @@ public class APIGrabber {
     private static final int MAX_INGREDIENTS = 6;
     private static final int MAX_PAGE = 2;
     private static final int RESULTS_PER_PAGE = 25;
-
 
     /**
      * Run this with a keyword from POPULATION_KEYWORDS to get a series of recipes from the API.
@@ -197,6 +200,12 @@ public class APIGrabber {
         }
         if(EXCLUDED_WORDS == null) {
             EXCLUDED_WORDS = Arrays.asList(EXCLUDED_WORDS_DATA);
+        }
+        if(EXCLUDED_CHARS == null) {
+            EXCLUDED_CHARS = new ArrayList<Character>(EXCLUDED_CHARS_DATA.length);
+            for(int i = 0; i < EXCLUDED_CHARS_DATA.length; i++) {
+                EXCLUDED_CHARS.add(i, EXCLUDED_CHARS_DATA[i]);
+            }
         }
 
         List<Recipe> list = getRecipesFromAPIBasedOnKeywordAndPage(keyword, 1, RESULTS_PER_PAGE);
@@ -437,6 +446,16 @@ public class APIGrabber {
                 unit = list.item(0).getFirstChild().getNodeValue();
             } catch (Exception e) {
                 //System.err.println("Missing ingredient unit on recipe: " + recipe.getName());
+            }
+
+            for(Character c : EXCLUDED_CHARS) {
+                int index = name.indexOf(c);
+                while(index != -1) {
+                    StringBuilder sb = new StringBuilder(name);
+                    sb.deleteCharAt(index);
+                    name = sb.toString();
+                    index = name.indexOf(c);
+                }
             }
 
             Ingredient ingredient = new Ingredient(name, unit, quantity);
