@@ -4,12 +4,12 @@
 
 In order to clone the repository and run the code, following the steps outlined below:
 
-1. Acquire Android Studio and the Android SDK
-  a. Download from http://developer.android.com/sdk/index.html
+1. Acquire Android Studio and the Android SDK  
+  a. Download from http://developer.android.com/sdk/index.html  
   
   [step1.jpg]
   
-  b. Launch the installed application and choose "Standard" as the install type.
+  b. Launch the installed application and choose "Standard" as the install type.  
   
   [step2.jpg]
   
@@ -18,11 +18,11 @@ In order to clone the repository and run the code, following the steps outlined 
   [step3.jpg]
   
 2. Acquire the code from Github:  
-  a. Release URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/releases/tag/v0.9  
-  b. Download the source code as a zip and unzip it into a local directory
-  d. **Important: Delete The-Student-Cookbook.iml file from the top level of the project**
-  e. Open Android Studio and click "Open an existing Android Studio Project"
-  f. Select the "The-Student-Cookbook-0.9" folder as your project directory
+  a. Release URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/releases/tag/v0.9    
+  b. Download the source code as a zip and unzip it into a local directory  
+  c. **Important: Delete The-Student-Cookbook.iml file from the top level of the project**  
+  d. Open Android Studio and click "Open an existing Android Studio Project"  
+  e. Select the "The-Student-Cookbook-0.9" folder as your project directory  
 
 3. Open Android Studio  
   a. Open the project The-Student-Cookbook  
