@@ -11,11 +11,11 @@ In order to clone the repository and run the code, following the steps outlined 
   
   2. Launch the installed application and choose "Standard" as the install type.  
   
-  [step2.png]
+  ![step2.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step2.png)
   
   3. Take the defaults and click finish to start the installation of the SDK.
   
-  [step3.png]
+  ![step3.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step3.png)
   
 ### Acquire the code from Github:  
   1. Release URL: https://github.com/The-Student-Cookbook/The-Student-Cookbook/releases/tag/v0.9    
@@ -36,27 +36,27 @@ In order to clone the repository and run the code, following the steps outlined 
 ### Build the Project
   1. Once the project is imported, from the top menu, select "build" --> "make project"
   
-  [step4.png]
+  ![step4.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step4.png)
   
 ### Run the Project
   1. Select the green "run" icon from the top bar in Android Studio
   
-  [step5.png]
+  ![step5.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step5.png)
   
   2. A "device chooser" dialog will pop up.  Click the "..." button near the bottom to open the virtual device manager.
   
-  [step6.png]
+  ![step6.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step6.png)
   
   3. "Create Virtual Device...", then select the Nexus 6 emulator.
   4. Choose the download link next to the Marshmallow release for x86_64.  
   5. It will download and then eventually you'll end back at the "device chooser" dialog
   
-  [step7.png]
+  ![step7.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step7.png)
   
   6. Choose the Nexus 6 emulator you just downloaded, click ok
   7. The application will now launch.  It should launch and open up into the application.
   
-  [step8.png]
+  ![step8.png](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step8.png)
 
 ## Running the unit test suite
 
