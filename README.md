@@ -7,7 +7,7 @@ In order to clone the repository and run the code, following the steps outlined 
 ### Acquire Android Studio and the Android SDK  
   1. Download from http://developer.android.com/sdk/index.html  
   
-  [step1.jpg]
+  [step1.jpg](https://raw.githubusercontent.com/The-Student-Cookbook/The-Student-Cookbook/master/doc-img/step3.jpg)
   
   2. Launch the installed application and choose "Standard" as the install type.  
   
@@ -26,6 +26,7 @@ In order to clone the repository and run the code, following the steps outlined 
 
 ### Open Android Studio  
   1. Open the project The-Student-Cookbook  
+
 ### Build and run the code  
   1. Build -> Make project  
   2. Run -> Run 'app'  
