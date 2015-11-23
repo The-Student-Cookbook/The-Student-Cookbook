@@ -39,7 +39,7 @@ public class SearchableRecipeQueryActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_searchable_recipe_query);
 
-        //Give the buttons their click listeners
+        // Give the buttons their click listeners
         // This is the accept button, go to the next activity
         Button nextButton = (Button) findViewById(R.id.search_recipe_query_nextbutton);
         nextButton.setOnClickListener(new View.OnClickListener() {

@@ -93,7 +93,7 @@ public class GroceryListActivity extends Activity {
                 // redraw list view
                 List<String> ingredients = groceryList.getIngredients();
                 if(ingredients == null || ingredients.isEmpty()) {
-                    // hide empty list view
+                    // hide empt
                     listView.setVisibility(View.INVISIBLE);
 
                     TextView emptyView = (TextView) findViewById(R.id.empty_grocery_list);
