@@ -63,27 +63,23 @@ public class MealPlanActivity extends Activity {
         addToGroceryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                // TODO: add to grocery list
-//                DBTools tools = new DBTools();
-//                tools.addIngredientToGroceryList();
+            // need list of Ingredients for grocery list
+            List<Ingredient> ingredients = selectedRecipe.getIngredients();
 
-                // need list of Ingredients for grocery list
-                List<Ingredient> ingredients = selectedRecipe.getIngredients();
+            Log.d(TAG, "Ingredients = " + ingredients);
+            Log.d(TAG, "Grocery list before adding ingredients = " + dbTools.getGroceryList());
 
-                Log.d(TAG, "Ingredients = " + ingredients);
-                Log.d(TAG, "Grocery list before adding ingredients = " + dbTools.getGroceryList());
+            Iterator<Ingredient> itr = ingredients.iterator();
+            while(itr.hasNext()) {
+                Ingredient next = itr.next();
+                dbTools.addIngredientToGroceryList(next);
+            }
 
-                Iterator<Ingredient> itr = ingredients.iterator();
-                while(itr.hasNext()) {
-                    Ingredient next = itr.next();
-                   // dbTools.addIngredientToGroceryList(next);
-                }
+            Log.d(TAG, "Grocery list AFTER adding ingredients = " + dbTools.getGroceryList());
 
-                Log.d(TAG, "Grocery list AFTER adding ingredients = " + dbTools.getGroceryList());
-
-                Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, "Ingredients Added to Grocery List", Toast.LENGTH_SHORT);
-                toast.show();
+            Context context = getApplicationContext();
+            Toast toast = Toast.makeText(context, "Ingredients Added to Grocery List", Toast.LENGTH_SHORT);
+            toast.show();
             }
         });
 
