@@ -10,7 +10,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -43,7 +42,7 @@ public class DashboardActivity extends ListActivity {
         // TODO: there's probably a more robust way to do this
         // we should be able to define a list of Activities that get started when clicking a list item
         String[] dashboardItems = {"Help me choose...", "Choose for me...", "Browse all...",
-                "My Recipes", "Grocery List", "Settings", "Start database activity (temporary)"};
+                "My Recipes", "Grocery List", "Settings" /*, "Start database activity (temporary)"*/};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, dashboardItems);
         setListAdapter(adapter);
     }
