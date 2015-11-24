@@ -1651,6 +1651,32 @@ public class DBTools extends SQLiteOpenHelper {
         return recipes;
     }
 
+    public String getHasCookedDate(Recipe recipe) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String date = "";
+
+        String selectQuery = "SELECT dateCooked FROM Has_Cooked \n"
+                + "WHERE recipeId=" + recipe.getId() + ";";
+
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            date = cursor.getString(0);
+        }
+        else
+            System.out.println("No entry found in table");
+
+        return date;
+    }
+
+    public void clearHasCooked() {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String deleteStatement = "DELETE FROM Has_Cooked;";
+
+        db.execSQL(deleteStatement);
+    }
+
     public void addMealBaseToDatabase(String base) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();

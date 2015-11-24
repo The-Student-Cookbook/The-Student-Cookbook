@@ -1177,6 +1177,8 @@ public class DBToolsUnitTest extends AndroidTestCase {
 
         List<Recipe> recipes2 = db.getHasCooked();
 
+        String date = db.getHasCookedDate(recipes2.get(0));
+
         //assertTrue(recipes1.equals(recipes2));
         for (int i = 0; i < recipes2.size(); i++)
         {
