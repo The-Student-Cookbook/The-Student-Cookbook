@@ -1,4 +1,4 @@
-package cs506.studentcookbook.utils;
+package cs506.studentcookbook.activity.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,6 +15,7 @@ import java.util.List;
 import cs506.studentcookbook.R;
 import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Recipe;
+import cs506.studentcookbook.utils.DownloadImageTask;
 
 /**
  * Created by pgoetsch on 11/23/15.

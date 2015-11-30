@@ -9,13 +9,13 @@
         android:layout_height="50dp"
         android:layout_alignParentLeft="true"
         android:background="#000000"
-        android:padding="2dp"
+        android:layout_marginRight="5dp"
         android:minHeight="50dp"
         android:minWidth="50dp" />
 
     <TextView
         android:id="@+id/history_listitem_name"
-        android:layout_width="130dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@+id/history_listitem_icon"
         android:text="Recipe Title"
@@ -25,23 +25,21 @@
         android:id="@+id/history_listitem_delete"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_toRightOf="@+id/history_listitem_name"
+        android:layout_toLeftOf="@+id/history_listitem_rateUp"
         android:background="@drawable/ic_delete_black_24dp"/>
 
     <Button
         android:id="@+id/history_listitem_rateUp"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_toRightOf="@+id/history_listitem_delete"
-        android:background="@drawable/ic_arrow_upward_black_24dp"
-        android:layout_alignParentRight="false" />
+        android:layout_toLeftOf="@+id/history_listitem_rateDown"
+        android:background="@drawable/ic_arrow_upward_black_24dp" />
 
     <Button
         android:id="@+id/history_listitem_rateDown"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_alignParentRight="true"
-        android:background="@drawable/ic_arrow_downward_black_24dp"
-        android:layout_alignParentEnd="false" />
+        android:background="@drawable/ic_arrow_downward_black_24dp" />
 
 </RelativeLayout>

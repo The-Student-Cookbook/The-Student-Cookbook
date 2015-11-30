@@ -1,16 +1,13 @@
 package cs506.studentcookbook.activity.fragment;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Iterator;
 import java.util.List;
@@ -19,7 +16,7 @@ import cs506.studentcookbook.R;
 import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Preferences;
 import cs506.studentcookbook.model.Recipe;
-import cs506.studentcookbook.utils.HistoryListViewAdapter;
+import cs506.studentcookbook.activity.adapter.HistoryListViewAdapter;
 
 /**
  * Created by pgoetsch on 11/27/15.
@@ -68,7 +65,12 @@ public class HistoryFragment extends Fragment {
         TextView emptyView = (TextView) getView().findViewById(R.id.empty_my_recipes);
         emptyView.setVisibility(View.INVISIBLE);
 
-        List<Recipe> history = tools.getHasCooked();
+        // TODO: the app doesn't add to hasCooked after completing a recipe
+//        List<Recipe> pinned = tools.getHasCooked();
+        Preferences pref = new Preferences();
+        pref.setName("");
+        List<Recipe> history = tools.getSuggestedRecipes(pref);
+//        List<Recipe> history = tools.getHasCooked();
         if(history == null || history.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         }
@@ -92,15 +94,5 @@ public class HistoryFragment extends Fragment {
         HistoryListViewAdapter adapter = new HistoryListViewAdapter(getActivity(), history);
 
         listView.setAdapter(adapter);
-
-//        Button deleteBtn = (Button) listView.findViewById(R.id.history_listitem_delete);
-//
-//        deleteBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast toast = Toast.makeText(getContext(), "TODO", Toast.LENGTH_SHORT);
-//                toast.show();
-//            }
-//        });
     }
 }
