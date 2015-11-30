@@ -68,7 +68,115 @@ public class EditProfileActivity extends Activity {
         //Grab the list view
         preferencesList = (ExpandableListView) findViewById(R.id.editProfile_expandListview);
 
+        setupExpandableMenu();
 
+        //Setup Email edit button
+        Button editEmailButton = (Button) findViewById(R.id.editProfile_editEmail);
+        String email = user.getEmail();
+        if(email.equals(null))
+            email = "Not Available";
+        editEmailButton.setText(email);
+        editEmailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Setup alert dialog to get user's email
+                AlertDialog.Builder builder = new AlertDialog.Builder(EditProfileActivity.this);
+                builder.setTitle("Set Email:");
+
+                // Set up the input
+                final EditText input = new EditText(EditProfileActivity.this);
+                // Specify the type of input expected
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS );
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String newEmail = input.getText().toString();
+                        if(newEmail == null)
+                            Toast.makeText(EditProfileActivity.this, "Not a valid Email Address!", Toast.LENGTH_SHORT).show();
+                        else{
+                            user.setEmail(newEmail);
+                            ((Button) findViewById(R.id.editProfile_editEmail)).setText(newEmail);
+                        }
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
+        });
+
+        // Done button, returns to the profile screen
+        Button doneButton = (Button) findViewById(R.id.editprofile_done_button);
+        doneButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.setAllergicBases(listOfLists.get(0));
+                for(String prefs: listOfLists.get(1)){
+                    dbTools.incrementCuisineRating(0, prefs, 1, DBTools.LIKE);
+                }
+                //user.setTools();
+
+                for(String allergy: allergiesToRemove)
+                    dbTools.removeAllergicBase(allergy);
+
+                for(String pref: preferencesToRemove)
+                    preferences.removeLikedBase(pref);
+
+                for(Tool tool: toolToRemove)
+                    dbTools.removeTool(tool);
+
+                dbTools.setPreferences(preferences);
+                dbTools.setUserSettings(user);
+
+                finish();
+            }
+        });
+
+    }
+
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.edit_profile_activity_menu, menu);
+        return true;
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_editProfile_help:
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("How to Edit Profile:")
+                        .setMessage(R.string.edit_profile_helpDialog)
+                        .setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                                            }
+                        }).show();
+            return true;
+
+
+            default:
+                // Error of some sort
+                Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    /**
+     * Sets up all of the various things associated with the expandable menu
+     */
+    private void setupExpandableMenu(){
         profileExpListAdapter = new ProfileExpandableListAdapter(this, listHeaders, listOfLists);
         preferencesList.setAdapter(profileExpListAdapter);
         preferencesList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -139,73 +247,6 @@ public class EditProfileActivity extends Activity {
                 return false;
             }
         });
-
-        // Done button, returns to the profile screen
-        Button doneButton = (Button) findViewById(R.id.editprofile_done_button);
-        doneButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                user.setAllergicBases(listOfLists.get(0));
-                preferences.setLikedCuisines(listOfLists.get(1));
-
-                //user.setTools();
-
-                for(String allergy: allergiesToRemove)
-                    dbTools.removeAllergicBase(allergy);
-
-                for(String pref: preferencesToRemove)
-                    preferences.removeLikedBase(pref);
-
-                for(Tool tool: toolToRemove)
-                    dbTools.removeTool(tool);
-
-                dbTools.setPreferences(preferences);
-                dbTools.setUserSettings(user);
-
-                finish();
-            }
-        });
-
-
-        // Cancel button shouldn't make changes.
-        Button cancelButton = (Button) findViewById(R.id.editprofile_cancel_button);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
-    }
-
-
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.edit_profile_activity_menu, menu);
-        return true;
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_editProfile_help:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("How to Edit Profile:")
-                        .setMessage(R.string.edit_profile_helpDialog)
-                        .setPositiveButton(R.string.okay, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                                            }
-                        }).show();
-            return true;
-
-
-            default:
-                // Error of some sort
-                Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
-                return super.onOptionsItemSelected(item);
-
-        }
     }
 
     private void setupPreferences(){
@@ -228,9 +269,5 @@ public class EditProfileActivity extends Activity {
         listOfLists.add(allergiesList);
         listOfLists.add(preferences_List);
         listOfLists.add(toolsList);
-
-
     }
-
-
 }

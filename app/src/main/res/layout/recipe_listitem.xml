@@ -4,12 +4,12 @@
 
     <ImageView
         android:id="@+id/recipe_listitem_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
 
-        android:src="@drawable/ic_launcher" />
+        android:src="@drawable/ic_launcher"/>
 
     <TextView
         android:id="@+id/recipe_listitem_name"
@@ -19,7 +19,9 @@
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@+id/recipe_listitem_icon"
         android:text="Recipe Title"
-        android:textSize="16sp" />
+        android:textSize="16sp"
+        android:layout_alignParentEnd="true"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/recipe_listitem_rating"

@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -52,6 +53,11 @@ public class RecipeListViewAdapter extends BaseAdapter  {
 
         TextView rating = (TextView) row.findViewById(R.id.recipe_listitem_rating);
         rating.setText(String.format("%d", recipeList.get(position).getRating()));
+
+        //Update the icon
+        ImageView recipeIcon = (ImageView) row.findViewById(R.id.recipe_listitem_icon);
+        new DownloadImageTask(recipeIcon).execute(recipeList.get(position).getImageURL());
+
 
         return row;
     }

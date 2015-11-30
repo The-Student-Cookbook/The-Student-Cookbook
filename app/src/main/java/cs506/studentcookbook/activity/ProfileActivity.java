@@ -54,12 +54,19 @@ public class ProfileActivity extends Activity {
         //Setup the preferences
         setupPreferences();
 
-        //Grab the list view
-        preferencesList = (ExpandableListView) findViewById(R.id.profile_expand_list);
+        setupExpandableMenu();
 
-        profileExpListAdapter = new ProfileExpandableListAdapter(this, listHeaders, listOfLists);
-        preferencesList.setAdapter(profileExpListAdapter);
 
+        //Setup edit profile button
+        Button editProdileButton = (Button) findViewById(R.id.profile_editButton);
+        editProdileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // User chose the "Edit Profile" item
+                Intent switchToEditProfile = new Intent(ProfileActivity.this, EditProfileActivity.class);
+                ProfileActivity.this.startActivity(switchToEditProfile);
+            }
+        });
 
         Button homeButton = (Button) findViewById(R.id.profile_homeButton);
         homeButton.setOnClickListener(new View.OnClickListener() {
@@ -82,23 +89,6 @@ public class ProfileActivity extends Activity {
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_editProfile:
-                // User chose the "Edit Profile" item
-                Intent switchToEditProfile = new Intent(this, EditProfileActivity.class);
-                this.startActivity(switchToEditProfile);
-                return true;
-
-
-            default:
-                // Error of some sort
-                Toast.makeText(this, "Something went wrong!", Toast.LENGTH_SHORT).show();
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
 
     @Override
     public void onResume() {
@@ -106,7 +96,19 @@ public class ProfileActivity extends Activity {
 
         // Update the data set
         setupPreferences();
-        profileExpListAdapter.notifyDataSetChanged();
+        setupExpandableMenu();
+
+        ((TextView)findViewById(R.id.profile_EmailLocation)).setText("Email: " + user.getEmail());
+    }
+
+    /**
+     * Sets up all of the various things associated with the expandable menu
+     */
+    private void setupExpandableMenu() {
+        //Grab the list view
+        preferencesList = (ExpandableListView) findViewById(R.id.profile_expand_list);
+
+        profileExpListAdapter = new ProfileExpandableListAdapter(this, listHeaders, listOfLists);
         preferencesList.setAdapter(profileExpListAdapter);
     }
 
