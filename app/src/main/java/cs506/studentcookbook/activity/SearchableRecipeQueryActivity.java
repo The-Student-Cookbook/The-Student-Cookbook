@@ -90,11 +90,11 @@ public class SearchableRecipeQueryActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectedRecipe != null)
-                    selectedRecipe.setBackgroundColor(Color.BLACK);
+                    selectedRecipe.setBackgroundResource(android.R.drawable.list_selector_background);
                 selectedRecipe = view;
                 selectedRecipeObj = chosenRecipeList.get(position);
                 // TODO: Figure out what color a selected recipe should be
-                selectedRecipe.setBackgroundColor(Color.RED);
+                selectedRecipe.setBackgroundColor(Color.CYAN);
             }
 
         });

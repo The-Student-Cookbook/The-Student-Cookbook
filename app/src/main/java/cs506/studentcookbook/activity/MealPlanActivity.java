@@ -57,8 +57,18 @@ public class MealPlanActivity extends Activity {
             }
         });
 
+        Button pinButton = (Button) findViewById(R.id.meal_plan_pin_button);
+        pinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(selectedRecipe != null){
+                    dbTools.addRecipeToPinned(selectedRecipe);
+                    Toast.makeText(MealPlanActivity.this, "Recipe added to pinned list", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         //Setup the Add To Grocery List Button
-        // TODO: Interation 2: Send the grocery list stuff?
         Button addToGroceryButton = (Button) findViewById(R.id.meal_plan_add_to_grocery_button);
         addToGroceryButton.setOnClickListener(new View.OnClickListener() {
             @Override

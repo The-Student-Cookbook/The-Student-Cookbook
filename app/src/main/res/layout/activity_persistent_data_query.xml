@@ -28,7 +28,8 @@
         android:ems="10"
         android:id="@+id/groupSize_textinput"
         android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:hint="People" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -46,7 +47,8 @@
         android:ems="10"
         android:id="@+id/prepTime_textinput"
         android:layout_below="@+id/textView2"
-        android:layout_alignEnd="@+id/groupSize_textinput"/>
+        android:layout_alignEnd="@+id/groupSize_textinput"
+        android:hint="Minutes" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -64,7 +66,8 @@
         android:ems="10"
         android:id="@+id/cookingTime_textinput"
         android:layout_below="@+id/textView3"
-        android:layout_alignParentEnd="true"/>
+        android:layout_alignParentEnd="true"
+        android:hint="Minutes" />
 
     <TextView
         android:layout_width="wrap_content"

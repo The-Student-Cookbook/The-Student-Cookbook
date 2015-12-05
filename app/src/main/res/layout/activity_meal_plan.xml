@@ -3,32 +3,6 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go Back"
-        android:id="@+id/meal_plan_go_back_button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_toStartOf="@+id/meal_plan_add_to_grocery_button" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Let&apos;s Cook!"
-        android:id="@+id/meal_plan_lets_cook_button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/meal_plan_add_to_grocery_button" />
-
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add to Grocery List"
-        android:id="@+id/meal_plan_add_to_grocery_button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -97,4 +71,46 @@
         android:id="@+id/meal_plan_tools_body_text"
         android:layout_below="@+id/meal_plan_tools_header"
         android:layout_alignParentStart="true" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/meal_plan_tools_body_text"
+        android:layout_alignParentBottom="true">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pin"
+            android:id="@+id/meal_plan_pin_button"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/meal_plan_add_to_grocery_button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go Back"
+            android:id="@+id/meal_plan_go_back_button"
+            android:layout_alignBottom="@+id/meal_plan_tools_body_text"
+            android:layout_toEndOf="@+id/meal_plan_pin_button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Let&apos;s Cook!"
+            android:id="@+id/meal_plan_lets_cook_button"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_toEndOf="@+id/meal_plan_add_to_grocery_button" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add to Grocery List"
+            android:id="@+id/meal_plan_add_to_grocery_button"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true" />
+    </LinearLayout>
 </RelativeLayout>
