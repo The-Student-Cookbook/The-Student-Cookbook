@@ -2305,6 +2305,7 @@ public class DBTools extends SQLiteOpenHelper {
         r.setTechniques(this.getTechniques(recipeId));
         r.setTools(this.getTools(recipeId));
 
+        cursor.close();
         return r;
     }
 
@@ -2331,6 +2332,8 @@ public class DBTools extends SQLiteOpenHelper {
                 result.add(currRecipe);
             } while (cursor.moveToNext());
         }
+
+        cursor.close();
         return result;
     }
 
@@ -2371,6 +2374,7 @@ public class DBTools extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
         return result;
     }
 
@@ -2424,6 +2428,7 @@ public class DBTools extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
+        cursor.close();
         return result;
     }
 }
