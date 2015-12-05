@@ -17,9 +17,6 @@ import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.utils.DownloadImageTask;
 
-/**
- * Created by pgoetsch on 11/23/15.
- */
 public class HistoryListViewAdapter extends BaseAdapter {
 
     private List<Recipe> history;
@@ -66,6 +63,7 @@ public class HistoryListViewAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 // TODO: need to remove this single recipe from hasCooked
+                // https://github.com/The-Student-Cookbook/The-Student-Cookbook/issues/20
             }
         });
 

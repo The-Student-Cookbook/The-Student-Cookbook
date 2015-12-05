@@ -68,7 +68,8 @@ public class PinnedListViewAdapter extends BaseAdapter {
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "TODO: need to remove this single recipe from pinned and reload list");
+            tools.removeRecipeFromPinned(current);
+            // TODO: reload list .... first need correct data source
             }
         });
 

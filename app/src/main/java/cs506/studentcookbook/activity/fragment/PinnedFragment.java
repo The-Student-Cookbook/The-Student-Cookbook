@@ -58,12 +58,7 @@ public class PinnedFragment extends Fragment {
         TextView emptyView = (TextView) getView().findViewById(R.id.empty_pinned);
         emptyView.setVisibility(View.INVISIBLE);
 
-
-            // TODO: nowhere in the app adds to pinned recipes
-//        List<Recipe> pinned = tools.getPinnedRecipes();
-        Preferences pref = new Preferences();
-        pref.setName("");
-        List<Recipe> pinned = tools.getSuggestedRecipes(pref);
+        List<Recipe> pinned = tools.getPinnedRecipes();
         if(pinned == null || pinned.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         }

@@ -66,11 +66,11 @@ public class HistoryFragment extends Fragment {
         emptyView.setVisibility(View.INVISIBLE);
 
         // TODO: the app doesn't add to hasCooked after completing a recipe
-//        List<Recipe> pinned = tools.getHasCooked();
-        Preferences pref = new Preferences();
-        pref.setName("");
-        List<Recipe> history = tools.getSuggestedRecipes(pref);
-//        List<Recipe> history = tools.getHasCooked();
+        List<Recipe> history = tools.getHasCooked();
+//        Preferences pref = new Preferences();
+//        pref.setName("");
+//        List<Recipe> history = tools.getSuggestedRecipes(pref);
+////        List<Recipe> history = tools.getHasCooked();
         if(history == null || history.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         }
