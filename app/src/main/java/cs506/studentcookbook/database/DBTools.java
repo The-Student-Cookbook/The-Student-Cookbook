@@ -807,22 +807,29 @@ public class DBTools extends SQLiteOpenHelper {
         int recipeId = recipe.getId();
 
         String bool;
-        if (isLiked)
-            bool = "\"TRUE\"";
-        else
-            bool = "\"FALSE\"";
+        //if (isLiked)
+        //    bool = "\"TRUE\"";
+        //else
+        //    bool = "\"FALSE\"";
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         //May need to change this later to add modularity
         int userId = 0;
 
-        String insertStatement = "INSERT INTO Rates_Recipe (userId, recipeId, isLiked)\n"
-                +"VALUES (" + userId
-                +", " + recipeId
-                +", " + bool + ");";
+        //String insertStatement = "INSERT INTO Rates_Recipe (userId, recipeId, isLiked)\n"
+        //        +"VALUES (" + userId
+        //        +", " + recipeId
+        //        +", " + bool + ");";
 
-        db.execSQL(insertStatement);
+        //db.execSQL(insertStatement);
+
+        ContentValues values = new ContentValues();
+        values.put("userId", userId);
+        values.put("recipeId", recipeId);
+        values.put("isLiked", isLiked);
+        db.insertWithOnConflict(TABLE_RATES_RECIPE, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+
 
         //Adjust cuisine / base ratings for ML search
         for (int i = 0; i < recipe.getCuisines().size(); i++)
