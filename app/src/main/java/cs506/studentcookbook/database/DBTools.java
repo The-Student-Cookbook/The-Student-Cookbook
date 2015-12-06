@@ -689,11 +689,16 @@ public class DBTools extends SQLiteOpenHelper {
         //May need to change this later to add modularity
         int userId = 0;
 
-        String insertStatement = "INSERT INTO Has_On_Grocery_List (userId, ingredientName)\n"
-                +"VALUES (" + userId
-                +", '" + ingredientName + "');";
+        ContentValues values = new ContentValues();
+        values.put("userId", userId);
+        values.put("ingredientName", ingredientName);
+        db.insertWithOnConflict(TABLE_HAS_ON_GROCERY_LIST, null, values, SQLiteDatabase.CONFLICT_IGNORE);
 
-        db.execSQL(insertStatement);
+        //String insertStatement = "INSERT INTO Has_On_Grocery_List (userId, ingredientName)\n"
+        //        +"VALUES (" + userId
+        //        +", '" + ingredientName + "');";
+        //
+        //db.execSQL(insertStatement);
     }
 
     public void removeIngredientFromGroceryList(Ingredient ingredient) {
