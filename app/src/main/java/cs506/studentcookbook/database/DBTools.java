@@ -398,6 +398,15 @@ public class DBTools extends SQLiteOpenHelper {
                     index++;
                 } while (cursor.moveToNext());
             }
+        } else {
+            for(Recipe r : recipes) {
+                int recipeId = r.getId();
+                r.setBases(this.getBases(recipeId));
+                r.setCuisines(this.getCuisines(recipeId));
+                r.setIngredients(this.getIngredients(recipeId));
+                r.setTechniques(this.getTechniques(recipeId));
+                r.setTools(this.getTools(recipeId));
+            }
         }
 
         return recipes;
@@ -2137,12 +2146,22 @@ public class DBTools extends SQLiteOpenHelper {
 
         List<Recipe> suggested = new ArrayList<Recipe>();
 
-        for(Integer id : ids) {
-            if(recipeIsSuggested(id, userId)) {
-                Recipe r = getRecipe(id);
-                suggested.add(r);
-            }
+        //for(Integer id : ids) {
+        //    if(recipeIsSuggested(id, userId)) {
+        //        Recipe r = getRecipe(id);
+        //        suggested.add(r);
+        //    }
+        //}
+
+        boolean found = false;
+        int index = (int) (Math.random() * ids.size());
+
+        while(!recipeIsSuggested(index, userId)) {
+            index = (int) (Math.random() * ids.size());
         }
+
+        Recipe r = getRecipe(index);
+        suggested.add(r);
 
         cursor.close();
         return suggested;
@@ -2248,7 +2267,21 @@ public class DBTools extends SQLiteOpenHelper {
                     techniques.get(index).setImageURL(cursor.getString(4));
 
                 } catch (Exception e) { //The database doesn't have all amts filled in
-                }   //Currently can be null, if there is no entry in db
+                }   //Currently can be null, if there is no entry in
+
+
+                String selectQuery2 = "SELECT urlText "
+                        + "FROM " + TABLE_HAS_EXTERNAL_URL + " " +
+                        "WHERE techniqueName='" + techniques.get(index).getName() +"'";
+                Cursor cursor2 = db.rawQuery(selectQuery2, null);
+                try {
+                    while (cursor2.moveToNext()) {
+                        String test = cursor2.getString(0);
+                        techniques.get(index).addExternalURL(test);
+                    }
+                }catch(Exception e) {
+                }
+
 
                 //Increment counter var
                 index++;

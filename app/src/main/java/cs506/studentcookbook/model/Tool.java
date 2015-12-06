@@ -91,7 +91,7 @@ public class Tool implements Parcelable {
     }
 
     public String toString() {
-        return this.name + ": " + this.description;
+        return this.name /*+ ": " + this.description*/;
     }
 
     public boolean equals(Tool tool) {

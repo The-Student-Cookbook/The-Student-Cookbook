@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +20,7 @@ import cs506.studentcookbook.R;
 import cs506.studentcookbook.database.DBTools;
 import cs506.studentcookbook.model.Ingredient;
 import cs506.studentcookbook.model.Recipe;
+import cs506.studentcookbook.model.Technique;
 import cs506.studentcookbook.model.Tool;
 import cs506.studentcookbook.utils.DownloadImageTask;
 
@@ -124,9 +127,51 @@ public class MealPlanActivity extends Activity {
         //Tools
         TextView requiredTools = (TextView) findViewById(R.id.meal_plan_tools_body_text);
         String toolsFormattedString = "";
+
+        boolean isFirst = true;
         for(Tool toolLine: selectedRecipe.getTools()){
-            ingredientsFormattedString += toolLine.toString() + "\n";
+            if(!isFirst) {
+                toolsFormattedString += ", ";
+            }
+            toolsFormattedString += toolLine.toString();
+            isFirst = false;
+        }
+
+        if(toolsFormattedString.length() == 0) {
+            TextView header = (TextView) findViewById(R.id.meal_plan_tools_header);
+            header.setText("");
+        } else {
+            toolsFormattedString += "\n";
         }
         requiredTools.setText(toolsFormattedString);
+
+        //Techniques
+        TextView requiredTechniques = (TextView) findViewById(R.id.meal_plan_techniques_body_text);
+
+        String techniquesFormattedString = "";
+        isFirst = true;
+
+        for(Technique technique: selectedRecipe.getTechniques()){
+            String temp = technique.getName();
+
+            if(technique.getExternalURLs().size() > 0) {
+                temp = "<html><a href=\"" + technique.getExternalURLs().get(0) + "\">" + temp + "</a></html>";
+            }
+
+            if(!isFirst) {
+                techniquesFormattedString += ", ";
+            }
+            techniquesFormattedString += temp;
+            isFirst = false;
+        }
+
+        if(techniquesFormattedString.length() == 0) {
+            TextView header = (TextView) findViewById(R.id.meal_plan_techniques_header);
+            header.setText("");
+        }
+
+        requiredTechniques.setText(Html.fromHtml(techniquesFormattedString));
+        requiredTechniques.setMovementMethod(LinkMovementMethod.getInstance());
+
     }
 }
