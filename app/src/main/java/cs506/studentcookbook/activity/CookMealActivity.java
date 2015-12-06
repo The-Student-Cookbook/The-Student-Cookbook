@@ -16,6 +16,10 @@ import cs506.studentcookbook.R;
 import cs506.studentcookbook.model.Ingredient;
 import cs506.studentcookbook.model.Recipe;
 import cs506.studentcookbook.model.Tool;
+import cs506.studentcookbook.database.DBTools;
+
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class CookMealActivity extends Activity {
 
@@ -32,11 +36,15 @@ public class CookMealActivity extends Activity {
     private String instructions; //-------- IMPLEMENT AS LIST IN ITERATION 2
     private int step; //index of the current step not used until ITERATION 2
     private final String CURRENT_RECIPE_PARCEL_KEY = "CURRENT_RECIPE_PARCEL_KEY";
+    private DBTools dbTools;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cook_meal);
+
+        dbTools = new DBTools(getApplicationContext());
 
         //get graphical elements to use later
         recipeTitle = (TextView) findViewById(R.id.recipeTitle);
@@ -99,6 +107,13 @@ public class CookMealActivity extends Activity {
         nextStep.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Used to obtain date, used when adding recipe to history
+                Date currDate = new Date();
+                SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+                String date = sdf.format(currDate);
+
+                //Add recipe to history using today's date
+                dbTools.addHasCookedToDatabase(selectedRecipe.getId(),date);
 
                 Intent goToMyRecipesPage = new Intent(CookMealActivity.this, MyRecipesActivity.class);
                 Bundle bundle = new Bundle();
