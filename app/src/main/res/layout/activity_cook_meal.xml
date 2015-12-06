@@ -12,25 +12,16 @@
         android:layout_centerHorizontal="true" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/stepTitle"
-        android:text="stepTitle"
-        android:layout_below="@+id/recipeTitle"
-        android:layout_centerHorizontal="true" />
-
-    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/instruction"
         android:text="instruction"
-        android:layout_below="@+id/stepTitle"
         android:layout_above="@+id/cook_meal_button_bar"
         android:layout_alignParentStart="true"
         android:layout_marginTop="47dp"
 
-        android:scrollbars = "vertical" />
+        android:scrollbars = "vertical"
+        android:layout_below="@+id/recipeTitle" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -40,19 +31,11 @@
         android:id="@+id/cook_meal_button_bar">
 
         <Button
-            style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Previous Step"
-            android:id="@+id/previousStep"
-            android:layout_weight="1"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Next Step"
-            android:id="@+id/nextStep"
-            android:layout_weight="1"/>
+            android:text="Done"
+            android:id="@+id/doneCooking"
+            android:layout_weight="0.34"/>
     </LinearLayout>
 
 </RelativeLayout>

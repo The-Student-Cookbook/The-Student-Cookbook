@@ -15,13 +15,13 @@
         android:checked="false"
         android:layout_marginTop="38dp"
         android:layout_below="@+id/clearTitle"
-        android:layout_alignStart="@+id/deleteHistory" />
+        android:layout_alignStart="@+id/deleteCookedHistory" />
 
     <CheckBox
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Delete My Recipe History"
-        android:id="@+id/deleteHistory"
+        android:text="Delete Cooked Recipe History"
+        android:id="@+id/deleteCookedHistory"
         android:checked="false"
         android:layout_below="@+id/deleteProfile"
         android:layout_centerHorizontal="true"
@@ -43,5 +43,14 @@
         android:id="@+id/confirmClear"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Delete Recipe Ratings"
+        android:id="@+id/deleteRatings"
+        android:layout_below="@+id/deleteProfile"
+        android:layout_alignStart="@+id/deleteProfile"
+        android:checked="false" />
 
 </RelativeLayout>
