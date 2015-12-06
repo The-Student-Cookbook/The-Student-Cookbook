@@ -874,6 +874,7 @@ public class DBToolsUnitTest extends AndroidTestCase {
         technique11.setImageURL("technique11:imageURL");
         technique11.setExternalURLs(urls);
         technique11.setTools(tools1);
+        techniques1.add(technique11);
 
         Recipe recipe1 = new Recipe();
         recipe1.setId(1); //This would be 0, but Recipe table has autoincrement quality
@@ -898,13 +899,17 @@ public class DBToolsUnitTest extends AndroidTestCase {
         recipeList1.add(recipe1);
 
         //Should be equal to value already in db from populateEmptyTables helper method
-        //assertEquals(recipeList1, recipeList2);
+        for (int i = 0; i < recipeList1.size(); i++){
+            assertTrue(recipeList1.get(i).equals(recipeList2.get(i)));
+        }
 
         db.removeRecipeFromPinned(recipe1);
         db.addRecipeToPinned(recipe1);
 
-        //assertEquals(recipeList1, recipeList2);
-
+        //Should be equal to value already in db from populateEmptyTables helper method
+        for (int i = 0; i < recipeList1.size(); i++){
+            assertTrue(recipeList1.get(i).equals(recipeList2.get(i)));
+        }
     }
 
     public void testRateRecipes() {
