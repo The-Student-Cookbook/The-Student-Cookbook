@@ -1684,6 +1684,18 @@ public class DBTools extends SQLiteOpenHelper {
         db.execSQL(deleteStatement);
     }
 
+    public void removeHasCooked(int recipeId, String date){
+        //Until we add functionality to handle multiple users, use this:
+        int userId = 0;
+
+        String insertStatement = "DELETE FROM Has_Cooked\n"
+                +"WHERE (" + "userId=" + userId + " AND recipeId="+recipeId+
+                                                  " AND dateCooked='"+date+"')";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL(insertStatement);
+    }
+
     public void addMealBaseToDatabase(String base) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
