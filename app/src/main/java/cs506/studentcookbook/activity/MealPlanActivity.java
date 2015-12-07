@@ -170,8 +170,13 @@ public class MealPlanActivity extends Activity {
             header.setText("");
         }
 
+        TextView cooktime = (TextView) findViewById(R.id.meal_plan_cook_time);
+        cooktime.setText("Cook Time:\n" + selectedRecipe.getCookTime() + " min");
+
         requiredTechniques.setText(Html.fromHtml(techniquesFormattedString));
         requiredTechniques.setMovementMethod(LinkMovementMethod.getInstance());
+
+
 
     }
 }

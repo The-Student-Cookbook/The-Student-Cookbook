@@ -13,6 +13,15 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Cook Time:"
+        android:id="@+id/meal_plan_cook_time"
+        android:layout_above="@+id/meal_plan_ingredients_body_text"
+        android:layout_alignEnd="@+id/imageLayout"/>
+
     <RelativeLayout
         android:id="@+id/imageLayout"
         android:layout_width="640px"
