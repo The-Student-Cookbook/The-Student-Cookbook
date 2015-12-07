@@ -65,12 +65,7 @@ public class HistoryFragment extends Fragment {
         TextView emptyView = (TextView) getView().findViewById(R.id.empty_my_recipes);
         emptyView.setVisibility(View.INVISIBLE);
 
-        // TODO: the app doesn't add to hasCooked after completing a recipe
         List<Recipe> history = tools.getHasCooked();
-//        Preferences pref = new Preferences();
-//        pref.setName("");
-//        List<Recipe> history = tools.getSuggestedRecipes(pref);
-////        List<Recipe> history = tools.getHasCooked();
         if(history == null || history.isEmpty()) {
             emptyView.setVisibility(View.VISIBLE);
         }
