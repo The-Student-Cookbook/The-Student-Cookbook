@@ -999,7 +999,9 @@ public class DBTools extends SQLiteOpenHelper {
                     + ", "  + DEFAULT_ESTIMATECOST
                     + ");";
 
-            db.execSQL(updateQuery);
+            try {
+                db.execSQL(updateQuery);
+            } catch(Exception e) {}
         }
         else
         {
@@ -1068,7 +1070,9 @@ public class DBTools extends SQLiteOpenHelper {
         //updateQuery += "\nWHERE userId=" + userId;
         updateQuery += ";";
 
-        db.execSQL(updateQuery);
+        try {
+            db.execSQL(updateQuery);
+        } catch(Exception e) {}
     }
 
     //To make this easier to use, the method automatically checks whether it needs to write an
@@ -1109,7 +1113,9 @@ public class DBTools extends SQLiteOpenHelper {
                     + ", "  + DEFAULT_ESTIMATECOST
                     + ");";
 
-            db.execSQL(updateQuery);
+            try {
+                db.execSQL(updateQuery);
+            } catch(Exception e) {}
         }
 
         //Note: this changes the values of the entire column.
@@ -1127,7 +1133,11 @@ public class DBTools extends SQLiteOpenHelper {
         ;
         //updateQuery += "\nWHERE userId=" + userId;
         updateQuery += ";";
-        db.execSQL(updateQuery);
+
+        try {
+            db.execSQL(updateQuery);
+        } catch(Exception e) {}
+
 
         //Adds tools
         for (int i = 0; i < user.getTools().size(); i++)
@@ -1211,7 +1221,10 @@ public class DBTools extends SQLiteOpenHelper {
                 +", '" + toolName + "');";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(insertStatement);
+
+        try {
+            db.execSQL(insertStatement);
+        } catch(Exception e) {}
     }
 
     public void removeTool(Tool tool) {
@@ -1224,7 +1237,10 @@ public class DBTools extends SQLiteOpenHelper {
                 +"WHERE (" + "userId=" + userId + " AND toolName='"+toolName+"')";
 
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL(insertStatement);
+
+        try {
+            db.execSQL(insertStatement);
+        } catch(Exception e) {}
     }
     ///////////////////////////////////////////////////////////////////////////////////////////////
     // Create tables methods
@@ -1626,7 +1642,10 @@ public class DBTools extends SQLiteOpenHelper {
                 +", " + recipes.get(recipes.size()-1).getId()
                 +", \"" + date + "\")";
 
-        db.execSQL(insertStatement);
+        try {
+            db.execSQL(insertStatement);
+        } catch (Exception e) {
+        }
     }
 
     public List<Recipe> getHasCooked() {

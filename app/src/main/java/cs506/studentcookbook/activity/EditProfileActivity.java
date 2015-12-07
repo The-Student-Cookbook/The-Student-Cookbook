@@ -75,7 +75,7 @@ public class EditProfileActivity extends Activity {
         String email = user.getEmail();
         if(email.equals(null))
             email = "Not Available";
-        editEmailButton.setText(email);
+        editEmailButton.setText("Email: " + email);
         editEmailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
