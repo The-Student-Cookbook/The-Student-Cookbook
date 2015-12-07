@@ -743,11 +743,16 @@ public class DBTools extends SQLiteOpenHelper {
         //May need to change this later to add modularity
         int userId = 0;
 
-        String insertStatement = "INSERT INTO Pinned_Recipe (userId, recipeId)\n"
-                +"VALUES (" + userId
-                +", " + recipeId + ");";
+        //String insertStatement = "INSERT INTO Pinned_Recipe (userId, recipeId)\n"
+        //        +"VALUES (" + userId
+        //        +", " + recipeId + ");";
 
-        db.execSQL(insertStatement);
+        //db.execSQL(insertStatement);
+
+        ContentValues values = new ContentValues();
+        values.put("userId", userId);
+        values.put("recipeId", recipeId);
+        db.insertWithOnConflict(TABLE_PINNED_RECIPE, null, values, SQLiteDatabase.CONFLICT_IGNORE);
     }
 
     public List<Recipe> getPinnedRecipes() {
@@ -1587,12 +1592,18 @@ public class DBTools extends SQLiteOpenHelper {
         int userId = 0;
         SQLiteDatabase db = this.getWritableDatabase();
 
-        String insertStatement = "INSERT INTO Has_Cooked (userId, recipeId, dateCooked)\n"
-                +"VALUES (" + userId
-                +", " + recipeId
-                +", \"" + date + "\");";
+        //String insertStatement = "INSERT INTO Has_Cooked (userId, recipeId, dateCooked)\n"
+        //        +"VALUES (" + userId
+        //        +", " + recipeId
+        //        +", \"" + date + "\");";
 
-        db.execSQL(insertStatement);
+        //db.execSQL(insertStatement);
+
+        ContentValues values = new ContentValues();
+        values.put("userId", userId);
+        values.put("recipeId", recipeId);
+        values.put("dateCooked", date);
+        db.insertWithOnConflict(TABLE_HAS_COOKED, null, values, SQLiteDatabase.CONFLICT_REPLACE);
     }
 
     public void addHasCookedToDatabase(List<Recipe> recipes, String date) {

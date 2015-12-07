@@ -45,6 +45,12 @@ public class MealPlanActivity extends Activity {
         Bundle savedRecipeBundle = getIntent().getExtras();
         selectedRecipe = savedRecipeBundle.getParcelable(CURRENT_RECIPE_PARCEL_KEY);
 
+        // for some reason, the recipe appears blank. I'll just put this #hack here to fix it for now...
+        while(selectedRecipe.getName() == null || selectedRecipe.getName() == "") {
+            List<Recipe> list = dbTools.getSuggestedRecipes(null);
+            selectedRecipe = list.get(0);
+        }
+
         // grabs the image from the web and puts it in the image view
         new DownloadImageTask((ImageView) findViewById(R.id.recipeImageView)).execute(selectedRecipe.getImageURL());
 
@@ -171,7 +177,14 @@ public class MealPlanActivity extends Activity {
         }
 
         TextView cooktime = (TextView) findViewById(R.id.meal_plan_cook_time);
-        cooktime.setText("Cook Time:\n" + selectedRecipe.getCookTime() + " min");
+
+        // make sure a cook time of 0 doesn't appear. #hack
+        int cooktimeValue = selectedRecipe.getCookTime() + selectedRecipe.getPrepTime();
+        if(cooktimeValue == 0) {
+            cooktimeValue = 30;
+        }
+
+        cooktime.setText("Cook Time:\n" + cooktimeValue + " min");
 
         requiredTechniques.setText(Html.fromHtml(techniquesFormattedString));
         requiredTechniques.setMovementMethod(LinkMovementMethod.getInstance());
